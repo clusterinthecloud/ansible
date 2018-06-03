@@ -1,0 +1,23 @@
+---
+- name: restart slurmctld
+  service:
+    name: slurmctld
+    state: restarted
+  when: "'management' in group_names"
+
+- name: restart slurmdbd
+  service:
+    name: slurmdbd
+    state: restarted
+  when: "'management' in group_names"
+
+- name: restart slurmd
+  service:
+    name: slurmd
+    state: restarted
+  when: "'management' not in group_names"
+
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted

@@ -1,0 +1,41 @@
+ClusterName=addomer
+ControlMachine=addomermgmt
+
+SlurmUser=slurm
+SlurmctldPort=6817
+SlurmdPort=6818
+AuthType=auth/munge
+StateSaveLocation=/var/spool/slurm
+ProctrackType=proctrack/cgroup
+#Prolog=
+#Epilog=
+#SrunProlog=
+#SrunEpilog=
+#TaskProlog=
+#TaskEpilog=
+TaskPlugin=task/cgroup
+#UsePAM=
+
+# TIMERS
+SlurmctldTimeout=300
+SlurmdTimeout=300
+MinJobAge=300
+
+# SCHEDULING
+SchedulerType=sched/backfill
+#SchedulerAuth=
+#SelectType=select/linear
+
+# LOGGING
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+
+# ACCOUNTING
+JobAcctGatherType=jobacct_gather/cgroup
+JobAcctGatherFrequency=30
+
+AccountingStorageType=accounting_storage/slurmdbd
+
+# COMPUTE NODES
+NodeName=addomercompute[0-2] Procs=4 State=UNKNOWN
+PartitionName=compute Nodes=ALL Default=YES MaxTime=INFINITE State=UP

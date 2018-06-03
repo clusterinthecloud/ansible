@@ -1,0 +1,5 @@
+---
+- hosts: management
+  roles:
+    - mysql
+    - slurm

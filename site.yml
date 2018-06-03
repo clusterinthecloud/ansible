@@ -1,0 +1,12 @@
+---
+- name: common
+  hosts: all
+  tags: common
+  roles:
+    - epel
+    - security-updates
+    - debug-tools
+    - ntp
+    - users
+- import_playbook: management.yml
+- import_playbook: compute.yml

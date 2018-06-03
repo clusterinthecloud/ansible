@@ -1,0 +1,4 @@
+---
+- name: useradd <users>
+  user: name="{{ item }}" append=yes shell=/bin/bash
+  with_items: '{{ users }}'

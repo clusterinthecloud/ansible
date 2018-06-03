@@ -1,0 +1,24 @@
+---
+- name: install MySQL-python
+  yum: name=MySQL-python state=present
+
+- name: install mariadb
+  yum:
+    name: mariadb-server
+    state: installed
+
+- name: start service mariadb
+  service:
+    name: mariadb
+    state: started
+
+- name: create slurm accounting database
+  mysql_db:
+    name: slurmacct
+    state: present
+
+- mysql_user:
+    name: slurm
+    password: "{{ slurm_accounting_db_password }}"
+    priv: 'slurmacct.*:ALL'
+    state: present

@@ -1,0 +1,22 @@
+---
+#
+# This is the one file that violates my rule of "don't just throw a bunch of
+# stuff into a role." These are all really useful tools, with single line
+# installs
+#
+
+- when: ansible_distribution == 'CentOS'
+  name: yum install <cool-stuff>
+  yum: name={{ item }}
+  with_items:
+    - curl
+    - htop
+    - iotop
+    - lsof
+    - rsync
+    - screen
+    - sysstat
+    - tcpdump
+    - traceroute
+    - wget
+    - nmap

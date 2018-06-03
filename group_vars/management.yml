@@ -1,0 +1,4 @@
+---
+slurm_packages:
+  - slurmctld
+  - slurmdbd

@@ -1,0 +1,5 @@
+---
+users:
+  - mw16387
+
+slurm_accounting_db_password: 12345

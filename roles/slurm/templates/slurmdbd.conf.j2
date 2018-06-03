@@ -1,0 +1,15 @@
+# Authentication info
+AuthType=auth/munge
+
+# slurmDBD info
+DbdHost=localhost
+SlurmUser=slurm
+
+LogFile=/var/log/slurm/slurmdbd.log
+
+# Database info
+StorageType=accounting_storage/mysql
+StorageHost=localhost
+StorageUser=slurm
+StoragePass={{slurm_accounting_db_password}}
+StorageLoc=slurmacct
