@@ -1,0 +1,46 @@
+---
+- name: install Python 3.6
+  yum: name=rh-python36 state=installed
+
+- name: install OCI client
+  pip:
+    name: oci-cli
+    virtualenv: /opt/oci-cli
+    virtualenv_command: /opt/rh/rh-python36/root/bin/python -m venv
+
+- file:
+    path: "{{ slurm_elastic.oracle.config_directory }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: copy OCI private key
+  copy:
+    src: "{{ slurm_elastic.oracle.private_key_path }}"
+    dest: "{{ slurm_elastic.oracle.config_directory }}/oci_api_key.pem"
+    owner: slurm
+    group: slurm
+    mode: 0400
+
+- name: configure OCI config file
+  template:
+    src: oci-config.j2
+    dest: "{{ slurm_elastic.oracle.config_directory }}/config"
+    owner: slurm
+    group: slurm
+    mode: 0400
+
+- name: configure startnode script
+  template:
+    src: startnode.j2
+    dest: /usr/local/bin/startnode
+    mode: 0755
+  notify: restart slurmctld
+
+- name: configure stopnode script
+  template:
+    src: stopnode.j2
+    dest: /usr/local/bin/stopnode
+    mode: 0755
+  notify: restart slurmctld

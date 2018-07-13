@@ -1,3 +1,11 @@
 ---
 slurm_packages:
   - slurmd
+
+install_packages:
+  - mpich-devel
+  - fltk-devel
+  - fftw-devel
+  - fltk-fluid
+  - cuda-cudart-9-1
+  - cuda-cufft-9-1

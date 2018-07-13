@@ -1,5 +1,5 @@
-ClusterName=addomer
-ControlMachine=addomermgmt
+ClusterName={{ slurm_cluster_name }}
+ControlMachine={{ slurm_control_machine }}
 
 SlurmUser=slurm
 SlurmctldPort=6817
@@ -36,6 +36,12 @@ JobAcctGatherFrequency=30
 
 AccountingStorageType=accounting_storage/slurmdbd
 
+# ELASTIC
+ResumeProgram=/usr/local/bin/startnode
+SuspendProgram=/usr/local/bin/stopnode
+SuspendTime=600
+ResumeTimeout=600
+
 # COMPUTE NODES
-NodeName=addomercompute[0-2] Procs=4 State=UNKNOWN
+NodeName={{ slurm_compute_nodelist }} State=CLOUD SocketsPerBoard={{ slurm_compute_sockets }} CoresPerSocket={{ slurm_compute_cores_per_socket }} ThreadsPerCore={{ slurm_compute_threads_per_core }} RealMemory={{ slurm_compute_memory }}
 PartitionName=compute Nodes=ALL Default=YES MaxTime=INFINITE State=UP

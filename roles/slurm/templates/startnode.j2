@@ -1,0 +1,18 @@
+#! /bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+LOGFILE=/home/slurm/elastic.log
+
+hosts=$(scontrol show hostnames $1)
+for host in ${hosts}
+do
+  echo "$(date): Starting ${host}" &>> ${LOGFILE}
+  instance_id=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="{{ slurm_elastic.oracle.compartment_ocid }}" | jq --raw-output '.data[] | select(."display-name" == "'${host}'") | select(."lifecycle-state" != "TERMINATED") | .id')
+  if /opt/oci-cli/bin/oci compute instance action --instance-id="${instance_id}" --action=START ; then
+    echo "$(date):   Started ${host}" &>> ${LOGFILE}
+  else
+    echo "$(date):   Failed to start ${host}" &>> ${LOGFILE}
+  fi
+  scontrol update nodename=${host} nodehostname=${host}
+done

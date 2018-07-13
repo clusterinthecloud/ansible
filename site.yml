@@ -7,6 +7,7 @@
     - security-updates
     - debug-tools
     - ntp
+    - filesystem
     - users
 - import_playbook: management.yml
 - import_playbook: compute.yml

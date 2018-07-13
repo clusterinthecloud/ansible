@@ -5,18 +5,23 @@
 # installs
 #
 
-- when: ansible_distribution == 'CentOS'
-  name: yum install <cool-stuff>
-  yum: name={{ item }}
-  with_items:
-    - curl
-    - htop
-    - iotop
-    - lsof
-    - rsync
-    - screen
-    - sysstat
-    - tcpdump
-    - traceroute
-    - wget
-    - nmap
+- name: yum install <cool-stuff>
+  yum:
+    name:
+      - curl
+      - htop
+      - iotop
+      - lsof
+      - rsync
+      - screen
+      - sysstat
+      - tcpdump
+      - traceroute
+      - wget
+      - nmap
+      - git
+      - cmake
+
+- name: yum install packages
+  yum:
+    name: "{{ install_packages }}"

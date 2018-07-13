@@ -1,4 +1,24 @@
 ---
+- name: disable SELinux
+  selinux:
+    state: disabled
+
 - name: useradd <users>
-  user: name="{{ item }}" append=yes shell=/bin/bash
+  user:
+    name: "{{ item }}"
+    append: yes
+    shell: /bin/bash
+    home: /mnt{{ filesystem_mount_point }}/home/{{ item }}
+    generate_ssh_key: yes
   with_items: '{{ users }}'
+  when: "'management' in group_names"
+
+- name: useradd <users>
+  user:
+    name: "{{ item }}"
+    append: yes
+    shell: /bin/bash
+    home: /mnt{{ filesystem_mount_point }}/home/{{ item }}
+    create_home: no
+  with_items: '{{ users }}'
+  when: "'management' not in group_names"

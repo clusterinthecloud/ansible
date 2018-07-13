@@ -2,3 +2,18 @@
 slurm_packages:
   - slurmctld
   - slurmdbd
+
+slurm_elastic:
+  oracle:
+    private_key_path: "/home/matt/.oci/oci_api_key.pem"
+    config_directory: /home/slurm/.oci/
+    user_ocid: "ocid1.user.oc1..aaaaaaaavgmwem5jctg42xvlbtcdpvukm7rrgensid6z7kcedrurd75tatca"
+    fingerprint: "6e:9f:92:ed:a0:ed:b5:dc:79:c1:8b:38:97:23:e8:63"
+    tenancy_ocid: "ocid1.tenancy.oc1..aaaaaaaadkkfx2lrusqkpbxsk7p5zphqrrl2gzw6fx3bizi7gxxg6kc5mfda"
+    region: "eu-frankfurt-1"
+    compartment_ocid: "ocid1.tenancy.oc1..aaaaaaaadkkfx2lrusqkpbxsk7p5zphqrrl2gzw6fx3bizi7gxxg6kc5mfda"
+
+install_packages:
+  - xorg-x11-xauth
+  - cuda-cudart-9-1
+  - cuda-cufft-9-1

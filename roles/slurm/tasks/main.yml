@@ -15,6 +15,7 @@
 - name: start service munge
   service:
     name: munge
+    enabled: yes
     state: started
 
 - name: install Slurm build dependencies
@@ -34,22 +35,22 @@
 
 - name: download Slurm source
   get_url:
-    url: https://download.schedmd.com/slurm/slurm-17.11.6.tar.bz2
+    url: https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2
     dest: /tmp/
-    checksum: sha1:920876076558079a2214b88e8a3286bf6a7c9bde
+    checksum: "{{ slurm_download_checksum }}"
   register: download_slurm_source
 
 - name: rpmbuild Slurm
   command: rpmbuild -ta {{ download_slurm_source.dest }}
   args:
     chdir: /tmp
-    creates: /root/rpmbuild/RPMS/x86_64/slurm-17.11.6-1.el7.x86_64.rpm
+    creates: /root/rpmbuild/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm
 
 - name: install Slurm base package
-  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-17.11.6-1.el7.x86_64.rpm state=present
+  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm state=present
 
 - name: install Slurm
-  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-{{item}}-17.11.6-1.el7.x86_64.rpm state=present
+  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64.rpm state=present
   loop: "{{ slurm_packages }}"
 
 - file:
@@ -130,6 +131,9 @@
     - restart slurmctld
     - restart slurmd
 
+- include_tasks: elastic.yml
+  when: "'management' in group_names"
+
 - name: start service slurmdbd
   service:
     name: slurmdbd
@@ -150,3 +154,10 @@
     state: started
     enabled: yes
   when: "'management' not in group_names"
+
+- name: create accounting cluster
+  command: sacctmgr --immediate add cluster {{ slurm_cluster_name }}
+  register: create_cluster_result
+  changed_when: "create_cluster_result.rc == 0"
+  failed_when: "create_cluster_result.rc != 0 and create_cluster_result.stdout != ' This cluster {{ slurm_cluster_name }} already exists.  Not adding.'"
+  when: "'management' in group_names"

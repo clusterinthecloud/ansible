@@ -2,4 +2,19 @@
 users:
   - mw16387
 
+slurm_version: 17.11.7
+slurm_download_checksum: sha1:1116fb3b2998cdc6f5394c1687ddb9c6bcba1339
+
 slurm_accounting_db_password: 12345
+
+slurm_cluster_name: addomer
+slurm_control_machine: mgmt
+
+slurm_compute_nodelist: compute[1-2]
+slurm_compute_memory: 191834
+slurm_compute_sockets: 2
+slurm_compute_cores_per_socket: 14
+slurm_compute_threads_per_core: 2
+
+filesystem_target_ip: 10.1.20.5
+filesystem_mount_point: /shared
