@@ -11,6 +11,7 @@
   service:
     name: mariadb
     state: started
+    enabled: yes
 
 - name: create slurm accounting database
   mysql_db:
