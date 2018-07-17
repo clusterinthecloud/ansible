@@ -1,0 +1,4 @@
+- name: Set DNS search doamins to all subnets
+  copy:
+    content: 'supersede domain-search "clustervcn.oraclevcn.com", "subnetad1.clustervcn.oraclevcn.com", "subnetad2.clustervcn.oraclevcn.com", "subnetad3.clustervcn.oraclevcn.com";'
+    dest: /etc/dhcp/dhclient-ens3.conf

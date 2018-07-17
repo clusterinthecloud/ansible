@@ -3,6 +3,7 @@
   hosts: all
   tags: common
   roles:
+    - dhcp
     - epel
     - security-updates
     - debug-tools
