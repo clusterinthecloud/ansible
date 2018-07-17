@@ -1,6 +1,7 @@
 ---
 slurm_packages:
   - slurmd
+  - libpmi
 
 install_packages:
   - mpich-devel

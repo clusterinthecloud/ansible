@@ -42,6 +42,9 @@ SuspendProgram=/usr/local/bin/stopnode
 SuspendTime=600
 ResumeTimeout=600
 
+# MPI
+MpiDefault=pmi2
+
 # COMPUTE NODES
 NodeName={{ slurm_compute_nodelist }} State=CLOUD SocketsPerBoard={{ slurm_compute_sockets }} CoresPerSocket={{ slurm_compute_cores_per_socket }} ThreadsPerCore={{ slurm_compute_threads_per_core }} RealMemory={{ slurm_compute_memory }}
 PartitionName=compute Nodes=ALL Default=YES MaxTime=INFINITE State=UP
