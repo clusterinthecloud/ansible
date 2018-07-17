@@ -7,7 +7,7 @@
 - name: Mount shared file system
   mount:
     path: /mnt/{{ filesystem_mount_point }}
-    src: "{{ filesystem_target_ip }}:{{ filesystem_mount_point }}"
+    src: "{{ filesystem_target_address }}:{{ filesystem_mount_point }}"
     fstype: nfs
     opts: defaults,nofail,nosuid
     state: mounted
