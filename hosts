@@ -2,5 +2,8 @@
 mgmt ansible_host=130.61.9.10
 
 [compute]
-compute1 ansible_host=130.61.60.59
-compute2 ansible_host=130.61.55.95
+compute1
+compute2
+
+[compute:vars]
+ansible_ssh_extra_args="-J opc@130.61.9.10"
