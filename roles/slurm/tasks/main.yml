@@ -131,6 +131,14 @@
     - restart slurmctld
     - restart slurmd
 
+- name: open all ports within subnet
+  firewalld:
+    rich_rule: 'rule family="ipv4" source address="10.0.0.0/8" accept'
+    permanent: true
+    state: enabled
+  notify:
+    - restart firewalld
+
 - include_tasks: elastic.yml
   when: "'management' in group_names"
 
