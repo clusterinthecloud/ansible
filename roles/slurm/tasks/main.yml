@@ -33,24 +33,30 @@
       - perl-ExtUtils-MakeMaker
     state: present
 
+- name: make home directory
+  file:
+    path: /mnt{{ filesystem_mount_point }}/apps/slurm
+    state: directory
+
 - name: download Slurm source
   get_url:
     url: https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2
-    dest: /tmp/
+    dest: /mnt{{ filesystem_mount_point }}/apps/slurm/
     checksum: "{{ slurm_download_checksum }}"
   register: download_slurm_source
 
 - name: rpmbuild Slurm
-  command: rpmbuild -ta {{ download_slurm_source.dest }}
+  command: rpmbuild --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
   args:
     chdir: /tmp
-    creates: /root/rpmbuild/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm
+    creates: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm
+  when: "'management' in group_names"
 
 - name: install Slurm base package
-  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm state=present
+  yum: name=/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm state=present
 
 - name: install Slurm
-  yum: name=/root/rpmbuild/RPMS/x86_64/slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64.rpm state=present
+  yum: name=/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64.rpm state=present
   loop: "{{ slurm_packages }}"
 
 - file:
