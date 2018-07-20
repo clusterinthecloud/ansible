@@ -1,6 +1,8 @@
 ---
 users:
-  - mw16387
+  - name: mw16387
+    key: https://github.com/milliams.keys
+    uid: 1000
 
 slurm_version: 17.11.7
 slurm_download_checksum: sha1:1116fb3b2998cdc6f5394c1687ddb9c6bcba1339

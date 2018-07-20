@@ -3,22 +3,36 @@
   selinux:
     state: disabled
 
+- name: make home directory
+  file:
+    path: /mnt{{ filesystem_mount_point }}/home
+    state: directory
+
 - name: useradd <users>
   user:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
     append: yes
     shell: /bin/bash
-    home: /mnt{{ filesystem_mount_point }}/home/{{ item }}
+    home: /mnt{{ filesystem_mount_point }}/home/{{ item.name }}
     generate_ssh_key: yes
-  with_items: '{{ users }}'
+    uid: "{{ item.mode|default(omit) }}"
+  loop: '{{ users }}'
   when: "'management' in group_names"
 
 - name: useradd <users>
   user:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
     append: yes
     shell: /bin/bash
-    home: /mnt{{ filesystem_mount_point }}/home/{{ item }}
+    home: /mnt{{ filesystem_mount_point }}/home/{{ item.name }}
     create_home: no
-  with_items: '{{ users }}'
+    uid: "{{ item.mode|default(omit) }}"
+  loop: '{{ users }}'
   when: "'management' not in group_names"
+
+- name: Set authorized key
+  authorized_key:
+    user: "{{ item.name }}"
+    state: present
+    key: "{{ item.key }}"
+  loop: "{{ users }}"
