@@ -4,6 +4,7 @@
   tags: common
   roles:
     - dhcp
+    - ssh
     - epel
     - security-updates
     - debug-tools

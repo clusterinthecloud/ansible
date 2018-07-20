@@ -1,0 +1,8 @@
+---
+
+- name: set SSHD AddressFamily to inet
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AddressFamily'
+    line: "AddressFamily inet"
+  notify: restart sshd
