@@ -12,11 +12,24 @@ slurm_accounting_db_password: 12345
 slurm_cluster_name: addomer
 slurm_control_machine: mgmt
 
-slurm_compute_nodelist: compute[1-2]
-slurm_compute_memory: 191834
-slurm_compute_sockets: 2
-slurm_compute_cores_per_socket: 14
-slurm_compute_threads_per_core: 2
+slurm_compute_nodelists:
+  - nodelist: compute[001-004]
+    memory: 772000
+    sockets: 2
+    cores_per_socket: 26
+    threads_per_core: 2
+  - nodelist: compute[005-008]
+    memory: 191800
+    sockets: 2
+    cores_per_socket: 14
+    threads_per_core: 2
+
+slurm_partitions:
+  - name: compute
+    nodelist: compute[001-004]
+    default: YES
+  - name: gpu
+    nodelist: compute[005-008]
 
 filesystem_target_address: fileserverad1
 filesystem_mount_point: /shared

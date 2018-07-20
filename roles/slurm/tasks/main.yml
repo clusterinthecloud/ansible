@@ -76,7 +76,9 @@
     owner: slurm
     group: slurm
     mode: 0644
-  notify: restart slurmctld
+  notify:
+    - restart slurmd
+    - restart slurmctld
 
 - name: slurmdbd config file
   template:
