@@ -18,5 +18,5 @@ slurm_compute_sockets: 2
 slurm_compute_cores_per_socket: 14
 slurm_compute_threads_per_core: 2
 
-filesystem_target_address: 10.1.20.5
+filesystem_target_address: fileserverad1
 filesystem_mount_point: /shared
