@@ -73,7 +73,9 @@
 
 - fail:
     msg: "grafana_admin_password must be set"
-  when: not grafana_admin_password
+  when:
+    - monitoring_role == "master"
+    - not grafana_admin_password
 
 - name: Check admin password
   uri:
