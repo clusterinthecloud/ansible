@@ -1,0 +1,107 @@
+---
+
+- name: Add InfluxDB repository
+  yum_repository:
+    name: influxdb
+    description: InfluxDB
+    baseurl: https://repos.influxdata.com/centos/$releasever/$basearch/stable/
+    gpgkey: https://repos.influxdata.com/influxdb.key
+
+- name: install telegraf package
+  yum:
+    name:
+      - telegraf
+  notify: restart telegraf
+
+- name: enable the telegraf service
+  service:
+    name: telegraf
+    state: started
+    enabled: yes
+
+- name: install influxdb package
+  yum:
+    name:
+      - influxdb
+  notify: restart influxdb
+  when: monitoring_role == "master"
+
+- name: enable the influxdb service
+  service:
+    name: influxdb
+    state: started
+    enabled: yes
+  when: monitoring_role == "master"
+
+- name: set InfluxDB URL
+  ini_file:
+    path: /etc/telegraf/telegraf.conf
+    section: "[outputs.influxdb]"
+    option: urls
+    value: '["http://mgmt:8086"]'
+    backup: yes
+  notify: restart telegraf
+
+- name: Add Grafana repository
+  yum_repository:
+    name: grafana
+    description: Grafana
+    baseurl: https://packagecloud.io/grafana/stable/el/7/$basearch
+    gpgkey: https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+
+- name: install grafana package
+  yum:
+    name:
+      - grafana
+  notify: restart grafana
+  when: monitoring_role == "master"
+
+- name: enable the grafana service
+  service:
+    name: grafana-server
+    state: started
+    enabled: yes
+  when: monitoring_role == "master"
+
+- name: open Grafana port in firewall
+  firewalld:
+    port: 3000/tcp
+    permanent: true
+    state: enabled
+  notify:
+    - restart firewalld
+
+- name: Check admin password
+  uri:
+    url: http://localhost:3000/api/admin/settings
+    user: admin
+    password: "{{ grafana_admin_password }}"
+    force_basic_auth: yes
+  ignore_errors: yes
+  register: grafana_password
+  when: monitoring_role == "master"
+
+- name: Set admin password
+  uri:
+    url: http://localhost:3000/api/user/password
+    user: admin
+    password: admin
+    force_basic_auth: yes
+    method: PUT
+    body_format: json
+    body: '{ "oldPassword": "admin", "newPassword": "{{ grafana_admin_password }}", "confirmNew": "{{ grafana_admin_password }}"}'
+  ignore_errors: '{{ ansible_check_mode }}'
+  when:
+    - monitoring_role == "master"
+    - grafana_password.status == 401
+
+- name: Create influxdb datasource
+  grafana_datasource:
+    grafana_url: http://localhost:3000
+    grafana_user: admin
+    grafana_password: "{{ grafana_admin_password }}"
+    name: influxdb
+    ds_type: influxdb
+    url: http://localhost:8086
+    database: telegraf
+  when: monitoring_role == "master"

@@ -11,5 +11,6 @@
     - ntp
     - filesystem
     - users
+    - monitoring
 - import_playbook: management.yml
 - import_playbook: compute.yml

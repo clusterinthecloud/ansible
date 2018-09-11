@@ -15,5 +15,10 @@ slurm_elastic:
 
 install_packages:
   - xorg-x11-xauth
+  - cuda
   - cuda-cudart-9-1
   - cuda-cufft-9-1
+
+monitoring_role: master
+
+grafana_admin_password: supergoodgrafanapasswordthatishardtoguessmaybenot

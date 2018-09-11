@@ -8,5 +8,9 @@ install_packages:
   - fltk-devel
   - fftw-devel
   - fltk-fluid
+  - ghostscript
+  - cuda
   - cuda-cudart-9-1
   - cuda-cufft-9-1
+
+monitoring_role: client
