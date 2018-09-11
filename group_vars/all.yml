@@ -2,13 +2,7 @@
 users:
   - name: mw16387
     key: https://github.com/milliams.keys
-    uid: 1000
-  - name: jb17316
-    uid: 340397
-  - name: ib14525
-    uid: 281319
-  - name: cb14941
-    uid: 280735
+
 
 # From https://www.schedmd.com/downloads.php
 slurm_version: 17.11.8
