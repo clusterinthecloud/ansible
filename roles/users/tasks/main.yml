@@ -34,5 +34,5 @@
   authorized_key:
     user: "{{ item.name }}"
     state: present
-    key: "{{ item.key }}"
+    key: "{{ item.key | default('') }}"
   loop: "{{ users }}"
