@@ -46,6 +46,7 @@
     dest: /mnt{{ filesystem_mount_point }}/apps/slurm/
     checksum: "{{ slurm_download_checksum }}"
   register: download_slurm_source
+  when: "'management' in group_names"
 
 - name: rpmbuild Slurm
   command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
@@ -67,6 +68,14 @@
   args:
     chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
   when: rebuilt_slurm.changed
+
+# We want the management node to complete the build before the compute nodes continue.
+# Wait for up to an hour
+- name: Wait until Slurm repo has been created
+  wait_for:
+    path: /mnt/shared/apps/slurm/RPMS/x86_64/repodata/repomd.xml
+    timeout: 3600
+  when: "'management' not in group_names"
 
 - name: Add repository
   yum_repository:
