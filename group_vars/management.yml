@@ -3,6 +3,7 @@ slurm_packages:
   - slurmctld
   - slurmdbd
 
+# Set these to match your terraform.tfvars
 slurm_elastic:
   oracle:
     private_key_path: "/home/matt/.oci/oci_api_key.pem"
@@ -21,4 +22,5 @@ install_packages:
 
 monitoring_role: master
 
-grafana_admin_password: supergoodgrafanapasswordthatishardtoguessmaybenot
+# Set this to something secure. It is public-facing!
+grafana_admin_password:

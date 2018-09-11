@@ -4,14 +4,17 @@ users:
     key: https://github.com/milliams.keys
     uid: 1000
 
+# From https://www.schedmd.com/downloads.php
 slurm_version: 17.11.8
 slurm_download_checksum: sha1:bee727437c9d13dc11ac21c54801b72bda38b330
 
+# Set this to something secure.
 slurm_accounting_db_password: 12345
 
 slurm_cluster_name: addomer
 slurm_control_machine: mgmt
 
+# Define types of nodes based on what you created in your cloud cluster
 slurm_compute_nodelists:
   - nodelist: compute[001-004]
     memory: 772000

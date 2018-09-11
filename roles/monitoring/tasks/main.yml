@@ -71,6 +71,10 @@
   notify:
     - restart firewalld
 
+- fail:
+    msg: "grafana_admin_password must be set"
+  when: not grafana_admin_password
+
 - name: Check admin password
   uri:
     url: http://localhost:3000/api/admin/settings
