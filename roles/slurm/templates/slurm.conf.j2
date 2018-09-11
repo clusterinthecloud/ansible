@@ -24,7 +24,8 @@ MinJobAge=300
 # SCHEDULING
 SchedulerType=sched/backfill
 #SchedulerAuth=
-#SelectType=select/linear
+SelectType=select/cons_res
+SelectTypeParameters=CR_CPU_Memory
 
 # LOGGING
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
@@ -39,9 +40,9 @@ AccountingStorageType=accounting_storage/slurmdbd
 # ELASTIC
 ResumeProgram=/usr/local/bin/startnode
 SuspendProgram=/usr/local/bin/stopnode
-SuspendTime=600
+SuspendTime=3600
 ResumeTimeout=600
-SuspendTimeout=0
+SuspendTimeout=60
 
 # MPI
 MpiDefault=pmi2
