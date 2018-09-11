@@ -31,6 +31,8 @@
       - gtk2-devel
       - mariadb-devel
       - perl-ExtUtils-MakeMaker
+      - createrepo
+      - lua-devel
     state: present
 
 - name: make home directory
@@ -46,17 +48,38 @@
   register: download_slurm_source
 
 - name: rpmbuild Slurm
-  command: rpmbuild --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
+  command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
   args:
     chdir: /tmp
     creates: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm
+  register: rebuilt_slurm
   when: "'management' in group_names"
 
+- name: make local Slurm repo
+  command: createrepo --no-database /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
+  args:
+    chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
+    creates: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/repodata
+  when: "'management' in group_names"
+
+- name: update Slurm repo data
+  command: createrepo --no-database --update /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
+  args:
+    chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
+  when: rebuilt_slurm.changed
+
+- name: Add repository
+  yum_repository:
+    name: slurm
+    description: Slurm
+    baseurl: file:/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
+    gpgcheck: no
+
 - name: install Slurm base package
-  yum: name=/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm state=present
+  yum: name=slurm-{{ slurm_version }}-1.el7.x86_64 state=present
 
 - name: install Slurm
-  yum: name=/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64.rpm state=present
+  yum: name=slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64 state=present
   loop: "{{ slurm_packages }}"
 
 - file:
