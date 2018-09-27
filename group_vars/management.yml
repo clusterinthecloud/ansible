@@ -21,6 +21,3 @@ install_packages:
   - cuda-cufft-9-1
 
 monitoring_role: master
-
-# Set this to something secure. It is public-facing!
-grafana_admin_password:
