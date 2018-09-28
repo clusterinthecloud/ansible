@@ -3,15 +3,18 @@
   git:
     repo: https://github.com/ACRC/slurm-ansible-playbook.git
     dest: /home/opc/slurm-ansible-playbook
+  when: "'management' in group_names"
 - name: copy example users file
   copy:
     src: users.yml.example
     dest: /home/opc/users.yml.example
+  when: "'management' in group_names"
 - name: copy over finisher script
   copy:
     src: finish.py
     dest: /home/opc/finish
     mode: 0755
+  when: "'management' in group_names"
 - file:
     path: /mnt/shared/finalised
     state: directory
