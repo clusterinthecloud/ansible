@@ -19,8 +19,8 @@ class VarsModule(BaseVarsPlugin):
 
         super(VarsModule, self).get_vars(loader, path, entities)
 
-        nodes = loader.load_from_file('~/nodes.yaml')
-        shapes = loader.load_from_file('~/shapes.yaml')
+        nodes = loader.load_from_file('/home/opc/nodes.yaml')
+        shapes = loader.load_from_file('/home/opc/shapes.yaml')
 
         nodelist = {}
         for hostname, shape in zip(nodes['names'], nodes['shapes']):
