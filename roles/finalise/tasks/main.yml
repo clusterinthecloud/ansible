@@ -1,8 +1,16 @@
 ---
+- name: checkout Ansible repo
+  git:
+    repo: https://github.com/ACRC/slurm-ansible-playbook.git
+    dest: /home/opc/slurm-ansible-playbook
+- name: copy example users file
+  copy:
+    src: users.yml.example
+    dest: /home/opc/users.yml.example
 - name: copy over finisher script
   copy:
     src: finish.py
-    dest: /home/opc/finish.py
+    dest: /home/opc/finish
     mode: 0755
 - file:
     path: /mnt/shared/finalised
@@ -11,4 +19,4 @@
 - file:
     path: /mnt/shared/finalised/{{ansible_hostname}}
     state: touch
-    mode: 0644
+    mode: 0777

@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function)
 import glob
 import os
+import subprocess
 
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
@@ -22,6 +23,9 @@ if unfinished_nodes:
     print('For information about why they have not finished, SSH to that machine and check the file /home/opc/ansible-pull.log')
     exit(1)
 
-print('Please create the user config file and rerun this script...')
+if not os.path.exists('/home/opc/users.yml'):
+    print('Please rename and edit users.yml.example to users.yml and rerun this script.')
+    print('It should contain the users you want to have access to the system.')
+    exit(1)
 
-
+#subprocess.check_call([], stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)

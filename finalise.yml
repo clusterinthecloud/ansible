@@ -1,0 +1,6 @@
+---
+- name: common
+  hosts: all
+  tags: common
+  roles:
+    - users
