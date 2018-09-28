@@ -16,5 +16,6 @@
 - import_playbook: compute.yml
 - name: finalise
   hosts: all
+  tags: finalise
   roles:
     - finalise
