@@ -16,10 +16,8 @@ slurm_control_machine: mgmt
 
 slurm_partitions:
   - name: compute
-    nodelist: compute[001-004]
+    nodelist: ALL
     default: YES
-  - name: gpu
-    nodelist: compute[005-008]
 
 filesystem_target_address: fileserverad1
 filesystem_mount_point: /shared
