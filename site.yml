@@ -14,3 +14,14 @@
     - monitoring
 - import_playbook: management.yml
 - import_playbook: compute.yml
+- name: finalise
+  hosts: all
+  tasks:
+    - file:
+        path: /mnt/shared/finalised
+        state: directory
+        mode: "u+rw,g-wx,o-rwx"
+    - file:
+        path: /mnt/shared/finalised/{{ansible_hostname}}
+        state: touch
+        mode: "u+rw,g-wx,o-rwx"
