@@ -5,8 +5,8 @@
 # installs
 #
 
-- name: yum install <cool-stuff>
-  yum:
+- name: yum install useful tools
+  package:
     name:
       - curl
       - htop

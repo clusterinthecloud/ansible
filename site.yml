@@ -16,12 +16,5 @@
 - import_playbook: compute.yml
 - name: finalise
   hosts: all
-  tasks:
-    - file:
-        path: /mnt/shared/finalised
-        state: directory
-        mode: 0755
-    - file:
-        path: /mnt/shared/finalised/{{ansible_hostname}}
-        state: touch
-        mode: 0644
+  roles:
+    - finalise

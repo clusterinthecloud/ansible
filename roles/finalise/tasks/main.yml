@@ -1,0 +1,14 @@
+---
+- name: copy over finisher script
+  copy:
+    src: finish.py
+    dest: /home/opc/finish.py
+    mode: 0755
+- file:
+    path: /mnt/shared/finalised
+    state: directory
+    mode: 0755
+- file:
+    path: /mnt/shared/finalised/{{ansible_hostname}}
+    state: touch
+    mode: 0644
