@@ -24,4 +24,4 @@
     - file:
         path: /mnt/shared/finalised/{{ansible_hostname}}
         state: touch
-        mode: 0744
+        mode: 0644
