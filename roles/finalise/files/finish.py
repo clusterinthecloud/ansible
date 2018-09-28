@@ -29,7 +29,7 @@ if not os.path.exists('/home/opc/users.yml'):
     print('It should contain the users you want to have access to the system along with their SSH keys.')
     exit(1)
 
-rc = subprocess.call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=/home/opc/users.yml', 'finalise.yml'], cwd='/home/opc/slurm-ansible-playbook')
+rc = subprocess.call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=@/home/opc/users.yml', 'finalise.yml'], cwd='/home/opc/slurm-ansible-playbook')
 
 if rc != 0:
     print('Error: Ansible run did not complete correctly')
