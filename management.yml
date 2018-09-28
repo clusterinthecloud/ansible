@@ -3,3 +3,4 @@
   roles:
     - mysql
     - slurm
+    - debug-tools
