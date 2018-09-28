@@ -24,8 +24,12 @@ if unfinished_nodes:
     exit(1)
 
 if not os.path.exists('/home/opc/users.yml'):
+    print('Error: Could not find users.yml')
     print('Please rename and edit users.yml.example to users.yml and rerun this script.')
-    print('It should contain the users you want to have access to the system.')
+    print('It should contain the users you want to have access to the system along with their SSH keys.')
     exit(1)
 
-subprocess.check_call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=/home/opc/users.yml', 'finalise.yml'], cwd='/home/opc/slurm-ansible-playbook')
+rc = subprocess.call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=/home/opc/users.yml', 'finalise.yml'], cwd='/home/opc/slurm-ansible-playbook')
+
+if rc != 0:
+    print('Error: Ansible run did not complete correctly')
