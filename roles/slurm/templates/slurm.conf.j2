@@ -56,8 +56,8 @@ GresTypes={{ slurm_gres_types }}
 #JobSubmitPlugins=python
 
 # COMPUTE NODES
-{% for nodes in slurm_compute_nodelists %}
-NodeName={{ nodes.nodelist }} State={{ nodes.state | default("UNKNOWN") }} SocketsPerBoard={{ nodes.sockets }} CoresPerSocket={{ nodes.cores_per_socket }} ThreadsPerCore={{ nodes.threads_per_core }} RealMemory={{ nodes.memory }}{{ " Gres="+nodes.gres if nodes.gres is defined else " " }}
+{% for nodename, shape in slurm_compute_nodelists.items() %}
+NodeName={{ nodename }} State={{ shape.state | default("UNKNOWN") }} SocketsPerBoard={{ shape.sockets }} CoresPerSocket={{ shape.cores_per_socket }} ThreadsPerCore={{ shape.threads_per_core }} RealMemory={{ shape.memory }}{{ " Gres="+shape.gres if shape.gres is defined else " " }}
 {% endfor %}
 {% for partition in slurm_partitions %}
 PartitionName={{ partition.name }} Nodes={{ partition.nodelist }} MaxTime=INFINITE State=UP Default={{ partition.default | default("NO") }} OverSubscribe={{ partition.oversubscribe | default("NO") }}

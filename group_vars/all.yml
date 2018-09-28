@@ -14,19 +14,6 @@ slurm_accounting_db_password: 12345
 slurm_cluster_name: cluster
 slurm_control_machine: mgmt
 
-# Define types of nodes based on what you created in your cloud cluster
-slurm_compute_nodelists:
-  - nodelist: compute[001-004]
-    memory: 772000
-    sockets: 2
-    cores_per_socket: 26
-    threads_per_core: 2
-  - nodelist: compute[005-008]
-    memory: 191800
-    sockets: 2
-    cores_per_socket: 14
-    threads_per_core: 2
-
 slurm_partitions:
   - name: compute
     nodelist: compute[001-004]
