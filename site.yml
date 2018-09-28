@@ -20,8 +20,8 @@
     - file:
         path: /mnt/shared/finalised
         state: directory
-        mode: "u+rw,g-wx,o-rwx"
+        mode: 0755
     - file:
         path: /mnt/shared/finalised/{{ansible_hostname}}
         state: touch
-        mode: "u+rw,g-wx,o-rwx"
+        mode: 0755
