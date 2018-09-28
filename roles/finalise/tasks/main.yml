@@ -9,6 +9,7 @@
   copy:
     src: users.yml.example
     dest: /home/opc/users.yml.example
+    mode: 0666
   when: "'management' in group_names"
 - name: copy over finisher script
   copy:
