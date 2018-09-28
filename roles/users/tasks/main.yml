@@ -3,12 +3,12 @@
   selinux:
     state: disabled
 
-- name: make home directory
+- name: make base home directory
   file:
     path: /mnt{{ filesystem_mount_point }}/home
     state: directory
 
-- name: useradd <users>
+- name: add users to the management node
   user:
     name: "{{ item.name }}"
     append: yes
@@ -19,7 +19,7 @@
   loop: '{{ users }}'
   when: "'management' in group_names"
 
-- name: useradd <users>
+- name: add users to the compute nodes
   user:
     name: "{{ item.name }}"
     append: yes
@@ -30,7 +30,7 @@
   loop: '{{ users }}'
   when: "'management' not in group_names"
 
-- name: Set authorized key
+- name: set authorized SSH keys
   authorized_key:
     user: "{{ item.name }}"
     state: present
