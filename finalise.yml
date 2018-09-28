@@ -1,6 +1,10 @@
 ---
-- name: common
+- name: finalise
   hosts: all
-  tags: common
   roles:
     - users
+  tasks:
+    - name: set motd
+      copy:
+        content: Welcome to the cluster
+        dest: /etc/motd

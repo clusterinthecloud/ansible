@@ -22,6 +22,13 @@
     dest: /home/opc/finish
     mode: 0755
   when: "'management' in group_names"
+- name: set motd
+  copy:
+    content: |
+      Welcome to the cluster
+      In order to create users, run the script "./finish" and follow the instructions
+    dest: /etc/motd
+  when: "'management' in group_names"
 - name: create directory for the finalised files
   file:
     path: /mnt/shared/finalised
