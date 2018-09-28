@@ -71,7 +71,7 @@
 
 # We want the management node to complete the build before the compute nodes continue.
 # Wait for up to an hour
-- name: Wait until Slurm repo has been created
+- name: Wait until Slurm repo has been created by the mangement node
   wait_for:
     path: /mnt/shared/apps/slurm/RPMS/x86_64/repodata/repomd.xml
     timeout: 3600
@@ -91,7 +91,8 @@
   yum: name=slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64 state=present
   loop: "{{ slurm_packages }}"
 
-- file:
+- name: create slurm config directory
+  file:
     path: /etc/slurm
     state: directory
     mode: 0755
@@ -140,21 +141,24 @@
     - restart slurmd
     - restart slurmctld
 
-- file:
+- name: set slurm log directory permissions
+  file:
     path: /var/log/slurm/
     state: directory
     owner: slurm
     group: slurm
     mode: 0755
 
-- file:
+- name: set slurm spool directory permissions
+  file:
     path: /var/spool/slurm/
     state: directory
     owner: slurm
     group: slurm
     mode: 0755
 
-- file:
+- name: set slurmd config directory permissions
+  file:
     path: /var/spool/slurmd/
     state: directory
     owner: slurm

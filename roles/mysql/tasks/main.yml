@@ -18,7 +18,8 @@
     name: slurmacct
     state: present
 
-- mysql_user:
+- name: create slurm MySQL user
+  mysql_user:
     name: slurm
     password: "{{ slurm_accounting_db_password }}"
     priv: 'slurmacct.*:ALL'
