@@ -1,7 +1,5 @@
 ---
-users:
-  - name: mw16387
-    key: https://github.com/milliams.keys
+users: []
 
 # From https://www.schedmd.com/downloads.php
 slurm_version: 17.11.8
