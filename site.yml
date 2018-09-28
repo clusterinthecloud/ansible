@@ -7,11 +7,11 @@
     - ssh
     - epel
     - security-updates
-    - debug-tools
     - ntp
     - filesystem
     - users
     - monitoring
+    - debug-tools
 - import_playbook: management.yml
 - import_playbook: compute.yml
 - name: finalise
