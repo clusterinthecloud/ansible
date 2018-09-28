@@ -5,6 +5,10 @@
     version: pull  # TODO Update this
     dest: /home/opc/slurm-ansible-playbook
   when: "'management' in group_names"
+- file:
+    path: /home/opc/slurm-ansible-playbook
+    state: directory
+    owner: opc
 - name: copy example users file
   copy:
     src: users.yml.example
