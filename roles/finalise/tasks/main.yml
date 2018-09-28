@@ -2,6 +2,7 @@
 - name: checkout Ansible repo
   git:
     repo: https://github.com/ACRC/slurm-ansible-playbook.git
+    refspec: pull  # TODO Update this
     dest: /home/opc/slurm-ansible-playbook
   when: "'management' in group_names"
 - name: copy example users file
