@@ -28,4 +28,5 @@ if not os.path.exists('/home/opc/users.yml'):
     print('It should contain the users you want to have access to the system.')
     exit(1)
 
-#subprocess.check_call([], stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
+subprocess.check_call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=/home/opc/users.yml', 'users.yml'],
+                      stdout=subprocess.STDOUT, stderr=subprocess.STDOUT, cwd='/home/opc/slurm-ansible-playbook')
