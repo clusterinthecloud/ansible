@@ -1,4 +1,11 @@
 ---
+- hosts: all
+  pre_tasks:
+    - name: Verify Ansible meets Cluster's version requirements.
+      assert:
+        that: "ansible_version.full | version_compare('2.5', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.5 to use this Ansible playbook."
 - name: common
   hosts: all
   tags: common
