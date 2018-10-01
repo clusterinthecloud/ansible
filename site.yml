@@ -4,12 +4,12 @@
   tasks:
     - name: copy example users file
       copy:
-        src: users.yml.example
+        src: roles/finalise/files/users.yml.example
         dest: /home/opc/users.yml.example
         mode: 0666
     - name: copy over finisher script
       copy:
-        src: finish.py
+        src: roles/finalise/files/finish.py
         dest: /home/opc/finish
         mode: 0755
     - name: set motd
