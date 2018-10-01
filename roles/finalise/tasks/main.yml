@@ -10,6 +10,7 @@
     path: /home/opc/slurm-ansible-playbook
     state: directory
     owner: opc
+  when: "'management' in group_names"
 - name: create directory for the finalised files
   file:
     path: /mnt/shared/finalised
