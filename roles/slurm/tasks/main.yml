@@ -48,6 +48,11 @@
   register: download_slurm_source
   when: "'management' in group_names"
 
+- name: set rpmmacros file for parallelism
+  copy:
+    content: %_smp_mflags -j {{ansible_processor_vcpus}}
+    dest: /root/.rpmmacros
+
 - name: rpmbuild Slurm
   command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
   args:
