@@ -1,0 +1,4 @@
+---
+- name: install clustershell
+  package:
+    name: clustershell

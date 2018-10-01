@@ -1,6 +1,7 @@
 ---
 - hosts: management
   roles:
+    - clustershell
     - mysql
     - slurm
     - debug-tools
