@@ -9,5 +9,5 @@
     path: /mnt/{{ filesystem_mount_point }}
     src: "{{ filesystem_target_address }}:{{ filesystem_mount_point }}"
     fstype: nfs
-    opts: defaults,nofail,nosuid
+    opts: defaults,nobootwait,nosuid
     state: mounted
