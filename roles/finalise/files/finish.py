@@ -32,4 +32,8 @@ if not os.path.exists('/home/opc/users.yml'):
 rc = subprocess.call(['ansible-playbook', '--inventory=/home/opc/hosts', '--extra-vars=@/home/opc/users.yml', 'finalise.yml'], cwd='/home/opc/slurm-ansible-playbook')
 
 if rc != 0:
-    print('Error: Ansible run did not complete correctly')
+    msg = 'Error: Ansible run did not complete correctly'
+    print()
+    print('#'*len(msg))
+    print(msg)
+    print('#'*len(msg))
