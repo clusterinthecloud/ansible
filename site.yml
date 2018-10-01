@@ -15,8 +15,12 @@
     - name: set motd
       copy:
         content: |
+          ######################
+
           Welcome to the cluster
           In order to create users, run the script "./finish" and follow the instructions
+
+          ######################
         dest: /etc/motd
 - name: common
   hosts: all
