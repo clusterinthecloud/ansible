@@ -2,6 +2,10 @@
 - name: install clustershell
   package:
     name: clustershell
+- name: copy clustershell config file
+  copy:
+    src: clush.conf
+    dest: /etc/clustershell/clush.conf
 - name: copy clustershell group config file
   copy:
     src: groups.conf
