@@ -24,7 +24,7 @@ GresTypes={{ slurm_gres_types }}
 
 # COMPUTE NODES
 {% for nodename, shape in slurm_compute_nodelists.items() %}
-NodeName={{ nodename }} State={{ shape.state | default("UNKNOWN") }} SocketsPerBoard={{ shape.sockets }} CoresPerSocket={{ shape.cores_per_socket }} ThreadsPerCore={{ shape.threads_per_core }} RealMemory={{ shape.memory }}{{ " Gres="+shape.gres if shape.gres is defined else " " }}
+NodeName={{ nodename }} State={{ shape.state | default("UNKNOWN") }} SocketsPerBoard={{ shape.sockets | default("1") }} CoresPerSocket={{ shape.cores_per_socket }} ThreadsPerCore={{ shape.threads_per_core | default("1") }} RealMemory={{ shape.memory }}{{ " Gres="+shape.gres if shape.gres is defined else " " }}
 {% endfor %}
 
 # PARTITIONS
