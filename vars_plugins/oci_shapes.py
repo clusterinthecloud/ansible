@@ -7,6 +7,7 @@ DOCUMENTATION = '''
     short_description: In charge of creating the Slurm config for each compute instance
 '''
 
+from ansible.errors import AnsibleFileNotFound
 from ansible.plugins.vars import BaseVarsPlugin
 
 FOUND = {}
@@ -19,8 +20,11 @@ class VarsModule(BaseVarsPlugin):
 
         super(VarsModule, self).get_vars(loader, path, entities)
 
-        nodes = loader.load_from_file('/home/opc/nodes.yaml')
-        shapes = loader.load_from_file('/home/opc/shapes.yaml')
+        try:
+            nodes = loader.load_from_file('/home/opc/nodes.yaml')
+            shapes = loader.load_from_file('/home/opc/shapes.yaml')
+        except AnsibleFileNotFound:
+            return {}
 
         nodelist = {}
         for hostname, shape in zip(nodes['names'], nodes['shapes']):
