@@ -48,6 +48,11 @@
   register: download_slurm_source
   when: "'management' in group_names"
 
+- name: set rpmmacros file for parallelism
+  copy:
+    content: "%_smp_mflags -j {{ansible_processor_vcpus}}"
+    dest: /root/.rpmmacros
+
 - name: rpmbuild Slurm
   command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
   args:
@@ -71,7 +76,7 @@
 
 # We want the management node to complete the build before the compute nodes continue.
 # Wait for up to an hour
-- name: Wait until Slurm repo has been created
+- name: Wait until Slurm repo has been created by the mangement node
   wait_for:
     path: /mnt/shared/apps/slurm/RPMS/x86_64/repodata/repomd.xml
     timeout: 3600
@@ -91,7 +96,8 @@
   yum: name=slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64 state=present
   loop: "{{ slurm_packages }}"
 
-- file:
+- name: create slurm config directory
+  file:
     path: /etc/slurm
     state: directory
     mode: 0755
@@ -118,6 +124,18 @@
     - restart slurmd
     - restart slurmctld
 
+- name: slurm config file (shared)
+  template:
+    src: slurm_shared.conf.j2
+    dest: /mnt/shared/apps/slurm/slurm.conf
+    owner: slurm
+    group: slurm
+    mode: 0644
+  when: "'management' in group_names"
+  notify:
+    - restart slurmd
+    - restart slurmctld
+
 - name: slurmdbd config file
   template:
     src: slurmdbd.conf.j2
@@ -140,21 +158,24 @@
     - restart slurmd
     - restart slurmctld
 
-- file:
+- name: set slurm log directory permissions
+  file:
     path: /var/log/slurm/
     state: directory
     owner: slurm
     group: slurm
     mode: 0755
 
-- file:
+- name: set slurm spool directory permissions
+  file:
     path: /var/spool/slurm/
     state: directory
     owner: slurm
     group: slurm
     mode: 0755
 
-- file:
+- name: set slurmd config directory permissions
+  file:
     path: /var/spool/slurmd/
     state: directory
     owner: slurm
@@ -195,6 +216,12 @@
     state: started
     enabled: yes
   when: "'management' in group_names"
+
+- name: Wait until Slurm config file has been created by the mangement node
+  wait_for:
+    path: /mnt/shared/apps/slurm/slurm.conf
+    timeout: 300
+  when: "'management' not in group_names"
 
 - name: start service slurmd
   service:

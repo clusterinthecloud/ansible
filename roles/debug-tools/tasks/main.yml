@@ -5,8 +5,8 @@
 # installs
 #
 
-- name: yum install <cool-stuff>
-  yum:
+- name: yum install useful tools
+  package:
     name:
       - curl
       - htop
@@ -21,13 +21,6 @@
       - nmap
       - git
       - cmake
-
-- name: enable CUDA repo
-  yum_repository:
-    name: nvidia
-    description: NVIDIA CUDA
-    baseurl: http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64
-    gpgkey: http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2af80.pub
 
 - name: yum install packages
   yum:

@@ -1,0 +1,23 @@
+---
+- name: checkout Ansible repo
+  git:
+    repo: https://github.com/ACRC/slurm-ansible-playbook.git
+    version: pull  # TODO Update this
+    dest: /home/opc/slurm-ansible-playbook
+  when: "'management' in group_names"
+- name: set permissions for ansible git checkout
+  file:
+    path: /home/opc/slurm-ansible-playbook
+    state: directory
+    owner: opc
+  when: "'management' in group_names"
+- name: create directory for the finalised files
+  file:
+    path: /mnt/shared/finalised
+    state: directory
+    mode: 0755
+- name: create the finalised file
+  file:
+    path: /mnt/shared/finalised/{{ansible_hostname}}
+    state: touch
+    mode: 0777

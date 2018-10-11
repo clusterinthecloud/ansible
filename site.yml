@@ -1,23 +1,44 @@
 ---
-- hosts: all
-  pre_tasks:
-    - name: Verify Ansible meets Cluster's version requirements.
-      assert:
-        that: "ansible_version.full | version_compare('2.5', '>=')"
-        msg: >
-          "You must update Ansible to at least 2.5 to use this Ansible playbook."
+- name: finisher script
+  hosts: management
+  tasks:
+    - name: copy example users file
+      copy:
+        src: roles/finalise/files/users.yml.example
+        dest: /home/opc/users.yml.example
+        mode: 0666
+    - name: copy over finisher script
+      copy:
+        src: roles/finalise/files/finish.py
+        dest: /home/opc/finish
+        mode: 0755
+    - name: set motd
+      copy:
+        content: |
+          ######################
+
+          Welcome to the cluster
+          In order to create users, run the script "./finish" and follow the instructions
+
+          ######################
+        dest: /etc/motd
+
 - name: common
   hosts: all
   tags: common
   roles:
+    - filesystem
     - dhcp
     - ssh
     - epel
     - security-updates
-    - debug-tools
     - ntp
-    - filesystem
     - users
     - monitoring
 - import_playbook: management.yml
 - import_playbook: compute.yml
+- name: finalise
+  hosts: all
+  tags: finalise
+  roles:
+    - finalise

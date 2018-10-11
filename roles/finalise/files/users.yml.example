@@ -1,0 +1,6 @@
+---
+users:
+  - name: usernamehere
+    key: https://github.com/usernameexample.keys
+  - name: anotheruernamehere
+    key: ssh-rsa UmFuZG9tIGtleSBjb250ZW50cy4gUHV0IHlvdXIgb3duIGtleSBpbiBoZXJlIG9idmlvdXNseS4= user@computer

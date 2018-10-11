@@ -1,0 +1,20 @@
+---
+- name: install clustershell
+  package:
+    name: clustershell
+- name: copy clustershell config file
+  copy:
+    src: clush.conf
+    dest: /etc/clustershell/clush.conf
+- name: copy clustershell group config file
+  copy:
+    src: groups.conf
+    dest: /etc/clustershell/groups.conf
+- name: copy clustershell slurm config file
+  copy:
+    src: slurm.conf
+    dest: /etc/clustershell/groups.conf.d/slurm.conf
+- name: copy clustershell cluster config file
+  copy:
+    src: cluster.yaml
+    dest: /etc/clustershell/groups.d/cluster.yaml

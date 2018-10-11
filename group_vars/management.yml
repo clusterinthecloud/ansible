@@ -3,24 +3,11 @@ slurm_packages:
   - slurmctld
   - slurmdbd
 
-# Set these to match your terraform.tfvars
 slurm_elastic:
   oracle:
-    private_key_path: "/home/user/.oci/oci_api_key.pem"
     config_directory: /home/slurm/.oci/
-    user_ocid: "ocid1.user.oc1..."
-    fingerprint: "11:22:33:44:55:66:77:88:99:00:aa:bb:cc:dd:ee:ff"
-    tenancy_ocid: "ocid1.tenancy.oc1..."
-    region: "eu-frankfurt-1"
-    compartment_ocid: "ocid1.tenancy.oc1..."
 
 install_packages:
   - xorg-x11-xauth
-  - cuda
-  - cuda-cudart-9-1
-  - cuda-cufft-9-1
 
 monitoring_role: master
-
-# Set this to something secure. It is public-facing!
-grafana_admin_password:

@@ -1,5 +1,4 @@
 ---
-
 - name: install nfs-utils
   yum:
     name: nfs-utils

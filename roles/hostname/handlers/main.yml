@@ -1,3 +1,0 @@
----
-- name: reboot
-  file: path=/var/run/reboot-required state=touch

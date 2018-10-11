@@ -1,3 +1,4 @@
+---
 - name: Set DNS search domains to all subnets
   copy:
     content: 'supersede domain-search "clustervcn.oraclevcn.com", "subnetad1.clustervcn.oraclevcn.com", "subnetad2.clustervcn.oraclevcn.com", "subnetad3.clustervcn.oraclevcn.com";'

@@ -31,34 +31,4 @@ SelectTypeParameters=CR_CPU_Memory
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
 SlurmdLogFile=/var/log/slurm/slurmd.log
 
-# ACCOUNTING
-JobAcctGatherType=jobacct_gather/cgroup
-JobAcctGatherFrequency=30
-
-AccountingStorageType=accounting_storage/slurmdbd
-
-# ELASTIC
-ResumeProgram=/usr/local/bin/startnode
-SuspendProgram=/usr/local/bin/stopnode
-SuspendTime=3600
-ResumeTimeout=600
-SuspendTimeout=60
-
-# MPI
-MpiDefault=pmi2
-
-{% if slurm_gres_types is defined and slurm_gres_types %}
-# GRES
-GresTypes={{ slurm_gres_types }}
-{% endif %}
-
-# Plugins
-#JobSubmitPlugins=python
-
-# COMPUTE NODES
-{% for nodes in slurm_compute_nodelists %}
-NodeName={{ nodes.nodelist }} State={{ nodes.state | default("UNKNOWN") }} SocketsPerBoard={{ nodes.sockets }} CoresPerSocket={{ nodes.cores_per_socket }} ThreadsPerCore={{ nodes.threads_per_core }} RealMemory={{ nodes.memory }}{{ " Gres="+nodes.gres if nodes.gres is defined else " " }}
-{% endfor %}
-{% for partition in slurm_partitions %}
-PartitionName={{ partition.name }} Nodes={{ partition.nodelist }} MaxTime=INFINITE State=UP Default={{ partition.default | default("NO") }} OverSubscribe={{ partition.oversubscribe | default("NO") }}
-{% endfor %}
+include /mnt/shared/apps/slurm/slurm.conf
