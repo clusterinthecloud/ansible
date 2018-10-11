@@ -222,6 +222,9 @@
     name: slurmd
     state: started
     enabled: yes
+  wait_for:
+    path: /mnt/shared/apps/slurm/slurm.conf
+    timeout: 300
   when: "'management' not in group_names"
 
 - name: create accounting cluster
