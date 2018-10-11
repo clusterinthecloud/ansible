@@ -217,14 +217,17 @@
     enabled: yes
   when: "'management' in group_names"
 
+- name: Wait until Slurm config file has been created by the mangement node
+  wait_for:
+    path: /mnt/shared/apps/slurm/slurm.conf
+    timeout: 300
+  when: "'management' not in group_names"
+
 - name: start service slurmd
   service:
     name: slurmd
     state: started
     enabled: yes
-  wait_for:
-    path: /mnt/shared/apps/slurm/slurm.conf
-    timeout: 300
   when: "'management' not in group_names"
 
 - name: create accounting cluster
