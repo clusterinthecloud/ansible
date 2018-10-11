@@ -2,7 +2,7 @@
 - name: checkout Ansible repo
   git:
     repo: https://github.com/ACRC/slurm-ansible-playbook.git
-    version: pull  # TODO Update this
+    version: master
     dest: /home/opc/slurm-ansible-playbook
   when: "'management' in group_names"
 - name: set permissions for ansible git checkout
