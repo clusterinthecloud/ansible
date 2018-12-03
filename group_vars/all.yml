@@ -16,5 +16,5 @@ slurm_partitions:
     nodelist: ALL
     default: YES
 
-filesystem_target_address: fileserverad1
+filesystem_target_address: fileserver
 filesystem_mount_point: /shared
