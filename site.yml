@@ -27,8 +27,8 @@
   hosts: all
   tags: common
   roles:
-    - filesystem
     - dhcp
+    - filesystem
     - ssh
     - epel
     - security-updates
