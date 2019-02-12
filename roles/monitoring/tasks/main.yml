@@ -19,6 +19,15 @@
     state: started
     enabled: yes
 
+- name: enable network monitoring in telegraf
+  ini_file:
+    path: /etc/telegraf/telegraf.conf
+    section: "[inputs.net]"
+    option: interfaces
+    value: '["*"]'
+    state: present
+  notify: restart telegraf
+
 - name: install influxdb package
   yum:
     name:
