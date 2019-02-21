@@ -28,7 +28,10 @@ class VarsModule(BaseVarsPlugin):
 
         nodelist = {}
         for hostname, shape in zip(nodes['names'], nodes['shapes']):
-            nodelist[hostname] = shapes[shape]
+            try:
+                nodelist[hostname] = shapes[shape]
+            except KeyError as e:
+                print("Error: could not find shape information for {}. \nPlease log a ticket at https://github.com/ACRC/oci-cluster-terraform/issues/new".format(shape))
 
         data = {"slurm_compute_nodelists": nodelist}
         return data
