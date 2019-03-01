@@ -1,0 +1,55 @@
+#! /bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ $# -ne 4 ]]; then
+    echo "Call with:"
+    echo "    ${0} <user name> <first name> <surname> <ssh key URL>"
+    exit 1
+fi
+
+ADMINNAME="cn=Directory Manager"
+ADMINPASSWORD=testadminpassword
+
+USER=${1}
+SSHKEYS=${4}
+GIDNUMBER=100
+GIVENNAME=${2}
+SURNAME=${3}
+
+HOMEROOT=/mnt/shared/home
+
+BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
+
+UIDNUMBER=$(ldapsearch -x -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
+
+mkdir ${HOMEROOT}/${USER}
+chmod 700 ${HOMEROOT}/${USER}
+
+ldapmodify -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -H ldap://localhost:389 <<EOF
+dn: cn=${USER},${BASEDN}
+changetype: add
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: posixAccount
+cn: ${USER}
+givenName: ${GIVENNAME}
+sn: ${SURNAME}
+uid: ${USER}
+uidNumber: ${UIDNUMBER}
+gidNumber: ${GIDNUMBER}
+homeDirectory: ${HOMEROOT}/${USER}
+loginShell: /bin/bash
+EOF
+
+cp -r /etc/skel/. /mnt/shared/home/${USER}/
+
+mkdir ${HOMEROOT}/${USER}/.ssh
+chmod 700 ${HOMEROOT}/${USER}/.ssh
+
+wget ${SSHKEYS} --output-document=${HOMEROOT}/${USER}/.ssh/authorized_keys --quiet
+chmod 600 ${HOMEROOT}/${USER}/.ssh/authorized_keys
+
+chown -R ${USER}:users ${HOMEROOT}/${USER}

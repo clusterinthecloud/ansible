@@ -1,5 +1,14 @@
 ---
 - hosts: compute
   roles:
+    - dhcp
+    - filesystem
+    - ssh
+    - epel
+    - security-updates
+    - ntp
+    - users
+    - sssd
+    - monitoring
     - debug-tools
     - slurm

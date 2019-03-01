@@ -36,7 +36,6 @@
     - users
     - monitoring
 - import_playbook: management.yml
-- import_playbook: compute.yml
 - name: finalise
   hosts: all
   tags: finalise

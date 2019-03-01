@@ -1,0 +1,19 @@
+# Install 389-ds
+
+- name: install 389-ds
+  package:
+    name=389-ds
+
+- name: check if 389 setup already run
+  command: systemctl list-unit-files dirsrv@.service
+  register: dirsrv_unit_list
+
+- name: copy 389 config template
+  template:
+    src: ds389.inf.j2
+    dest: /root/ds389.inf
+  when: "'dirsrv' in dirsrv_unit_list.stdout"
+
+- name: run setup-ds-admin.pl
+  command: setup-ds-admin.pl --silent --file=ds389.inf
+  when: "'dirsrv' in dirsrv_unit_list.stdout"
