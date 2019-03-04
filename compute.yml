@@ -10,3 +10,7 @@
     - sssd
     - monitoring
     - slurm
+  tasks:
+    - name: disable SELinux
+      selinux:
+        state: disabled
