@@ -12,8 +12,8 @@
   template:
     src: ds389.inf.j2
     dest: /root/ds389.inf
-  when: "'dirsrv' not in dirsrv_unit_list.stdout"
+  when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: run setup-ds-admin.pl
   command: setup-ds-admin.pl --silent --file=ds389.inf
-  when: "'dirsrv' not in dirsrv_unit_list.stdout"
+  when: "'disabled' in dirsrv_unit_list.stdout"
