@@ -7,3 +7,9 @@
   file:
     path: /mnt{{ filesystem_mount_point }}/home
     state: directory
+
+- name: copy in LDAP add user script
+  template:
+    src: add_user_ldap.j2
+    dest: /usr/local/sbin/add_user_ldap
+    mode: 0755

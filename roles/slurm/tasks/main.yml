@@ -34,11 +34,13 @@
       - createrepo
       - lua-devel
     state: present
+  when: "'management' in group_names"
 
 - name: make home directory
   file:
     path: /mnt{{ filesystem_mount_point }}/apps/slurm
     state: directory
+  when: "'management' in group_names"
 
 - name: download Slurm source
   get_url:
@@ -52,6 +54,7 @@
   copy:
     content: "%_smp_mflags -j {{ansible_processor_vcpus}}"
     dest: /root/.rpmmacros
+  when: "'management' in group_names"
 
 - name: rpmbuild Slurm
   command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
