@@ -12,4 +12,4 @@
   template:
     src: add_user_ldap.j2
     dest: /usr/local/sbin/add_user_ldap
-    mode: 0755
+    mode: 0700

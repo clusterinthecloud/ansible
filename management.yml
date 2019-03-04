@@ -35,6 +35,7 @@
     - ntp
     - 389ds
     - users
+    - sssd
     - monitoring
     - clustershell
     - mysql
