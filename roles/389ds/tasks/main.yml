@@ -15,5 +15,5 @@
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: run setup-ds-admin.pl
-  command: setup-ds-admin.pl --silent --file=ds389.inf
+  command: setup-ds-admin.pl --silent --file=/root/ds389.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
