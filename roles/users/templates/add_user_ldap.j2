@@ -21,7 +21,12 @@ HOMEROOT=/mnt/shared/home
 
 BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
 
-UIDNUMBER=$(ldapsearch -x -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
+if ldapsearch -x -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
+then
+    UIDNUMBER=$(ldapsearch -x -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
+else
+    UIDNUMBER=10001
+fi
 
 mkdir ${HOMEROOT}/${USER}
 chmod 700 ${HOMEROOT}/${USER}
