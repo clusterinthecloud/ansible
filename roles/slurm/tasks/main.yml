@@ -75,7 +75,9 @@
   command: createrepo --no-database --update /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
   args:
     chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-  when: rebuilt_slurm.changed
+  when:
+    - rebuilt_slurm.changed
+    - "'management' in group_names"
 
 # We want the management node to complete the build before the compute nodes continue.
 # Wait for up to an hour

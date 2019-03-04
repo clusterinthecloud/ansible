@@ -7,8 +7,6 @@
     - epel
     - security-updates
     - ntp
-    - users
     - sssd
     - monitoring
-    - debug-tools
     - slurm
