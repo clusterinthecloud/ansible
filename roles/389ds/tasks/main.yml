@@ -11,9 +11,9 @@
 - name: copy 389 config template
   template:
     src: ds389.inf.j2
-    dest: /root/ds389.inf
+    dest: /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: run setup-ds-admin.pl
-  command: setup-ds-admin.pl --silent --file=/root/ds389.inf
+  command: setup-ds-admin.pl --silent --file=/root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"

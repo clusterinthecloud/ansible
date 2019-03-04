@@ -1,11 +1,11 @@
 [General]
-FullMachineName={{ansible_hostname}}
+FullMachineName={{ansible_fqdn}}
 SuiteSpotUserID=dirsrv
 SuiteSpotGroup=dirsrv
 AdminDomain=citc.acrc.bristol.ac.uk
 ConfigDirectoryAdminID=admin
 ConfigDirectoryAdminPwd=testadminpassword
-ConfigDirectoryLdapURL=ldap://{{ansible_hostname}}:389/o=NetscapeRoot
+ConfigDirectoryLdapURL=ldap://{{ansible_fqdn}}:389/o=NetscapeRoot
 
 [slapd]
 SlapdConfigForMC=Yes
