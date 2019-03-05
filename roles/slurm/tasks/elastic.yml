@@ -57,7 +57,7 @@
       [compute]
       $(hostname -f)
       EOF
-      time ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout=ldap --inventory=/root/hosts compute.yml >> /root/ansible-pull.log
+      time python -u /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout=ldap --inventory=/root/hosts compute.yml >> /root/ansible-pull.log
 
       date
     dest: /home/slurm/bootstrap.sh
