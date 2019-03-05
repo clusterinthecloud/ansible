@@ -47,7 +47,7 @@
 
 - name: create cloud-init bootstrap script
   copy:
-    src: |
+    content: |
       #! /bin/bash
 
       date
