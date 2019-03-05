@@ -44,3 +44,21 @@
     dest: /usr/local/bin/stopnode
     mode: 0755
   notify: restart slurmctld
+
+- name: create cloud-init bootstrap script
+  copy:
+    src: |
+      #! /bin/bash
+
+      date
+
+      yum install -y ansible git
+      cat > /root/hosts <<EOF
+      [compute]
+      $(hostname -f)
+      EOF
+      time ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout=ldap --inventory=/root/hosts compute.yml >> /root/ansible-pull.log
+
+      date
+    dest: /home/slurm/bootstrap.sh
+    owner: slurm

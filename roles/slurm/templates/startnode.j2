@@ -4,15 +4,23 @@ IFS=$'\n\t'
 
 LOGFILE=/home/slurm/elastic.log
 
+AD_ROOT=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="{{ compartment_ocid }}" | jq --raw-output '.data[] | select(."display-name" == "mgmt") | select(."lifecycle-state" != "TERMINATED") | ."availability-domain"' | sed 's/.$//')
+
+VCN=$(/opt/oci-cli/bin/oci network vcn list --compartment-id="{{ compartment_ocid }}" | jq --raw-output '.data[] | select(."display-name" == "ClusterVCN") | .id')
+
 hosts=$(scontrol show hostnames $1)
 for host in ${hosts}
 do
   echo "$(date): Starting ${host}" &>> ${LOGFILE}
-  instance_id=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="{{ compartment_ocid }}" | jq --raw-output '.data[] | select(."display-name" == "'${host}'") | select(."lifecycle-state" != "TERMINATED") | .id')
-  if /opt/oci-cli/bin/oci compute instance action --instance-id="${instance_id}" --action=START ; then
-    echo "$(date):   Started ${host}" &>> ${LOGFILE}
-  else
-    echo "$(date):   Failed to start ${host}" &>> ${LOGFILE}
-  fi
-  scontrol update nodename=${host} nodehostname=${host} state=Resume
+
+  #/opt/oci-cli/bin/oci compute image list --compartment-id="ocid1.compartment.oc1..aaaaaaaag6t4jsvae6wpaeoyrgt35qkjvl5uxtao4guatxawiuu64cn25l5a" | jq --raw-output '.data[] | select(."operating-system" == "Oracle Linux") | select(."operating-system-version" | startswith("7.")) | select(."display-name" | contains("GPU") | not)'
+
+  COMPARTMENT="{{ compartment_ocid }}"
+  AD="${AD_ROOT}${AD_NUMBER}"
+  SUBNET=$(/opt/oci-cli/bin/oci network subnet list --compartment-id=${COMPARTMENT} --vcn-id=${VCN} | jq --raw-output '.data[] | select(."display-name" == "SubnetAD'${AD_NUMBER}'") | .id')
+  SHAPE="VM.Standard2.1"
+  IMAGE="ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
+  SSHKEY=$(cat /home/slurm/opc_authorized_keys)
+
+  /opt/oci-cli/bin/oci compute instance launch --compartment-id=${COMPARTMENT} --availability-domain=${AD} --shape=${SHAPE} --subnet-id=${SUBNET} --image-id=${IMAGE} --display-name=${host} --hostname-label=${host} --metadata='{"ssh_authorized_keys":"'${SSHKEY}'", "user_data":"'$(base64 --wrap=0 bootstrap.sh)'"}'
 done
