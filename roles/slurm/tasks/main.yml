@@ -106,12 +106,16 @@
   group:
     name: slurm
     state: present
+    system: yes
+    gid: 245
 
 - name: create slurm user
   user:
     name: slurm
     comment: Slurm controller user
     group: slurm
+    system: yes
+    uid: 245
 
 - name: slurm config file
   template:
