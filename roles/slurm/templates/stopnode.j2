@@ -8,8 +8,8 @@ hosts=$(scontrol show hostnames $1)
 for host in ${hosts}
 do
   echo "$(date): Stopping ${host}" &>> ${LOGFILE}
-  instance_id=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="{{ compartment_ocid }}" | jq --raw-output '.data[] | select(."display-name" == "'${host}'") | select(."lifecycle-state" != "TERMINATED") | .id')
-  if /opt/oci-cli/bin/oci compute instance action --instance-id="${instance_id}" --action=STOP ; then
+  instance_id=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="{{ compartment_ocid }}" --display-name=${host} | jq --raw-output '.data[] | select(."lifecycle-state" != "TERMINATED") | .id')
+  if /opt/oci-cli/bin/oci compute instance terminate --instance-id="${instance_id}" ; then
     echo "$(date):   Stopped ${host}" &>> ${LOGFILE}
   else
     echo "$(date):   Failed to stop ${host}" &>> ${LOGFILE}
