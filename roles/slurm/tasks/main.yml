@@ -94,6 +94,21 @@
     baseurl: file:/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
     gpgcheck: no
 
+- name: create slurm group
+  group:
+    name: slurm
+    state: present
+    system: yes
+    gid: 245
+
+- name: create slurm user
+  user:
+    name: slurm
+    comment: Slurm controller user
+    group: slurm
+    system: yes
+    uid: 245
+
 - name: install Slurm base package
   yum: name=slurm-{{ slurm_version }}-1.el7.x86_64 state=present
 
@@ -106,17 +121,6 @@
     path: /etc/slurm
     state: directory
     mode: 0755
-
-- name: create slurm group
-  group:
-    name: slurm
-    state: present
-
-- name: create slurm user
-  user:
-    name: slurm
-    comment: Slurm controller user
-    group: slurm
 
 - name: slurm config file
   template:
