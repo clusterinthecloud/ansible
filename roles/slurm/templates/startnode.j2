@@ -1,60 +1,85 @@
-#! /bin/bash
-set -euo pipefail
-IFS=$'\n\t'
+import base64
+import logging
+import re
+import subprocess
+import sys
+import time
 
-LOGFILE=/home/slurm/elastic.log
+import oci
 
-COMPARTMENT="{{ compartment_ocid }}"
-AD_ROOT=$(/opt/oci-cli/bin/oci compute instance list --compartment-id="${COMPARTMENT}" | jq --raw-output '.data[] | select(."display-name" == "mgmt") | select(."lifecycle-state" != "TERMINATED") | ."availability-domain"' | sed 's/.$//')
-VCN=$(/opt/oci-cli/bin/oci network vcn list --compartment-id="${COMPARTMENT}" | jq --raw-output '.data[] | select(."display-name" == "ClusterVCN") | .id')
-SSHKEY=$(paste -sd '~' /home/slurm/opc_authorized_keys | sed 's/~/\\n/g')
+log = logging.getLogger(__name__)
 
-hosts=$(scontrol show hostnames "$1")
-for host in ${hosts}
-do
-  echo "$(date): Starting ${host}" &>> ${LOGFILE}
+log.setLevel(logging.INFO)
+handler = logging.FileHandler('elastic.log')
+#handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
-  #/opt/oci-cli/bin/oci compute image list --compartment-id="ocid1.compartment.oc1..aaaaaaaag6t4jsvae6wpaeoyrgt35qkjvl5uxtao4guatxawiuu64cn25l5a" | jq --raw-output '.data[] | select(."operating-system" == "Oracle Linux") | select(."operating-system-version" | startswith("7.")) | select(."display-name" | contains("GPU") | not) | first'
+config = oci.config.from_file()
 
-  AD="${AD_ROOT}${AD_NUMBER}"  # TODO
-  SUBNET=$(/opt/oci-cli/bin/oci network subnet list --compartment-id="${COMPARTMENT}" --vcn-id="${VCN}" | jq --raw-output '.data[] | select(."display-name" == "SubnetAD'"${AD_NUMBER}"'") | .id')
-  SHAPE=$(sinfo --Format="features:200" --noheader --nodes="${host}" | grep -o 'shape=[^,]*' | sed 's/shape=//' | tr -d '[:space:]')
-  IMAGE="ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
+compartment_id = "{{ compartment_ocid }}"
 
-  # Check existing sources to see if the node has been seen before.
-  # If it has then we should reuse the IP address.
-  DNSIP=$(host "${host}" | awk '{print $NF}' | grep -Eo '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' || true)
-  SLURMIP=$(scontrol show node "${host}" | grep -Eo 'NodeAddr=[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' | grep -o '[[:digit:]].*' || true)
-  if [[ -n "${DNSIP}" ]]
-  then
-    IP=${DNSIP}
-  elif [[ -n "${SLURMIP}" ]]
-  then
-    IP=${SLURMIP}
-  else
-    IP=""
-  fi
+keys_file = "/home/slurm/opc_authorized_keys"
 
-  # Create the flag to set the IP if wanted
-  if [[ -n "${IP}" ]]
-  then
-    IPSTRING="--private-ip=${IP}"
-  else
-    IPSTRING=""
-  fi
+ad_root = oci.core.ComputeClient(config).list_instances(compartment_id, display_name="mgmt").data[0].availability_domain[:-1]  # TODO exclude terminated instances
 
-  LAUNCHNODEDATA=$(/opt/oci-cli/bin/oci compute instance launch --compartment-id="${COMPARTMENT}" --availability-domain="${AD}" --shape="${SHAPE}" --subnet-id="${SUBNET}" --image-id="${IMAGE}" --display-name="${host}" --hostname-label="${host}" ${IPSTRING} --metadata='{"ssh_authorized_keys":"'"${SSHKEY}"'", "user_data":"'"$(base64 --wrap=0 /home/slurm/bootstrap.sh)"'"}')
-  NODEID=$(echo "${LAUNCHNODEDATA}" | jq --raw-output '.data | .id')
+vcn = [n for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0].id
 
-  until /opt/oci-cli/bin/oci compute vnic-attachment list --compartment-id="${COMPARTMENT}" | jq --exit-status '.data[] | select(."instance-id" == "'"${NODEID}"'")' > /dev/null 2>&1
-  do
-    echo "$(date): No VNIC attachment yet. Waiting..." &>> ${LOGFILE}
-    sleep 5
-  done
+with open(keys_file) as kf:
+    ssh_keys = kf.read().replace("\n", "\\n")
 
-  VNICID=$(/opt/oci-cli/bin/oci compute vnic-attachment list --compartment-id="${COMPARTMENT}" | jq --raw-output '.data[] | select(."instance-id" == "'"${NODEID}"'") | ."vnic-id"')
-  PRIVATEIP=$(/opt/oci-cli/bin/oci network vnic get --vnic-id="${VNICID}" | jq --raw-output '.data | ."private-ip"')
+hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=subprocess.PIPE).stdout.decode().split()
 
-  echo "$(date): Private IP ${PRIVATEIP}" &>> ${LOGFILE}
-  scontrol update NodeName="${host}" NodeAddr="${PRIVATEIP}"
-done
+for host in hosts:
+    log.info(f"Starting {host}")
+
+    ad_number = 3  # TODO
+
+    ad = ad_root + str(ad_number)
+    subnet = [s for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0].id
+    features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
+    shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
+    image = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
+
+    host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", host], stdout=subprocess.PIPE).stdout.decode().split()[-1])
+    dns_ip = host_dns_match.group(0) if host_dns_match else None
+
+    slurm_dns_match = re.search(r"NodeAddr=((\d+\.){3}\d+)", subprocess.run(["scontrol", "show", "node", host], stdout=subprocess.PIPE).stdout.decode())
+    slurm_ip = slurm_dns_match.group(1) if slurm_dns_match else None
+
+    ip = dns_ip or slurm_ip
+
+    with open("/home/slurm/bootstrap.sh", "rb") as f:
+        user_data = base64.b64encode(f.read()).decode()
+
+    instance_details = oci.core.models.LaunchInstanceDetails(
+        compartment_id=compartment_id,
+        availability_domain=ad,
+        shape=shape,
+        subnet_id=subnet,
+        image_id=image,
+        display_name=host,
+        hostname_label=host,
+        create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip) if ip else None
+        metadata={
+            "ssh_authorized_keys": ssh_keys,
+            "user_data": user_data,
+        }
+    )
+
+    instance = oci.core.ComputeClient(config).launch_instance(instance_details)
+
+    node_id = instance.data.id
+
+    if not slurm_ip:
+        trying = True
+        while not oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data:
+            log.info("No VNIC attachment yet. Waiting...")
+            time.sleep(5)
+
+        vnic_id = oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data[0].vnic_id
+        private_ip = oci.core.VirtualNetworkClient(config).get_vnic(vnic_id).data.private_ip
+
+        log.info(f"Private IP {private_ip}")
+        subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
