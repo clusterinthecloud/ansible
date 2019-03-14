@@ -27,7 +27,7 @@ def get_mgmt_info() -> dict:
 
 
 def encode_nodename(shape_name: str, ad: int, node_number: int) -> str:
-    return "{}_ad{}_{:0>4}".format(shape_name.lower().replace(".", "_"), ad, node_number)
+    return "{}-ad{}-{:0>4}".format(shape_name.lower().replace(".", "-"), ad, node_number)
 
 
 def get_node_configs(limits, shapes, mgmt_info):
