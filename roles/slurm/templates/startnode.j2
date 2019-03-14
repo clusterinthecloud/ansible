@@ -80,7 +80,6 @@ for host in hosts:
     node_id = instance.data.id
 
     if not slurm_ip:
-        trying = True
         while not oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data:
             log.info(" No VNIC attachment yet. Waiting...")
             time.sleep(5)
