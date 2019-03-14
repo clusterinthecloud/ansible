@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 
 log.setLevel(logging.INFO)
 handler = logging.FileHandler('/var/log/slurm/elastic.log')
-#handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 log.addHandler(handler)
@@ -24,9 +23,10 @@ compartment_id = "{{ compartment_ocid }}"
 
 keys_file = "/home/slurm/opc_authorized_keys"
 
-ad_root = oci.core.ComputeClient(config).list_instances(compartment_id, display_name="mgmt").data[0].availability_domain[:-1]  # TODO exclude terminated instances
+mgmt_nodes = oci.core.ComputeClient(config).list_instances(compartment_id, display_name="mgmt").data
+ad_root = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0].availability_domain[:-1]
 
-vcn = [n for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0].id
+vcn = [n.id for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
 
 with open(keys_file) as kf:
     ssh_keys = kf.read().replace("\n", "\\n")
@@ -39,7 +39,7 @@ for host in hosts:
     features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    subnet = [s for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0].id
+    subnet = [s.id for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
     image = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
     ad = f"{ad_root}{ad_number}"
 

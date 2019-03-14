@@ -1,17 +1,34 @@
-#! /bin/bash
-set -euo pipefail
-IFS=$'\n\t'
+#! /opt/oci/bin/python
 
-LOGFILE=/home/slurm/elastic.log
+import logging
+import subprocess
+import sys
 
-hosts=$(scontrol show hostnames $1)
-for host in ${hosts}
-do
-  echo "$(date): Stopping ${host}" &>> ${LOGFILE}
-  instance_id=$(/opt/oci/bin/oci compute instance list --compartment-id="{{ compartment_ocid }}" --display-name=${host} | jq --raw-output '.data[] | select(."lifecycle-state" != "TERMINATED") | .id')
-  if /opt/oci/bin/oci compute instance terminate --force --instance-id="${instance_id}" ; then
-    echo "$(date):   Stopped ${host}" &>> ${LOGFILE}
-  else
-    echo "$(date):   Failed to stop ${host}" &>> ${LOGFILE}
-  fi
-done
+import oci
+
+log = logging.getLogger(__name__)
+
+log.setLevel(logging.INFO)
+handler = logging.FileHandler('/var/log/slurm/elastic.log')
+formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+
+config = oci.config.from_file()
+
+compartment_id = "{{ compartment_ocid }}"
+
+hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=subprocess.PIPE).stdout.decode().split()
+
+for host in hosts:
+    log.info(f"Stopping {host}")
+
+    try:
+        matching_nodes = oci.core.ComputeClient(config).list_instances(compartment_id, display_name=host).data
+        node_id = [n.id for n in matching_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
+
+        oci.core.ComputeClient(config).terminate_instance(node_id)
+    except Exception as e:
+        log.error(f" problem while stopping: {e}")
+    else:
+        log.info(f" Stopped {host}")
