@@ -9,7 +9,10 @@
 
 - name: install OCI tools
   pip:
-    name: oci oci-cli PyYAML
+    name:
+      - oci
+      - oci-cli
+      - PyYAML
     virtualenv: /opt/oci
     virtualenv_command: /bin/python36 -m venv
 
