@@ -6,11 +6,11 @@ import sys
 
 import oci
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("stopnode")
 
 log.setLevel(logging.INFO)
 handler = logging.FileHandler('/var/log/slurm/elastic.log')
-formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
@@ -30,5 +30,6 @@ for host in hosts:
         oci.core.ComputeClient(config).terminate_instance(node_id)
     except Exception as e:
         log.error(f" problem while stopping: {e}")
-    else:
-        log.info(f" Stopped {host}")
+        continue
+
+    log.info(f" Stopped {host}")
