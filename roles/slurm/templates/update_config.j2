@@ -7,10 +7,14 @@ import yaml
 
 def load_yaml(filename) -> dict:
     with open(filename, "r") as f:
-        return yaml.load(f)
+        return yaml.safe_load(f)
 
 
 def get_limits() -> dict:
+    """
+    Until OCI has an API to fetch service limits, we have to hard-code
+    them in a file.
+    """
     return load_yaml("/home/slurm/limits.yaml")
 
 
