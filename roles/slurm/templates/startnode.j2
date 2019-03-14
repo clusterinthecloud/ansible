@@ -36,13 +36,12 @@ hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=su
 for host in hosts:
     log.info(f"Starting {host}")
 
-    ad_number = 3  # TODO
-
-    ad = ad_root + str(ad_number)
-    subnet = [s for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0].id
     features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
+    ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
+    subnet = [s for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0].id
     image = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
+    ad = f"{ad_root}{ad_number}"
 
     host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", host], stdout=subprocess.PIPE).stdout.decode().split()[-1])
     dns_ip = host_dns_match.group(0) if host_dns_match else None
@@ -77,11 +76,13 @@ for host in hosts:
     if not slurm_ip:
         trying = True
         while not oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data:
-            log.info("No VNIC attachment yet. Waiting...")
+            log.info(" No VNIC attachment yet. Waiting...")
             time.sleep(5)
 
         vnic_id = oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data[0].vnic_id
         private_ip = oci.core.VirtualNetworkClient(config).get_vnic(vnic_id).data.private_ip
 
-        log.info(f"Private IP {private_ip}")
+        log.info(f"  Private IP {private_ip}")
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
+
+    log.info(f" Started {host}")
