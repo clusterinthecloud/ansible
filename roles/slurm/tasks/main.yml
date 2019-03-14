@@ -131,7 +131,6 @@
     mode: 0644
   notify:
     - restart slurmd
-    - restart slurmctld
 
 - name: slurm config file (shared)
   template:
@@ -143,7 +142,6 @@
   when: "'management' in group_names"
   notify:
     - restart slurmd
-    - restart slurmctld
 
 - name: slurmdbd config file
   template:
@@ -153,7 +151,6 @@
     group: slurm
     mode: 0400
   notify:
-    - restart slurmctld
     - restart slurmdbd
 
 - name: cgroup config file
@@ -165,7 +162,6 @@
     mode: 0400
   notify:
     - restart slurmd
-    - restart slurmctld
 
 - name: set slurm log directory permissions
   file:
@@ -198,7 +194,6 @@
     state: enabled
   notify:
     - restart firewalld
-    - restart slurmctld
     - restart slurmd
 
 - name: open all ports within subnet
@@ -215,13 +210,6 @@
 - name: start service slurmdbd
   service:
     name: slurmdbd
-    state: started
-    enabled: yes
-  when: "'management' in group_names"
-
-- name: start service slurmctld
-  service:
-    name: slurmctld
     state: started
     enabled: yes
   when: "'management' in group_names"

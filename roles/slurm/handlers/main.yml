@@ -10,12 +10,6 @@
     state: restarted
   when: "'management' in group_names"
 
-- name: restart slurmctld
-  service:
-    name: slurmctld
-    state: restarted
-  when: "'management' in group_names"
-
 - name: restart slurmd
   service:
     name: slurmd

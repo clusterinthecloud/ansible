@@ -67,14 +67,12 @@
     src: startnode.j2
     dest: /usr/local/bin/startnode
     mode: 0755
-  notify: restart slurmctld
 
 - name: configure stopnode script
   template:
     src: stopnode.j2
     dest: /usr/local/bin/stopnode
     mode: 0755
-  notify: restart slurmctld
 
 - name: configure update_config script
   template:
