@@ -62,7 +62,7 @@ for host in hosts:
         image_id=image,
         display_name=host,
         hostname_label=host,
-        create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip) if ip else None,
+        create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
         metadata={
             "ssh_authorized_keys": ssh_keys,
             "user_data": user_data,
