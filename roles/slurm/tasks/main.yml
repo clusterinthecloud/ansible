@@ -18,81 +18,13 @@
     enabled: yes
     state: started
 
-- name: install Slurm build dependencies
-  yum:
-    name:
-      - gcc
-      - make
-      - rpm-build
-      - munge-devel
-      - readline-devel
-      - openssl-devel
-      - pam-devel
-      - gtk2-devel
-      - mariadb-devel
-      - perl-ExtUtils-MakeMaker
-      - createrepo
-      - lua-devel
-    state: present
-  when: "'management' in group_names"
-
-- name: make home directory
-  file:
-    path: /mnt{{ filesystem_mount_point }}/apps/slurm
-    state: directory
-  when: "'management' in group_names"
-
-- name: download Slurm source
-  get_url:
-    url: https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2
-    dest: /mnt{{ filesystem_mount_point }}/apps/slurm/
-    checksum: "{{ slurm_download_checksum }}"
-  register: download_slurm_source
-  when: "'management' in group_names"
-
-- name: set rpmmacros file for parallelism
-  copy:
-    content: "%_smp_mflags -j {{ansible_processor_vcpus}}"
-    dest: /root/.rpmmacros
-  when: "'management' in group_names"
-
-- name: rpmbuild Slurm
-  command: rpmbuild --clean --define "_topdir /mnt{{ filesystem_mount_point }}/apps/slurm" -ta {{ download_slurm_source.dest }}
-  args:
-    chdir: /tmp
-    creates: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/slurm-{{ slurm_version }}-1.el7.x86_64.rpm
-  register: rebuilt_slurm
-  when: "'management' in group_names"
-
-- name: make local Slurm repo
-  command: createrepo --no-database /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-  args:
-    chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-    creates: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64/repodata
-  when: "'management' in group_names"
-
-- name: update Slurm repo data
-  command: createrepo --no-database --update /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-  args:
-    chdir: /mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-  when:
-    - rebuilt_slurm.changed
-    - "'management' in group_names"
-
-# We want the management node to complete the build before the compute nodes continue.
-# Wait for up to an hour
-- name: Wait until Slurm repo has been created by the mangement node
-  wait_for:
-    path: /mnt/shared/apps/slurm/RPMS/x86_64/repodata/repomd.xml
-    timeout: 3600
-  when: "'management' not in group_names"
-
-- name: Add repository
+- name: Add Slurm COPR repository
   yum_repository:
     name: slurm
     description: Slurm
-    baseurl: file:/mnt{{ filesystem_mount_point }}/apps/slurm/RPMS/x86_64
-    gpgcheck: no
+    baseurl: https://copr-be.cloud.fedoraproject.org/results/milliams/citc/epel-7-$basearch/
+    gpgcheck: yes
+    gpgkey: https://copr-be.cloud.fedoraproject.org/results/milliams/citc/pubkey.gpg
 
 - name: create slurm group
   group:
@@ -110,10 +42,10 @@
     uid: 245
 
 - name: install Slurm base package
-  yum: name=slurm-{{ slurm_version }}-1.el7.x86_64 state=present
+  yum: name=slurm-{{ slurm_version }}* state=present
 
 - name: install Slurm
-  yum: name=slurm-{{item}}-{{ slurm_version }}-1.el7.x86_64 state=present
+  yum: name=slurm-{{item}}-{{ slurm_version }}* state=present
   loop: "{{ slurm_packages }}"
 
 - name: create slurm config directory
