@@ -15,5 +15,5 @@
     - security-updates
     - ntp
     - sssd
-    - monitoring
     - slurm
+    - monitoring
