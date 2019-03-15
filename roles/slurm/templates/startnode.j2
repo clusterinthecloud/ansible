@@ -14,5 +14,4 @@ do
   else
     echo "$(date):   Failed to start ${host}" &>> ${LOGFILE}
   fi
-  scontrol update nodename=${host} nodehostname=${host} state=Resume
 done
