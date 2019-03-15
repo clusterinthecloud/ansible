@@ -35,7 +35,7 @@ def get_node_configs(limits, shapes, mgmt_info):
         try:
             shape_info = shapes[shape]
         except KeyError as e:
-            print("Error: Could not find shape information for '{}'. \nPlease log a ticket at https://github.com/ACRC/oci-cluster-terraform/issues/new".format(e))
+            print("Error: Could not find shape information for {}. \nPlease log a ticket at https://github.com/ACRC/oci-cluster-terraform/issues/new".format(e))
             continue
 
         for ad, ad_count in ad_counts.items():
