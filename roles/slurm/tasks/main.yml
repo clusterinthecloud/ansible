@@ -64,10 +64,16 @@
   notify:
     - restart slurmd
 
+- name: make home directory
+  file:
+    path: /mnt{{ filesystem_mount_point }}/etc/slurm
+    state: directory
+  when: "'management' in group_names"
+
 - name: slurm config file (shared)
   template:
     src: slurm_shared.conf.j2
-    dest: /mnt/shared/apps/slurm/slurm.conf
+    dest: /mnt/shared/etc/slurm/slurm.conf
     owner: slurm
     group: slurm
     mode: 0644
@@ -148,7 +154,7 @@
 
 - name: Wait until Slurm config file has been created by the mangement node
   wait_for:
-    path: /mnt/shared/apps/slurm/slurm.conf
+    path: /mnt/shared/etc/slurm/slurm.conf
     timeout: 300
   when: "'management' not in group_names"
 
