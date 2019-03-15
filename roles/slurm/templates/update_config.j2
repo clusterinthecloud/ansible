@@ -32,7 +32,11 @@ def encode_nodename(shape_name: str, ad: int, node_number: int) -> str:
 
 def get_node_configs(limits, shapes, mgmt_info):
     for shape, ad_counts in limits.items():
-        shape_info = shapes[shape]
+        try:
+            shape_info = shapes[shape]
+        except KeyError as e:
+            print("Error: Could not find shape information for '{}'. \nPlease log a ticket at https://github.com/ACRC/oci-cluster-terraform/issues/new".format(e))
+            continue
 
         for ad, ad_count in ad_counts.items():
             if shape == mgmt_info["mgmt_shape"] and ad == mgmt_info["mgmt_ad"]:
