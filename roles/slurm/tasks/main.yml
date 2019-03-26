@@ -41,9 +41,6 @@
     system: yes
     uid: 245
 
-- name: install Slurm base package
-  yum: name=slurm-{{ slurm_version }}* state=present
-
 - name: install Slurm
   yum: name=slurm-{{item}}-{{ slurm_version }}* state=present
   loop: "{{ slurm_packages }}"
