@@ -16,7 +16,7 @@ if unfinished_nodes:
     for node in sorted(unfinished_nodes):
         print(' ', node)
     print('Please allow them to finish before continuing.')
-    print('For information about why they have not finished, SSH to that machine and check the file /home/root/ansible-pull.log')
+    print('For information about why they have not finished, SSH to that machine and check the file /root/ansible-pull.log')
     exit(1)
 
 if not os.path.exists('/home/opc/limits.yaml'):
