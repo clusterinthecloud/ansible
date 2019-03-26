@@ -29,7 +29,7 @@ ad_root = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TER
 vcn = [n.id for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
 
 with open(keys_file) as kf:
-    ssh_keys = kf.read().replace("\n", "\\n")
+    ssh_keys = kf.read()
 
 hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=subprocess.PIPE).stdout.decode().split()
 
