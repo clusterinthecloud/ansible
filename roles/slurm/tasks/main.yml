@@ -121,8 +121,8 @@
   file:
     path: /var/spool/slurmd/
     state: directory
-    owner: slurm
-    group: slurm
+    owner: root
+    group: root
     mode: 0755
 
 - name: open firewall for slurm
