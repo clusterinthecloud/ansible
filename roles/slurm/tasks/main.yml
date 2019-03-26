@@ -116,6 +116,7 @@
     owner: slurm
     group: slurm
     mode: 0755
+  when: "'management' in group_names"
 
 - name: set slurmd config directory permissions
   file:
@@ -124,6 +125,7 @@
     owner: root
     group: root
     mode: 0755
+  when: "'management' not in group_names"
 
 - name: open firewall for slurm
   firewalld:
