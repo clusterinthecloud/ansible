@@ -4,7 +4,7 @@ users: []
 # From https://www.schedmd.com/downloads.php
 slurm_version: 17.11
 
-# Set this to something secure.
+# TODO Generate this randomly on the cluster
 slurm_accounting_db_password: 12345
 
 slurm_cluster_name: cluster
