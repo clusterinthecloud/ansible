@@ -2,5 +2,5 @@
 - name: restart ntp (Ubuntu)
   service: name=ntp state=restarted
 
-- name: restart ntpd (CentOS)
+- name: restart ntpd (RedHat)
   service: name=ntpd state=restarted
