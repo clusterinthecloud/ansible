@@ -17,3 +17,5 @@ slurm_partitions:
 
 filesystem_target_address: fileserver
 filesystem_mount_point: /shared
+
+ansible_pull_branch: citc2
