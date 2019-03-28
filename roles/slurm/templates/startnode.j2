@@ -6,8 +6,29 @@ import re
 import subprocess
 import sys
 import time
+from typing import Dict
 
 import oci
+
+
+def get_images() -> Dict[str, Dict[str, str]]:
+    return {
+        "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0": {
+            "ca-toronto-1": "ocid1.image.oc1.ca-toronto-1.aaaaaaaayeivcqwwqnuo6qkz2fwpmskhcwrlhxgwaibqbhwwkohepnlyxk5q",
+            "eu-frankfurt-1": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaayupoeyifqy7a6gyup3axhtnidjvfptj55e34bzgt7m7bv3gwv3wa",
+            "uk-london-1": "ocid1.image.oc1.uk-london-1.aaaaaaaap5kk2lbo5lj3k5ff5tl755a4cszjwd6zii7jlcp6nz3gogh54wtq",
+            "us-ashburn-1": "ocid1.image.oc1.iad.aaaaaaaab5l5wv7njknupfxvyynplhsygdz67uhfaz35nsnhsk3ufclqjaea",
+            "us-phoenix-1": "ocid1.image.oc1.phx.aaaaaaaahu7hv6lqbdyncgwehipwsuh3htfuxcoxbl4arcetx6hzixft366a",
+        },
+        "Oracle-Linux-7.6-2019.02.20-0": {
+            "ca-toronto-1": "ocid1.image.oc1.ca-toronto-1.aaaaaaaa7ac57wwwhputaufcbf633ojir6scqa4yv6iaqtn3u64wisqd3jjq",
+            "eu-frankfurt-1": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva",
+            "uk-london-1": "ocid1.image.oc1.uk-london-1.aaaaaaaarruepdlahln5fah4lvm7tsf4was3wdx75vfs6vljdke65imbqnhq",
+            "us-ashburn-1": "ocid1.image.oc1.iad.aaaaaaaannaquxy7rrbrbngpaqp427mv426rlalgihxwdjrz3fr2iiaxah5a",
+            "us-phoenix-1": "ocid1.image.oc1.phx.aaaaaaaacss7qgb6vhojblgcklnmcbchhei6wgqisqmdciu3l4spmroipghq",
+        },
+    }
+
 
 log = logging.getLogger("startnode")
 
@@ -24,7 +45,9 @@ compartment_id = "{{ compartment_ocid }}"
 keys_file = "/home/slurm/opc_authorized_keys"
 
 mgmt_nodes = oci.core.ComputeClient(config).list_instances(compartment_id, display_name="mgmt").data
-ad_root = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0].availability_domain[:-1]
+mgmt_node = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
+ad_root = mgmt_node.availability_domain[:-1]
+region = mgmt_node.region
 
 vcn = [n.id for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
 
@@ -42,7 +65,8 @@ for host in hosts:
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     subnet = [s.id for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
-    image = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva"
+    image_name = "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0" if "GPU" in shape else "Oracle-Linux-7.6-2019.02.20-0"
+    image = get_images()[image_name][region]
     ad = f"{ad_root}{ad_number}"
 
     host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", host], stdout=subprocess.PIPE).stdout.decode().split()[-1])
