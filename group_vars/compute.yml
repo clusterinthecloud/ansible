@@ -3,6 +3,8 @@ slurm_packages:
   - slurmd
   - libpmi
 
+slurm_role: compute
+
 install_packages:
   - mpich-devel
 

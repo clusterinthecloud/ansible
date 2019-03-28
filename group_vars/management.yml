@@ -6,6 +6,8 @@ slurm_packages:
   - slurmctld
   - slurmdbd
 
+slurm_role: mgmt
+
 slurm_elastic:
   oracle:
     config_directory: /home/slurm/.oci/

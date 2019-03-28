@@ -65,7 +65,7 @@
   file:
     path: /mnt{{ filesystem_mount_point }}/etc/slurm
     state: directory
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
 
 - name: slurm config file (shared)
   template:
@@ -74,7 +74,7 @@
     owner: slurm
     group: slurm
     mode: 0644
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
   notify:
     - restart slurmd
 
@@ -85,7 +85,7 @@
     owner: slurm
     group: slurm
     mode: 0400
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
   notify:
     - restart slurmdbd
 
@@ -114,7 +114,7 @@
     owner: slurm
     group: slurm
     mode: 0755
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
 
 - name: set slurmd config directory permissions
   file:
@@ -123,7 +123,7 @@
     owner: root
     group: root
     mode: 0755
-  when: "'management' not in group_names"
+  when: slurm_role == "compute"
 
 - name: open firewall for slurm
   firewalld:
@@ -143,31 +143,31 @@
     - restart firewalld
 
 - include_tasks: elastic.yml
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
 
 - name: start service slurmdbd
   service:
     name: slurmdbd
     state: started
     enabled: yes
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"
 
 - name: Wait until Slurm config file has been created by the mangement node
   wait_for:
     path: /mnt/shared/etc/slurm/slurm.conf
     timeout: 300
-  when: "'management' not in group_names"
+  when: slurm_role == "compute"
 
 - name: start service slurmd
   service:
     name: slurmd
     state: started
     enabled: yes
-  when: "'management' not in group_names"
+  when: slurm_role == "compute"
 
 - name: create accounting cluster
   command: sacctmgr --immediate add cluster {{ slurm_cluster_name }}
   register: create_cluster_result
   changed_when: "create_cluster_result.rc == 0"
   failed_when: "create_cluster_result.rc != 0 and create_cluster_result.stdout != ' This cluster {{ slurm_cluster_name }} already exists.  Not adding.'"
-  when: "'management' in group_names"
+  when: slurm_role == "mgmt"

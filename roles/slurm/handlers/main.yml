@@ -8,10 +8,9 @@
   service:
     name: slurmdbd
     state: restarted
-  when: "'management' in group_names"
 
 - name: restart slurmd
   service:
     name: slurmd
     state: restarted
-  when: "'management' not in group_names"
+  when: slurm_role == "compute"
