@@ -51,18 +51,18 @@ formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
-config = oci.config.from_file()
+oci_config = oci.config.from_file()
 
 compartment_id = "{{ compartment_ocid }}"
 
 keys_file = "/home/slurm/opc_authorized_keys"
 
-mgmt_nodes = oci.core.ComputeClient(config).list_instances(compartment_id, display_name="mgmt").data
+mgmt_nodes = oci.core.ComputeClient(oci_config).list_instances(compartment_id, display_name="mgmt").data
 mgmt_node = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
 ad_root = mgmt_node.availability_domain[:-1]
 region = mgmt_node.region
 
-vcn = [n.id for n in oci.core.VirtualNetworkClient(config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
+vcn = [n.id for n in oci.core.VirtualNetworkClient(oci_config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
 
 with open(keys_file) as kf:
     ssh_keys = kf.read()
@@ -77,7 +77,7 @@ for host in hosts:
     features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    subnet = [s.id for s in oci.core.VirtualNetworkClient(config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
+    subnet = [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
     image_name = "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0" if "GPU" in shape else "Oracle-Linux-7.6-2019.02.20-0"
     image = get_images()[image_name][region]
     ad = f"{ad_root}{ad_number}"
@@ -109,7 +109,7 @@ for host in hosts:
     )
 
     try:
-        instance = oci.core.ComputeClient(config).launch_instance(instance_details)
+        instance = oci.core.ComputeClient(oci_config).launch_instance(instance_details)
     except oci.exceptions.ServiceError as e:
         log.error(f" problem launching instance: {e}")
         continue
@@ -117,12 +117,12 @@ for host in hosts:
     node_id = instance.data.id
 
     if not slurm_ip:
-        while not oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data:
+        while not oci.core.ComputeClient(oci_config).list_vnic_attachments(compartment_id, instance_id=node_id).data:
             log.info(" No VNIC attachment yet. Waiting...")
             time.sleep(5)
 
-        vnic_id = oci.core.ComputeClient(config).list_vnic_attachments(compartment_id, instance_id=node_id).data[0].vnic_id
-        private_ip = oci.core.VirtualNetworkClient(config).get_vnic(vnic_id).data.private_ip
+        vnic_id = oci.core.ComputeClient(oci_config).list_vnic_attachments(compartment_id, instance_id=node_id).data[0].vnic_id
+        private_ip = oci.core.VirtualNetworkClient(oci_config).get_vnic(vnic_id).data.private_ip
 
         log.info(f"  Private IP {private_ip}")
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
