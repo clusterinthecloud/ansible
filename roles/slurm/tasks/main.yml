@@ -85,6 +85,7 @@
     owner: slurm
     group: slurm
     mode: 0400
+  when: "'management' in group_names"
   notify:
     - restart slurmdbd
 
