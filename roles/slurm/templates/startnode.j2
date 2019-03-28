@@ -12,6 +12,9 @@ import oci
 
 
 def get_images() -> Dict[str, Dict[str, str]]:
+    """
+    From https://docs.cloud.oracle.com/iaas/images/
+    """
     return {
         "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0": {
             "ca-toronto-1": "ocid1.image.oc1.ca-toronto-1.aaaaaaaayeivcqwwqnuo6qkz2fwpmskhcwrlhxgwaibqbhwwkohepnlyxk5q",
