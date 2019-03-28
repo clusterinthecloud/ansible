@@ -7,11 +7,21 @@
         state: disabled
 
 - hosts: compute
+  tasks:
+    - name: pre-install packages we will need
+      package:
+        state: present
+        name:
+          - nfs-utils
+          - ntp
+          - sssd
+          - telegraf
+
+- hosts: compute
   roles:
     - dhcp
     - filesystem
     - ssh
-    - epel
     - security-updates
     - ntp
     - sssd
