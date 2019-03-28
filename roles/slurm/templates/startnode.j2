@@ -9,7 +9,18 @@ import time
 from typing import Dict
 
 import oci
+import yaml
 
+
+def load_yaml(filename) -> dict:
+    with open(filename, "r") as f:
+        return yaml.safe_load(f)
+
+def get_startnode_config() -> Dict[str, Dict[str, str]]:
+    return load_yaml("/etc/citc/startnode.yaml")
+
+def get_mgmt_info() -> Dict[str, Dict[str, str]]:
+    return load_yaml("/etc/citc/mgmt_shape.yaml")
 
 def get_images() -> Dict[str, Dict[str, str]]:
     """
@@ -32,7 +43,6 @@ def get_images() -> Dict[str, Dict[str, str]]:
         },
     }
 
-
 def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
@@ -51,18 +61,17 @@ formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
-oci_config = oci.config.from_file()
+startnode_config = get_startnode_config()
+mgmt_info = get_mgmt_info()
 
-compartment_id = "{{ compartment_ocid }}"
+compartment_id = startnode_config["compartment_id"]
+region = startnode_config["region"]
+vcn = startnode_config["vcn_id"]
+ad_root = mgmt_info["ad"][:-1]
 
 keys_file = "/home/slurm/opc_authorized_keys"
 
-mgmt_nodes = oci.core.ComputeClient(oci_config).list_instances(compartment_id, display_name="mgmt").data
-mgmt_node = [n for n in mgmt_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
-ad_root = mgmt_node.availability_domain[:-1]
-region = mgmt_node.region
-
-vcn = [n.id for n in oci.core.VirtualNetworkClient(oci_config).list_vcns(compartment_id).data if n.display_name == "ClusterVCN"][0]
+oci_config = oci.config.from_file()
 
 with open(keys_file) as kf:
     ssh_keys = kf.read()
