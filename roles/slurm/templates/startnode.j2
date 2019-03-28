@@ -19,9 +19,6 @@ def load_yaml(filename) -> dict:
 def get_startnode_config() -> Dict[str, Dict[str, str]]:
     return load_yaml("/etc/citc/startnode.yaml")
 
-def get_mgmt_info() -> Dict[str, Dict[str, str]]:
-    return load_yaml("/etc/citc/mgmt_shape.yaml")
-
 def get_images() -> Dict[str, Dict[str, str]]:
     """
     From https://docs.cloud.oracle.com/iaas/images/
@@ -61,12 +58,11 @@ handler.setFormatter(formatter)
 log.addHandler(handler)
 
 startnode_config = get_startnode_config()
-mgmt_info = get_mgmt_info()
 
 compartment_id = startnode_config["compartment_id"]
 region = startnode_config["region"]
 vcn = startnode_config["vcn_id"]
-ad_root = mgmt_info["ad"][:-1]
+ad_root = startnode_config["ad_root"][:-1]
 
 keys_file = "/home/slurm/opc_authorized_keys"
 
