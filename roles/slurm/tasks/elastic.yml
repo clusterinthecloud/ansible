@@ -62,6 +62,14 @@
     group: slurm
     mode: 0744
 
+- name: copy startnode.yaml
+  copy:
+    src: /home/opc/startnode.yaml
+    dest: /etc/citc/startnode.yaml
+    owner: slurm
+    group: slurm
+    mode: 0744
+
 - name: configure startnode script
   template:
     src: startnode.j2
