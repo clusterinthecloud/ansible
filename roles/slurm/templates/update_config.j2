@@ -1,6 +1,7 @@
 #! /opt/oci/bin/python
 
 import re
+from typing import Dict
 
 import yaml
 
@@ -10,7 +11,7 @@ def load_yaml(filename) -> dict:
         return yaml.safe_load(f)
 
 
-def get_limits() -> dict:
+def get_limits() -> Dict[str, Dict[str, str]]:
     """
     Until OCI has an API to fetch service limits, we have to hard-code
     them in a file.
@@ -18,11 +19,11 @@ def get_limits() -> dict:
     return load_yaml("/home/opc/limits.yaml")
 
 
-def get_shapes() -> dict:
+def get_shapes() -> Dict[str, Dict[str, str]]:
     return load_yaml("/etc/citc/shapes.yaml")
 
 
-def get_mgmt_info() -> dict:
+def get_mgmt_info() -> Dict[str, str]:
     return load_yaml("/etc/citc/mgmt_shape.yaml")
 
 
