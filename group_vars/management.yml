@@ -1,4 +1,7 @@
 ---
+
+slurm_accounting_db_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,hexdigits') }}"
+
 slurm_packages:
   - slurmctld
   - slurmdbd

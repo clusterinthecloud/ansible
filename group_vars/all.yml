@@ -4,9 +4,6 @@ users: []
 # From https://www.schedmd.com/downloads.php
 slurm_version: 17.11
 
-# TODO Generate this randomly on the cluster
-slurm_accounting_db_password: 12345
-
 slurm_cluster_name: cluster
 slurm_control_machine: mgmt
 
