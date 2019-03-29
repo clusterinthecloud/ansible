@@ -22,6 +22,13 @@ def get_startnode_config() -> Dict[str, Dict[str, str]]:
 def get_subnet(compartment_id: str, vcn_id: str, ad_number: str) -> str:
     return subnet = [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
 
+def get_node_state(compartment_id: str, hostname: str) -> str:
+    matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
+    still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
+    if not still_exist:
+        return "TERMINATED"
+    return still_exist[0].lifecycle_state
+
 def get_images() -> Dict[str, Dict[str, str]]:
     """
     From https://docs.cloud.oracle.com/iaas/images/
@@ -79,7 +86,14 @@ hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=su
 for host in hosts:
     log.info(f"Starting {host}")
 
-    # TODO Check if node is already running
+    node_state = get_node_state(compartment_id, host)
+    while node_state == "TERMINATING":
+        log.info(" host is currently terminating. Waiting...")
+        time.sleep(5)
+
+    elif node_state != "TERMINATED":
+        log.warning(f" host is already running with state {node_state}")
+        continue
 
     features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
