@@ -90,7 +90,8 @@ for host in hosts:
         log.info(" host is currently terminating. Waiting...")
         time.sleep(5)
 
-    if get_node_state(compartment_id, host) != "TERMINATED":
+    node_state = get_node_state(compartment_id, host)
+    if node_state != "TERMINATED":
         log.warning(f" host is already running with state {node_state}")
         continue
 
