@@ -86,12 +86,11 @@ hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=su
 for host in hosts:
     log.info(f"Starting {host}")
 
-    node_state = get_node_state(compartment_id, host)
-    while node_state == "TERMINATING":
+    while get_node_state(compartment_id, host) == "TERMINATING":
         log.info(" host is currently terminating. Waiting...")
         time.sleep(5)
 
-    if node_state != "TERMINATED":
+    if get_node_state(compartment_id, host) != "TERMINATED":
         log.warning(f" host is already running with state {node_state}")
         continue
 
