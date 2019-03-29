@@ -152,12 +152,6 @@
     enabled: yes
   when: slurm_role == "mgmt"
 
-- name: Wait until Slurm config file has been created by the mangement node
-  wait_for:
-    path: /mnt/shared/etc/slurm/slurm.conf
-    timeout: 300
-  when: slurm_role == "compute"
-
 - name: start service slurmd
   service:
     name: slurmd
