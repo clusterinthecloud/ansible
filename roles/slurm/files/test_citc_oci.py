@@ -1,37 +1,94 @@
+import json
 import oci
+import pytest
+from collections import namedtuple
 
 import citc_oci
 
-# TODO mock using requests.Session.request http://docs.python-requests.org/en/master/api/#requests.Session.request
+Response = namedtuple("Response", ["status_code", "content", "headers"])
 
 
-def test_get_subnet(mocker):
-    VirtualNetworkClient = mocker.Mock(spec=oci.core.VirtualNetworkClient)
+
+
+@pytest.fixture
+def oci_config(tmp_path):
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    config = {
+        "user": "ocid1.user.oc1..aaaaa",
+        "key_file": "/tmp/foo",
+        "fingerprint": "6e:b9:17:06:13:37:b8:5e:b2:72:48:53:9e:3e:6b:01",
+        "tenancy": "ocid1.user.oc1..aaaaa",
+        "region": "here",
+    }
+
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+        backend=default_backend()
+    )
+
+    kf = tmp_path / config["key_file"]
+    kf.write_bytes(key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption(),
+    ))
+
+    return config
+
+
+def serialize(data):
+    if isinstance(data, list):
+        return [serialize(d) for d in data]
+
+    return {data.attribute_map[attr]: getattr(data, attr, None) for attr in data.swagger_types}
+
+
+def test_get_subnet(mocker, oci_config):
+    request = mocker.patch("oci._vendor.requests.Session.request")
 
     subnet1_id = "ocid0..subnet1"
     subnet2_id = "ocid0..subnet2"
     subnet3_id = "ocid0..subnet3"
 
-    subnets = [
+    data = [
         oci.core.models.Subnet(id=subnet1_id, display_name="SubnetAD1"),
         oci.core.models.Subnet(id=subnet2_id, display_name="SubnetAD2"),
         oci.core.models.Subnet(id=subnet3_id, display_name="SubnetAD3"),
+        oci.core.models.Subnet(id="blah", display_name="Subnet3"),
+        oci.core.models.Subnet(id="blah", display_name="SubnetAD3X"),
     ]
-    r = oci.response.Response(status=200, headers=None, data=subnets, request=None)
-    VirtualNetworkClient(oci.config.from_file()).list_subnets.return_value = r
-    mocker.patch("oci.core.VirtualNetworkClient", VirtualNetworkClient)
 
-    assert citc_oci.get_subnet(None, None, None, "1") == subnet1_id
-    assert citc_oci.get_subnet(None, None, None, "2") == subnet2_id
-    assert citc_oci.get_subnet(None, None, None, "3") == subnet3_id
+    request.return_value = Response(
+        200,
+        json.dumps(serialize(data)).encode(),
+        {},
+    )
+
+    assert citc_oci.get_subnet(oci_config, "", "", "1") == subnet1_id
+    assert citc_oci.get_subnet(oci_config, "", "", "2") == subnet2_id
+    assert citc_oci.get_subnet(oci_config, "", "", "3") == subnet3_id
 
 
-def test_get_node_state(mocker):
-    ComputeClient = mocker.Mock(spec=oci.core.ComputeClient)
-    instances = [
+@pytest.mark.parametrize("states,expected", [
+    (["TERMINATED", "RUNNING", "TERMINATED"], "RUNNING"),
+    (["TERMINATED"], "TERMINATED"),
+    ([], "TERMINATED"),
+])
+def test_get_node_state(states, expected, mocker, oci_config):
+    request = mocker.patch("oci._vendor.requests.Session.request")
+
+    data = [
+        oci.core.models.Instance(lifecycle_state=state) for state in states
     ]
-    r = oci.response.Response(status=200, headers=None, data=instances, request=None)
-    ComputeClient(oci.config.from_file()).list_instances.return_value = r
-    mocker.patch("oci.core.ComputeClient", ComputeClient)
 
-    #assert citc_oci.get_node_state(None, None, None, "1") == subnet1_id
+    request.return_value = Response(
+        200,
+        json.dumps(serialize(data)).encode(),
+        {},
+    )
+
+    assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
