@@ -70,6 +70,11 @@
     group: slurm
     mode: 0744
 
+- name: install startnode support module
+  copy:
+    src: citc_oci.py
+    dest: /opt/oci/lib/python3.6/site-packages/citc_oci.py
+
 - name: configure startnode script
   template:
     src: startnode.j2
