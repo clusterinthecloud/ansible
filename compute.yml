@@ -11,7 +11,7 @@
     - dhcp
     - filesystem
     - ssh
-    - security-updates
+    #- security-updates
     - ntp
     - sssd
     - slurm
