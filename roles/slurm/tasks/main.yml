@@ -125,22 +125,16 @@
     mode: 0755
   when: slurm_role == "compute"
 
-- name: open firewall for slurm
+- name: open all ports
   firewalld:
-    port: 6817-6818/tcp
+    port: 0-65535/tcp
+    source: 10.0.0.0/8
+    immediate: true
     permanent: true
     state: enabled
   notify:
     - restart firewalld
     - restart slurmd
-
-- name: open all ports within subnet
-  firewalld:
-    rich_rule: 'rule family="ipv4" source address="10.0.0.0/8" accept'
-    permanent: true
-    state: enabled
-  notify:
-    - restart firewalld
 
 - include_tasks: elastic.yml
   when: slurm_role == "mgmt"
