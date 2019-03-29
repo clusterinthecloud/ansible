@@ -20,7 +20,7 @@ def get_startnode_config() -> Dict[str, Dict[str, str]]:
     return load_yaml("/etc/citc/startnode.yaml")
 
 def get_subnet(compartment_id: str, vcn_id: str, ad_number: str) -> str:
-    return subnet = [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
+    return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
 
 def get_node_state(compartment_id: str, hostname: str) -> str:
     matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
