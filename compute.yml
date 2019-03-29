@@ -7,23 +7,6 @@
         state: disabled
 
 - hosts: compute
-  tasks:
-    - name: Add InfluxDB repository
-      yum_repository:
-        name: influxdb
-        description: InfluxDB
-        baseurl: https://repos.influxdata.com/centos/$releasever/$basearch/stable/
-        gpgkey: https://repos.influxdata.com/influxdb.key
-    - name: pre-install packages we will need
-      package:
-        state: present
-        name:
-          - nfs-utils
-          - ntp
-          - sssd
-          - telegraf
-
-- hosts: compute
   roles:
     - dhcp
     - filesystem
