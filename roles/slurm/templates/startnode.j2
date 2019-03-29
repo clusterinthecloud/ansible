@@ -19,6 +19,9 @@ def load_yaml(filename) -> dict:
 def get_startnode_config() -> Dict[str, Dict[str, str]]:
     return load_yaml("/etc/citc/startnode.yaml")
 
+def get_subnet(compartment_id: str, vcn_id: str, ad_number: str) -> str:
+    return subnet = [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
+
 def get_images() -> Dict[str, Dict[str, str]]:
     """
     From https://docs.cloud.oracle.com/iaas/images/
@@ -81,7 +84,7 @@ for host in hosts:
     features = subprocess.run(["sinfo",  "--Format=features:200", "--noheader", f"--nodes={host}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    subnet = [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn).data if s.display_name == f"SubnetAD{ad_number}"][0]
+    subnet = get_subnet(compartment_id, vcn, ad_number)
     image_name = "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0" if "GPU" in shape else "Oracle-Linux-7.6-2019.02.20-0"
     image = get_images()[image_name][region]
     ad = f"{ad_root}{ad_number}"
