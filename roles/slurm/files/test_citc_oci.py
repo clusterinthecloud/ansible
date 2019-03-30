@@ -135,3 +135,48 @@ def test_create_node_config(mocker, requests_mocker, oci_config):
     assert node_config.subnet_id == "ocid0..subnet1"
     assert node_config.availability_domain == "HERE-AD-1"
     assert node_config.shape == "shapeA"
+
+@pytest.mark.parametrize(
+    "host_good,scontrol_good,expected",
+    [
+        (True, True, ("10.1.0.2", "10.1.0.2", "10.1.0.2")),
+        (True, False, ("10.1.0.2", "10.1.0.2", None)),
+        (False, True, ("10.1.0.2", None, "10.1.0.2")),
+        (False, False, (None, None, None)),
+    ],
+)
+def test_get_ip(host_good, scontrol_good, expected, mocker):
+    host_ret_good = b"foo has address 10.1.0.2"
+    host_ret_bad = b"Host foo not found: 3(NXDOMAIN)"
+    scontrol_ret_good = b"""NodeName=foo Arch=x86_64 CoresPerSocket=1
+        CPUAlloc=0 CPUErr=0 CPUTot=2 CPULoad=0.00
+        AvailableFeatures=shape=shapeA,ad=1
+        ActiveFeatures=shape=shapeA,ad=1
+        Gres=(null)
+        NodeAddr=10.1.0.2 NodeHostName=foo Port=0 Version=17.11
+        OS=Linux 4.14.35-1844.2.5.el7uek.x86_64 #2 SMP Mon Feb 4 18:24:45 PST 2019"""
+    scontrol_ret_bad = b"Node foo not found"
+
+    def run_mock(args, stdout):
+        if args[0] == "host":
+            if host_good:
+                return subprocess.CompletedProcess(
+                    args="", returncode=0, stdout=host_ret_good
+                )
+            else:
+                return subprocess.CompletedProcess(
+                    args="", returncode=0, stdout=host_ret_bad
+                )
+        if args[0] == "scontrol":
+            if scontrol_good:
+                return subprocess.CompletedProcess(
+                    args="", returncode=0, stdout=scontrol_ret_good
+                )
+            else:
+                return subprocess.CompletedProcess(
+                    args="", returncode=0, stdout=scontrol_ret_bad
+                )
+
+    mocker.patch("subprocess.run", side_effect=run_mock)
+
+    assert citc_oci.get_ip("foo") == expected
