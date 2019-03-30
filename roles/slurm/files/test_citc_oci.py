@@ -165,7 +165,7 @@ def test_get_ip(host_good, scontrol_good, expected, mocker):
                 )
             else:
                 return subprocess.CompletedProcess(
-                    args="", returncode=0, stdout=host_ret_bad
+                    args="", returncode=1, stdout=host_ret_bad
                 )
         if args[0] == "scontrol":
             if scontrol_good:
@@ -174,7 +174,7 @@ def test_get_ip(host_good, scontrol_good, expected, mocker):
                 )
             else:
                 return subprocess.CompletedProcess(
-                    args="", returncode=0, stdout=scontrol_ret_bad
+                    args="", returncode=1, stdout=scontrol_ret_bad
                 )
 
     mocker.patch("subprocess.run", side_effect=run_mock)
