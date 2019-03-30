@@ -20,7 +20,7 @@ def oci_config(tmp_path):
         "user": "ocid1.user.oc1..aaaaa",
         "key_file": "/tmp/foo",
         "fingerprint": "6e:b9:17:06:13:37:b8:5e:b2:72:48:53:9e:3e:6b:01",
-        "tenancy": "ocid1.user.oc1..aaaaa",
+        "tenancy": "ocid1.tenancy.oc1..aaaaa",
         "region": "here",
     }
 
