@@ -4,7 +4,7 @@ import subprocess
 import time
 from typing import Dict, Optional, Tuple
 
-import oci
+import oci  # type: ignore
 import yaml
 
 __all__ = ["get_nodespace", "start_node"]

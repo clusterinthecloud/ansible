@@ -6,8 +6,9 @@ python:
   - "3.6"
   - "3.7"
 
-install: pip install oci pytest-mock pyyaml ansible-lint
+install: pip install oci pytest-mock pyyaml ansible-lint mypy
 
 script:
   - pytest
   - ansible-lint compute.yml
+  - mypy roles/slurm/files/citc_oci.py
