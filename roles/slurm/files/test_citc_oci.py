@@ -26,17 +26,17 @@ def oci_config(tmp_path):
     }
 
     key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048,
-        backend=default_backend()
+        public_exponent=65537, key_size=2048, backend=default_backend()
     )
 
     kf = tmp_path / config["key_file"]
-    kf.write_bytes(key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption(),
-    ))
+    kf.write_bytes(
+        key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+    )
 
     return config
 
@@ -55,7 +55,10 @@ def serialize(data):
     if isinstance(data, list):
         return [serialize(d) for d in data]
 
-    return {data.attribute_map[attr]: getattr(data, attr, None) for attr in data.swagger_types}
+    return {
+        data.attribute_map[attr]: getattr(data, attr, None)
+        for attr in data.swagger_types
+    }
 
 
 def test_get_subnet(requests_mocker, oci_config):
@@ -71,30 +74,53 @@ def test_get_subnet(requests_mocker, oci_config):
         oci.core.models.Subnet(id=subnet3_id, display_name="SubnetAD3"),
     ]
 
-    requests_mocker.register_uri("GET", "/20160918/subnets?compartmentId=&vcnId=", text=json.dumps(serialize(data)))
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/subnets?compartmentId=&vcnId=",
+        text=json.dumps(serialize(data)),
+    )
 
     assert citc_oci.get_subnet(oci_config, "", "", "1") == subnet1_id
     assert citc_oci.get_subnet(oci_config, "", "", "2") == subnet2_id
     assert citc_oci.get_subnet(oci_config, "", "", "3") == subnet3_id
 
 
-@pytest.mark.parametrize("states,expected", [
-    (["TERMINATED", "RUNNING", "TERMINATED"], "RUNNING"),
-    (["TERMINATED"], "TERMINATED"),
-    ([], "TERMINATED"),
-])
+@pytest.mark.parametrize(
+    "states,expected",
+    [
+        (["TERMINATED", "RUNNING", "TERMINATED"], "RUNNING"),
+        (["TERMINATED"], "TERMINATED"),
+        ([], "TERMINATED"),
+    ],
+)
 def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     data = [oci.core.models.Instance(lifecycle_state=state) for state in states]
-    requests_mocker.register_uri("GET", "/20160918/instances/?compartmentId=ocid0..compartment&displayName=foo", text=json.dumps(serialize(data)))
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/instances/?compartmentId=ocid0..compartment&displayName=foo",
+        text=json.dumps(serialize(data)),
+    )
 
-    assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
+    assert (
+        citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo")
+        == expected
+    )
 
 
 def test_create_node_config(mocker, requests_mocker, oci_config):
     subnets = [oci.core.models.Subnet(id="ocid0..subnet1", display_name="SubnetAD1")]
-    requests_mocker.register_uri("GET", "/20160918/subnets?compartmentId=&vcnId=", text=json.dumps(serialize(subnets)))
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/subnets?compartmentId=&vcnId=",
+        text=json.dumps(serialize(subnets)),
+    )
 
-    mocker.patch("subprocess.run", return_value=subprocess.CompletedProcess(args="", returncode=0, stdout=b"ad=1,shape=shapeA"))
+    mocker.patch(
+        "subprocess.run",
+        return_value=subprocess.CompletedProcess(
+            args="", returncode=0, stdout=b"ad=1,shape=shapeA"
+        ),
+    )
     mocker.patch("citc_oci.open", mocker.mock_open(read_data=b"#! /bin/bash"))
 
     nodespace = {
