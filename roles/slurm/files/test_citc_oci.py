@@ -84,9 +84,7 @@ def test_get_subnet(requests_mocker, oci_config):
     ([], "TERMINATED"),
 ])
 def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
-    data = [
-        oci.core.models.Instance(lifecycle_state=state) for state in states
-    ]
+    data = [oci.core.models.Instance(lifecycle_state=state) for state in states]
     requests_mocker.register_uri("GET", "/20160918/instances/?compartmentId=ocid0..compartment&displayName=foo", text=json.dumps(serialize(data)))
 
     assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
