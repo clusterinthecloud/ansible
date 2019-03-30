@@ -1,7 +1,9 @@
+from collections import namedtuple
 import json
+
 import oci
 import pytest
-from collections import namedtuple
+import requests_mock
 
 import citc_oci
 
@@ -38,6 +40,13 @@ def oci_config(tmp_path):
     return config
 
 
+@pytest.fixture
+def requests_mocker(mocker):
+    adapter = requests_mock.Adapter()
+    mocker.patch("oci._vendor.requests.Session.get_adapter", return_value=adapter)
+    return adapter
+
+
 def serialize(data):
     """
     Turn any OCI model into its JSON equivalent
@@ -48,9 +57,7 @@ def serialize(data):
     return {data.attribute_map[attr]: getattr(data, attr, None) for attr in data.swagger_types}
 
 
-def test_get_subnet(mocker, oci_config):
-    request = mocker.patch("oci._vendor.requests.Session.request")
-
+def test_get_subnet(requests_mocker, oci_config):
     subnet1_id = "ocid0..subnet1"
     subnet2_id = "ocid0..subnet2"
     subnet3_id = "ocid0..subnet3"
@@ -63,11 +70,7 @@ def test_get_subnet(mocker, oci_config):
         oci.core.models.Subnet(id=subnet3_id, display_name="SubnetAD3"),
     ]
 
-    request.return_value = Response(
-        200,
-        json.dumps(serialize(data)).encode(),
-        {},
-    )
+    requests_mocker.register_uri("GET", "/20160918/subnets?compartmentId=&vcnId=", text=json.dumps(serialize(data)))
 
     assert citc_oci.get_subnet(oci_config, "", "", "1") == subnet1_id
     assert citc_oci.get_subnet(oci_config, "", "", "2") == subnet2_id
@@ -79,22 +82,15 @@ def test_get_subnet(mocker, oci_config):
     (["TERMINATED"], "TERMINATED"),
     ([], "TERMINATED"),
 ])
-def test_get_node_state(states, expected, mocker, oci_config):
-    request = mocker.patch("oci._vendor.requests.Session.request")
-
+def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     data = [
         oci.core.models.Instance(lifecycle_state=state) for state in states
     ]
-
-    request.return_value = Response(
-        200,
-        json.dumps(serialize(data)).encode(),
-        {},
-    )
+    requests_mocker.register_uri("GET", "/20160918/instances/?compartmentId=ocid0..compartment&displayName=foo", text=json.dumps(serialize(data)))
 
     assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
 
 
 @pytest.mark.skip(reason="Need to mock open(), subprocess.run() and requests (for subnet)")
-def test_create_node_config(oci_config):
+def test_create_node_config(mocker, oci_config):
     citc_oci.create_node_config(oci_config, "foo1", None, {}, "")
