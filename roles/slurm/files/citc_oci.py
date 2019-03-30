@@ -110,9 +110,8 @@ def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: 
         log.error(f" problem launching instance: {e}")
         return
 
-    node_id = instance.data.id
-
     if not slurm_ip:
+        node_id = instance.data.id
         while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
             log.info(" No VNIC attachment yet. Waiting...")
             time.sleep(5)
