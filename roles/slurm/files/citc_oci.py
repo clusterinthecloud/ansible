@@ -105,13 +105,13 @@ def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: 
     instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
 
     try:
-        instance = oci.core.ComputeClient(oci_config).launch_instance(instance_details)
+        instance = oci.core.ComputeClient(oci_config).launch_instance(instance_details).data
     except oci.exceptions.ServiceError as e:
         log.error(f" problem launching instance: {e}")
         return
 
     if not slurm_ip:
-        node_id = instance.data.id
+        node_id = instance.id
         while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
             log.info(" No VNIC attachment yet. Waiting...")
             time.sleep(5)
@@ -123,6 +123,7 @@ def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: 
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
 
     log.info(f" Started {host}")
+    return instance
 
 
 def get_images() -> Dict[str, Dict[str, str]]:

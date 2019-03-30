@@ -48,6 +48,16 @@ def requests_mocker(mocker):
     return adapter
 
 
+@pytest.fixture
+def nodespace():
+    return {
+        "ad_root": "HERE-AD-",
+        "compartment_id": "ocid1.compartment.oc1..aaaaa",
+        "vcn_id": "ocid1.vcn.oc1..aaaaa",
+        "region": "uk-london-1",
+    }
+
+
 def serialize(data):
     """
     Turn any OCI model into its JSON equivalent
@@ -107,7 +117,7 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     )
 
 
-def test_create_node_config(mocker, requests_mocker, oci_config):
+def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
     subnets = [oci.core.models.Subnet(id="ocid0..subnet1", display_name="SubnetAD1")]
     requests_mocker.register_uri(
         "GET",
@@ -123,18 +133,12 @@ def test_create_node_config(mocker, requests_mocker, oci_config):
     )
     mocker.patch("citc_oci.open", mocker.mock_open(read_data=b"#! /bin/bash"))
 
-    nodespace = {
-        "ad_root": "HERE-AD-",
-        "compartment_id": "ocid1.compartment.oc1..aaaaa",
-        "vcn_id": "ocid1.vcn.oc1..aaaaa",
-        "region": "uk-london-1",
-    }
-
     node_config = citc_oci.create_node_config(oci_config, "foo1", None, nodespace, "")
 
     assert node_config.subnet_id == "ocid0..subnet1"
     assert node_config.availability_domain == "HERE-AD-1"
     assert node_config.shape == "shapeA"
+
 
 @pytest.mark.parametrize(
     "host_good,scontrol_good,expected",
@@ -180,3 +184,48 @@ def test_get_ip(host_good, scontrol_good, expected, mocker):
     mocker.patch("subprocess.run", side_effect=run_mock)
 
     assert citc_oci.get_ip("foo") == expected
+
+
+def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
+        text=json.dumps(serialize([])),
+    )
+
+    mocker.patch("citc_oci.get_ip", return_value=(None, None, None))
+
+    mocker.patch(
+        "subprocess.run",
+        return_value=subprocess.CompletedProcess(
+            args="", returncode=0, stdout=b"ad=1,shape=shapeA"
+        ),
+    )
+    mocker.patch("citc_oci.open", mocker.mock_open(read_data=b"#! /bin/bash"))
+
+    mocker.patch("citc_oci.get_subnet", return_value="ocid0..subnet1")
+
+    new_instance_response = oci.core.models.Instance(id="ocid0..instance.foo")
+    requests_mocker.register_uri(
+        "POST",
+        "/20160918/instances/",
+        text=json.dumps(serialize(new_instance_response)),
+    )
+
+    vnic_attachments = [oci.core.models.VnicAttachment(vnic_id="ocid0..vnic")]
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/vnicAttachments/?compartmentId=ocid1.compartment.oc1..aaaaa&instanceId=ocid0..instance.foo",
+        text=json.dumps(serialize(vnic_attachments)),
+    )
+
+    vnic = oci.core.models.Vnic(private_ip="10.0.1.2")
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/vnics/ocid0..vnic",
+        text=json.dumps(serialize(vnic)),
+    )
+
+    instance = citc_oci.start_node(oci_config, mocker.Mock(), "foo", nodespace, "")
+
+    assert instance.id == "ocid0..instance.foo"
