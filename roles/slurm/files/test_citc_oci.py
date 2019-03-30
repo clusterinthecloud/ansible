@@ -1,5 +1,6 @@
 from collections import namedtuple
 import json
+import subprocess
 
 import oci
 import pytest
@@ -91,6 +92,22 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
 
 
-@pytest.mark.skip(reason="Need to mock open(), subprocess.run() and requests (for subnet)")
-def test_create_node_config(mocker, oci_config):
-    citc_oci.create_node_config(oci_config, "foo1", None, {}, "")
+def test_create_node_config(mocker, requests_mocker, oci_config):
+    subnets = [oci.core.models.Subnet(id="ocid0..subnet1", display_name="SubnetAD1")]
+    requests_mocker.register_uri("GET", "/20160918/subnets?compartmentId=&vcnId=", text=json.dumps(serialize(subnets)))
+
+    mocker.patch("subprocess.run", return_value=subprocess.CompletedProcess(args="", returncode=0, stdout=b"ad=1,shape=shapeA"))
+    mocker.patch("citc_oci.open", mocker.mock_open(read_data=b"#! /bin/bash"))
+
+    nodespace = {
+        "ad_root": "HERE-AD-",
+        "compartment_id": "ocid1.compartment.oc1..aaaaa",
+        "vcn_id": "ocid1.vcn.oc1..aaaaa",
+        "region": "uk-london-1",
+    }
+
+    node_config = citc_oci.create_node_config(oci_config, "foo1", None, nodespace, "")
+
+    assert node_config.subnet_id == "ocid0..subnet1"
+    assert node_config.availability_domain == "HERE-AD-1"
+    assert node_config.shape == "shapeA"
