@@ -25,7 +25,6 @@
     - dhcp
     - filesystem
     - ssh
-    - epel
     - security-updates
     - ntp
     - 389ds
