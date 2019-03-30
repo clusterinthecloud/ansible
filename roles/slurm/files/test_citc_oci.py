@@ -55,11 +55,11 @@ def test_get_subnet(mocker, oci_config):
     subnet3_id = "ocid0..subnet3"
 
     data = [
+        oci.core.models.Subnet(id="blah", display_name="Subnet3"),
+        oci.core.models.Subnet(id="blah", display_name="SubnetAD3X"),
         oci.core.models.Subnet(id=subnet1_id, display_name="SubnetAD1"),
         oci.core.models.Subnet(id=subnet2_id, display_name="SubnetAD2"),
         oci.core.models.Subnet(id=subnet3_id, display_name="SubnetAD3"),
-        oci.core.models.Subnet(id="blah", display_name="Subnet3"),
-        oci.core.models.Subnet(id="blah", display_name="SubnetAD3X"),
     ]
 
     request.return_value = Response(
