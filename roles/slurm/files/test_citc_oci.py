@@ -8,8 +8,6 @@ import citc_oci
 Response = namedtuple("Response", ["status_code", "content", "headers"])
 
 
-
-
 @pytest.fixture
 def oci_config(tmp_path):
     from cryptography.hazmat.backends import default_backend
@@ -95,3 +93,8 @@ def test_get_node_state(states, expected, mocker, oci_config):
     )
 
     assert citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo") == expected
+
+
+@pytest.mark.skip(reason="Need to mock open(), subprocess.run() and requests (for subnet)")
+def test_create_node_config(oci_config):
+    citc_oci.create_node_config(oci_config, "foo1", None, {}, "")
