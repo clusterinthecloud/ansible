@@ -41,6 +41,9 @@ def oci_config(tmp_path):
 
 
 def serialize(data):
+    """
+    Turn any OCI model into its JSON equivalent
+    """
     if isinstance(data, list):
         return [serialize(d) for d in data]
 

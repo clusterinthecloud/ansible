@@ -1,10 +1,20 @@
 ---
 - name: Set DNS search domains to all subnets
   copy:
-    content: 'supersede domain-search "clustervcn.oraclevcn.com", "subnetad1.clustervcn.oraclevcn.com", "subnetad2.clustervcn.oraclevcn.com", "subnetad3.clustervcn.oraclevcn.com";'
+    content: >
+      supersede domain-search
+      "clustervcn.oraclevcn.com",
+      "subnetad1.clustervcn.oraclevcn.com",
+      "subnetad2.clustervcn.oraclevcn.com",
+      "subnetad3.clustervcn.oraclevcn.com";
     dest: /etc/dhcp/dhclient.conf
 
 - name: manually add to resolv.conf for now
   lineinfile:
     path: /etc/resolv.conf
-    line: "search clustervcn.oraclevcn.com subnetad1.clustervcn.oraclevcn.com subnetad2.clustervcn.oraclevcn.com subnetad3.clustervcn.oraclevcn.com"
+    line: >
+      search
+      clustervcn.oraclevcn.com
+      subnetad1.clustervcn.oraclevcn.com
+      subnetad2.clustervcn.oraclevcn.com
+      subnetad3.clustervcn.oraclevcn.com

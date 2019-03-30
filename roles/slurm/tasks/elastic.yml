@@ -16,7 +16,8 @@
     virtualenv: /opt/oci
     virtualenv_command: /bin/python36 -m venv
 
-- file:
+- name: create oci config directory
+  file:
     path: "{{ slurm_elastic.oracle.config_directory }}"
     state: directory
     owner: slurm
@@ -39,7 +40,8 @@
     group: slurm
     mode: 0400
 
-- file:
+- name: create citc config dir
+  file:
     path: /etc/citc
     state: directory
     owner: slurm
@@ -105,7 +107,9 @@
       [compute]
       $(hostname -f)
       EOF
-      time python -u /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ ansible_pull_branch }} --inventory=/root/hosts compute.yml >> /root/ansible-pull.log
+      python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
+        --checkout={{ ansible_pull_branch }} \
+        --inventory=/root/hosts {{ ansible_pull_playbook }} >> /root/ansible-pull.log
 
       date
     dest: /home/slurm/bootstrap.sh

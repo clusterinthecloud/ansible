@@ -21,6 +21,6 @@
 
 - name: create the finalised file
   file:
-    path: /mnt/shared/finalised/{{ansible_hostname}}
+    path: /mnt/shared/finalised/{{ ansible_hostname }}
     state: touch
     mode: 0777
