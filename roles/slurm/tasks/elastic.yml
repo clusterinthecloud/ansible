@@ -96,7 +96,7 @@
 
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
 - name: generate SSH host keys for compute nodespace
-  command: ssh-keygen -t {item.type} -b {item.size} -f {item.path} -N "" < /dev/null
+  command: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
   with_items:
     - {"type": "-t ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
     - {"type": "-t rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
