@@ -117,6 +117,11 @@
     - /home/slurm/ssh_host_ecdsa_key
     - /home/slurm/ssh_host_ecdsa_key.pub
 
+- name: load the startnode config
+  include_vars:
+    file: /etc/citc/startnode.yaml
+    name: startnode_config
+
 - name: create cloud-init bootstrap script
   copy:
     content: |
@@ -151,7 +156,7 @@
       $(hostname -f)
       EOF
       python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
-        --checkout={{ ansible_pull_branch }} \
+        --checkout={{ startnode_config.ansible_branch }} \
         --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
 
       date
