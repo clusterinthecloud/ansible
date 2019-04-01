@@ -96,11 +96,11 @@
 
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
 - name: generate SSH host keys for compute nodespace
-  command: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
+  shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
   with_items:
     - {"type": "ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
     - {"type": "rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
-    - {"type": "ecdsa", "size": 4096, "path": "/home/slurm/ssh_host_ecdsa_key"}
+    - {"type": "ecdsa", "size": 521, "path": "/home/slurm/ssh_host_ecdsa_key"}
 
 - name: set ownership of host files
   file:
