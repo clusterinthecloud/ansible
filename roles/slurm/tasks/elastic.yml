@@ -94,12 +94,54 @@
     dest: /usr/local/bin/update_config
     mode: 0755
 
+# TODO Replace this with openssh_keypair when we use Ansible 2.8
+- name: generate SSH host keys for compute nodespace
+  command: ssh-keygen -t {item.type} -b {item.size} -f {item.path} -N "" < /dev/null
+  with_items:
+    - {"type": "-t ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
+    - {"type": "-t rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
+    - {"type": "-t ecdsa", "size": 4096, "path": "/home/slurm/ssh_host_ecdsa_key"}
+
+- name: set ownership of host files
+  file:
+    path: "{ item }"
+    owner: slurm
+    group: slurm
+  loop:
+    - /home/slurm/ssh_host_ed25519_key
+    - /home/slurm/ssh_host_ed25519_key.pub
+    - /home/slurm/ssh_host_rsa_key
+    - /home/slurm/ssh_host_rsa_key.pub
+    - /home/slurm/ssh_host_ecdsa_key
+    - /home/slurm/ssh_host_ecdsa_key.pub
+
 - name: create cloud-init bootstrap script
   copy:
     content: |
       #! /bin/bash
 
       date
+
+      cat > /etc/ssh/ssh_host_ecdsa_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ecdsa_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key.pub') }}
+      EOF
+      cat > /etc/ssh/ssh_host_rsa_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_rsa_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_rsa_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_rsa_key.pub') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ed25519_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
+      EOF
+      chmod 640 /etc/ssh/ssh_host_*
+      chmod 644 /etc/ssh/ssh_host_*.pub
 
       yum install -y ansible git
       cat > /root/hosts <<EOF
