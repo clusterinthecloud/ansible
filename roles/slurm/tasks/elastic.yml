@@ -98,9 +98,7 @@
 - name: generate SSH host keys for compute nodespace
   shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
   args:
-    creates:
-      - "{{ item.path }}"
-      - "{{ item.path }}.pub"
+    creates: "{{ item.path }}"
   with_items:
     - {"type": "ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
     - {"type": "rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
