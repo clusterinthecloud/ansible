@@ -104,7 +104,7 @@
 
 - name: set ownership of host files
   file:
-    path: "{ item }"
+    path: "{{ item }}"
     owner: slurm
     group: slurm
   loop:
