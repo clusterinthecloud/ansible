@@ -16,3 +16,5 @@ install_packages:
   - xorg-x11-xauth
 
 monitoring_role: master
+
+bootstrap_ansible_pull_playbook: compute.yml

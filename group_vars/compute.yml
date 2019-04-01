@@ -9,5 +9,3 @@ install_packages:
   - mpich-devel
 
 monitoring_role: client
-
-ansible_pull_playbook: compute.yml

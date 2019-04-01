@@ -152,7 +152,7 @@
       EOF
       python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
         --checkout={{ ansible_pull_branch }} \
-        --inventory=/root/hosts {{ ansible_pull_playbook }} >> /root/ansible-pull.log
+        --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
 
       date
     dest: /home/slurm/bootstrap.sh
