@@ -3,7 +3,11 @@ slurm_packages:
   - slurmd
   - libpmi
 
+slurm_role: compute
+
 install_packages:
-  - mpich-devel
+  - mpich
+  - openmpi
+  - openmpi3
 
 monitoring_role: client

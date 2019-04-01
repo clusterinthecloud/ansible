@@ -4,3 +4,4 @@
     name: '*'
     security: yes
     state: latest
+    exclude: kernel*

@@ -1,7 +1,12 @@
 ---
+
+slurm_accounting_db_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,hexdigits') }}"
+
 slurm_packages:
   - slurmctld
   - slurmdbd
+
+slurm_role: mgmt
 
 slurm_elastic:
   oracle:
@@ -9,5 +14,10 @@ slurm_elastic:
 
 install_packages:
   - xorg-x11-xauth
+  - mpich-devel
+  - openmpi-devel
+  - openmpi3-devel
 
 monitoring_role: master
+
+bootstrap_ansible_pull_playbook: compute.yml

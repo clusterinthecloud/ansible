@@ -1,5 +1,18 @@
 ---
+
+- hosts: compute
+  tasks:
+    - name: disable SELinux
+      selinux:
+        state: disabled
+
 - hosts: compute
   roles:
-    - debug-tools
+    - dhcp
+    - filesystem
+    - ssh
+    #- security-updates
+    - ntp
+    - sssd
     - slurm
+    - monitoring

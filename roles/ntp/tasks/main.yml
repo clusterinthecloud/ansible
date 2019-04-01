@@ -1,9 +1,11 @@
 ---
-- when: ansible_distribution == 'CentOS'
-  block:
-    - name: yum install ntp
-      yum: name=ntp
-      notify: restart ntpd (CentOS)
+- name: yum install ntp
+  yum:
+    name: ntp
+  notify: restart ntpd (RedHat)
 
-    - name: service start ntpd
-      service: name=ntpd state=started enabled=yes
+- name: service start ntpd
+  service:
+    name: ntpd
+    state: started
+    enabled: yes

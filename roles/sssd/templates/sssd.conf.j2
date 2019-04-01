@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+
+[sssd]
+config_file_version = 2
+services = nss, pam
+domains = ldap
+
+[domain/ldap]
+id_provider = ldap
+access_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+
+ldap_search_base = dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
+ldap_uri = ldap://mgmt
+ldap_access_filter = (objectClass=posixAccount)
+ldap_user_gecos = displayName
+
+cache_credentials = true

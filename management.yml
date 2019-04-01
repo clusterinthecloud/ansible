@@ -1,7 +1,51 @@
 ---
-- hosts: management
+- name: finisher script
+  hosts: management
+  tasks:
+    - name: copy over finisher script
+      copy:
+        src: roles/finalise/files/finish.py
+        dest: /home/opc/finish
+        mode: 0755
+    - name: set motd
+      copy:
+        content: |
+          ######################
+
+          Welcome to the cluster
+          Please now create users and define the number of nodes you want.
+
+          ######################
+        dest: /etc/motd
+
+- name: common
+  hosts: all
+  tags: common
   roles:
-    - clustershell
+    - dhcp
+    - filesystem
+    - ssh
+    - security-updates
+    - ntp
+    - 389ds
+    - users
+    - sssd
     - mysql
     - slurm
+  tasks:
+    - name: copy SSH public keys to slurm account
+      copy:
+        src: /home/opc/.ssh/authorized_keys
+        dest: /home/slurm/opc_authorized_keys
+        owner: slurm
+        group: slurm
+        mode: 0600
+
+- name: finalise
+  hosts: all
+  tags: finalise
+  roles:
+    - finalise
+    - monitoring
+    - clustershell
     - debug-tools

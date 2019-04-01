@@ -1,0 +1,18 @@
+---
+
+- name: install sssd
+  package:
+    name=sssd
+
+- name: copy 389 config template
+  template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    mode: 0600
+  notify: restart sssd
+
+- name: start service sssd
+  service:
+    name: sssd
+    state: started
+    enabled: yes

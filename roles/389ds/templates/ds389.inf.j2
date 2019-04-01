@@ -1,0 +1,25 @@
+[General]
+FullMachineName={{ansible_fqdn}}
+SuiteSpotUserID=dirsrv
+SuiteSpotGroup=dirsrv
+AdminDomain=citc.acrc.bristol.ac.uk
+ConfigDirectoryAdminID=admin
+ConfigDirectoryAdminPwd=testadminpassword
+ConfigDirectoryLdapURL=ldap://{{ansible_fqdn}}:389/o=NetscapeRoot
+
+[slapd]
+SlapdConfigForMC=Yes
+UseExistingMC=0
+ServerPort=389
+ServerIdentifier=mgmt
+Suffix=dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
+RootDN=cn=Directory Manager
+RootDNPwd=testadminpassword
+ds_bename=userRoot
+AddSampleEntries=No
+
+[admin]
+Port=9830
+#ServerIpAddress=
+ServerAdminID=admin
+ServerAdminPwd=testadminpassword
