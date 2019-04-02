@@ -27,6 +27,13 @@
     owner: opc
     group: opc
 
+- name: make shared apps directory
+  file:
+    path: /mnt/shared/apps
+    state: directory
+    owner: opc
+    group: opc
+
 - name: name easybuild config file
   copy:
     path: /etc/easybuild.d/eb.cfg
