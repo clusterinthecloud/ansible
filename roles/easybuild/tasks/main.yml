@@ -11,3 +11,26 @@
       - easybuild
     virtualenv: /opt/easybuild
     virtualenv_command: /usr/bin/python2 -m virtualenv
+
+- name: make easybuild runner
+  copy:
+    dest: /opt/easybuild/bin/easybuild
+    content: |
+      #! /bin/bash
+      /opt/easybuild/bin/python -m easybuild.main "$@"
+
+- name: make easybuild config dir
+  file:
+    path: /etc/easybuild.d
+    state: directory
+    owner: opc
+    group: opc
+
+- name: name easybuild config file
+  copy:
+    path: /etc/easybuild.d/eb.cfg
+    content: |
+      [basic]
+      refix = /home/opc/ebtest
+      repositorypath = /opt/easybuild/easybuild/easyconfigs
+      robot-paths = %(repositorypath)s:%(DEFAULT_ROBOT_PATHS)s
