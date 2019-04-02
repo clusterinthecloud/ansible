@@ -6,6 +6,6 @@
     state: present
 
 - name: install lmod config
-  file:
+  copy:
     dest: /etc/profile.d/10-modules.sh
     content: MODULEPATH={{ software_install_dir }}/modules/all

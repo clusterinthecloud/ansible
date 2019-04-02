@@ -27,7 +27,7 @@
     owner: opc
     group: opc
 
-- name: make shared apps directory
+- name: make shared software directory
   file:
     path: "{{ software_install_dir }}"
     state: directory
