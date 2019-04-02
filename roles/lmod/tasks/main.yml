@@ -4,3 +4,8 @@
   package:
     name: Lmod
     state: present
+
+- name: install lmod config
+  file:
+    dest: /etc/profile.d/10-modules.sh
+    content: MODULEPATH={{ software_install_dir }}/modules/all

@@ -29,7 +29,7 @@
 
 - name: make shared apps directory
   file:
-    path: /mnt/shared/apps
+    path: "{{ software_install_dir }}"
     state: directory
     owner: opc
     group: opc
@@ -39,6 +39,6 @@
     path: /etc/easybuild.d/eb.cfg
     content: |
       [basic]
-      prefix = /home/opc/ebtest
+      installpath = {{ software_install_dir }}
       repositorypath = /opt/easybuild/easybuild/easyconfigs
       robot-paths = %(repositorypath)s:%(DEFAULT_ROBOT_PATHS)s
