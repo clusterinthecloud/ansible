@@ -17,6 +17,7 @@ install_packages:
   - mpich-devel
   - openmpi-devel
   - openmpi3-devel
+  - rdma-core-devel
 
 monitoring_role: master
 
