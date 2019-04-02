@@ -18,6 +18,7 @@ install_packages:
   - openmpi-devel
   - openmpi3-devel
   - rdma-core-devel
+  - "@Development Tools"
 
 monitoring_role: master
 
