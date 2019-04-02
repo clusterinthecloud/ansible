@@ -14,7 +14,7 @@
 
 - name: make easybuild runner
   copy:
-    dest: /opt/easybuild/bin/easybuild
+    dest: /usr/local/bin/eb
     content: |
       #! /bin/bash
       /opt/easybuild/bin/python -m easybuild.main "$@"
