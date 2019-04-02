@@ -18,6 +18,7 @@
     content: |
       #! /bin/bash
       /opt/easybuild/bin/python -m easybuild.main "$@"
+    mode: a=rx,u+w
 
 - name: make easybuild config dir
   file:
@@ -31,6 +32,6 @@
     path: /etc/easybuild.d/eb.cfg
     content: |
       [basic]
-      refix = /home/opc/ebtest
+      prefix = /home/opc/ebtest
       repositorypath = /opt/easybuild/easybuild/easyconfigs
       robot-paths = %(repositorypath)s:%(DEFAULT_ROBOT_PATHS)s
