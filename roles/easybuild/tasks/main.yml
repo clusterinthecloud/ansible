@@ -11,3 +11,8 @@
       - easybuild
     virtualenv: /opt/easybuild
     virtualenv_command: /usr/bin/python2 -m virtualenv
+
+- name: install Lmod
+  package:
+    name: Lmod
+    state: present
