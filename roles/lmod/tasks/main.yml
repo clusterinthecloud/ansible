@@ -1,0 +1,6 @@
+---
+
+- name: install Lmod
+  package:
+    name: Lmod
+    state: present

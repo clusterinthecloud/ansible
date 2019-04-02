@@ -49,4 +49,5 @@
     - monitoring
     - clustershell
     - debug-tools
+    - lmod
     - easybuild
