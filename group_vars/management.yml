@@ -17,6 +17,7 @@ install_packages:
   - mpich-devel
   - openmpi-devel
   - openmpi3-devel
+  - "@Development Tools"
 
 monitoring_role: master
 
