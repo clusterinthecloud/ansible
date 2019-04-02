@@ -34,9 +34,9 @@
     owner: opc
     group: opc
 
-- name: name easybuild config file
+- name: easybuild config file
   copy:
-    path: /etc/easybuild.d/eb.cfg
+    dest: /etc/easybuild.d/eb.cfg
     content: |
       [basic]
       installpath = {{ software_install_dir }}
