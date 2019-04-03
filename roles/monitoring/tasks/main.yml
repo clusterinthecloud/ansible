@@ -177,7 +177,7 @@
 - name: run monitor_slurm on a cron
   cron:
     name: monitor_slurm
-    job: /usr/local/bin/monitor_slurm
+    job: /usr/bin/timeout -sSIGINT 5s /usr/local/bin/monitor_slurm
   when: monitoring_role == "master"
 
 - name: Copy in Slurm Grafana dashboard
