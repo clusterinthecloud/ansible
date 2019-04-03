@@ -120,13 +120,22 @@
     grafana_url: http://localhost:3000
     grafana_user: admin
     grafana_password: admin
-    name: influxdb
+    name: influxdb_telegraf
     ds_type: influxdb
     url: http://localhost:8086
     database: telegraf
   when: monitoring_role == "master"
 
 - name: Create database
-  influxdb_database:
-    hostname: localhost
-    database_name: slurm
+  command: curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE slurm"
+
+- name: Create influxdb datasource
+  grafana_datasource:
+    grafana_url: http://localhost:3000
+    grafana_user: admin
+    grafana_password: admin
+    name: influxdb_slurm
+    ds_type: influxdb
+    url: http://localhost:8086
+    database: slurm
+  when: monitoring_role == "master"
