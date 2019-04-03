@@ -172,8 +172,25 @@
         curl -i -XPOST 'http://localhost:8086/write?db=slurm' --data-binary "count_${state} value=${count} ${timestamp}"
       done
     mode: a=,u+rwx
+  when: monitoring_role == "master"
 
 - name: run monitor_slurm on a cron
   cron:
     name: monitor_slurm
     job: /usr/local/bin/monitor_slurm
+  when: monitoring_role == "master"
+
+- name: Copy in Slurm Grafana dashboard
+  template:
+    src: slurm_dashboard.json.j2
+    dest: /root/slurm_dashboard.json
+  when: monitoring_role == "master"
+
+- name: Load Slurm Grafana dashboard
+  grafana_dashboard:
+    grafana_url: http://localhost:3000
+    grafana_user: admin
+    grafana_password: "{{ grafana_admin_password }}"
+    state: present
+    path: /root/slurm_dashboard.json
+  when: monitoring_role == "master"
