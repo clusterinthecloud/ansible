@@ -183,15 +183,5 @@
 - name: Copy in Slurm Grafana dashboard
   template:
     src: slurm_dashboard.json.j2
-    dest: /root/slurm_dashboard.json
-  when: monitoring_role == "master"
-
-- name: Load Slurm Grafana dashboard
-  grafana_dashboard:
-    grafana_url: http://localhost:3000
-    grafana_user: admin
-    grafana_password: "{{ grafana_admin_password }}"
-    state: present
-    path: /root/slurm_dashboard.json
-    overwrite: yes
+    dest: /etc/grafana/provisioning/dashboards/slurm_dashboard.json
   when: monitoring_role == "master"
