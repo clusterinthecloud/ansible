@@ -125,3 +125,8 @@
     url: http://localhost:8086
     database: telegraf
   when: monitoring_role == "master"
+
+- name: Create database
+  influxdb_database:
+    hostname: localhost
+    database_name: slurm
