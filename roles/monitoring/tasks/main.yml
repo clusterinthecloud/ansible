@@ -86,8 +86,8 @@
   uri:
     url: http://localhost:3000/api/admin/settings
     user: admin
-    password: admin
-    force_basic_auth: "{{ grafana_admin_password }}"
+    password: "{{ grafana_admin_password }}"
+    force_basic_auth: yes
   ignore_errors: yes
   register: grafana_password
   when: monitoring_role == "master"
