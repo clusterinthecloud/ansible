@@ -21,7 +21,3 @@
       - nmap
       - git
       - cmake
-
-- name: yum install packages
-  yum:
-    name: "{{ install_packages }}"

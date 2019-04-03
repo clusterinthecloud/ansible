@@ -14,5 +14,6 @@
     #- security-updates
     - ntp
     - sssd
+    - packages
     - slurm
     - monitoring
