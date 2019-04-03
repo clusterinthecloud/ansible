@@ -119,7 +119,7 @@
   grafana_datasource:
     grafana_url: http://localhost:3000
     grafana_user: admin
-    grafana_password: {{ grafana_admin_password }}
+    grafana_password: "{{ grafana_admin_password }}"
     name: influxdb_telegraf
     ds_type: influxdb
     url: http://localhost:8086
@@ -134,7 +134,7 @@
   grafana_datasource:
     grafana_url: http://localhost:3000
     grafana_user: admin
-    grafana_password: {{ grafana_admin_password }}
+    grafana_password: "{{ grafana_admin_password }}"
     name: influxdb_slurm
     ds_type: influxdb
     url: http://localhost:8086
