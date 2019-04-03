@@ -186,6 +186,16 @@
     dest: /etc/citc/slurm_dashboard.json
   when: monitoring_role == "master"
 
+- name: Download Telegraf dashboard
+  get_url:
+    url: https://grafana.com/api/dashboards/928/revisions/3/download
+    dest: /etc/citc/928.json
+
+- replace:
+    path: /etc/citc/928.json
+    regexp: '\${DS_INFLUXDB_TELEGRAF}'
+    replace: 'influxdb_telegraf'
+
 - name: Import dashboard
   copy:
     dest: /etc/grafana/provisioning/dashboards/citc.yaml
