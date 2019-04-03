@@ -23,6 +23,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "influxdb_slurm",
+      "decimals": 0,
       "fill": 10,
       "gridPos": {
         "h": 11,
@@ -33,14 +34,14 @@
       "id": 2,
       "legend": {
         "avg": false,
-        "current": false,
+        "current": true,
         "hideEmpty": false,
         "hideZero": false,
         "max": false,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 0,
@@ -282,8 +283,9 @@
       },
       "yaxes": [
         {
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "Node count",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -295,7 +297,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
