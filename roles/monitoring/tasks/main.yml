@@ -191,7 +191,8 @@
     url: https://grafana.com/api/dashboards/928/revisions/3/download
     dest: /etc/citc/928.json
 
-- replace:
+- name: Set Influx datasource
+  replace:
     path: /etc/citc/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'
     replace: 'influxdb_telegraf'
