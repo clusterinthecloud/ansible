@@ -115,11 +115,11 @@
     owner: opc
     mode: 0700
 
-- name: Create influxdb datasource
+- name: Create influxdb telegraf datasource
   grafana_datasource:
     grafana_url: http://localhost:3000
     grafana_user: admin
-    grafana_password: admin
+    grafana_password: {{ grafana_admin_password }}
     name: influxdb_telegraf
     ds_type: influxdb
     url: http://localhost:8086
@@ -127,13 +127,14 @@
   when: monitoring_role == "master"
 
 - name: Create database
-  command: curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE slurm"
+  influxdb_database:
+      database_name: slurm
 
-- name: Create influxdb datasource
+- name: Create influxdb slurm datasource
   grafana_datasource:
     grafana_url: http://localhost:3000
     grafana_user: admin
-    grafana_password: admin
+    grafana_password: {{ grafana_admin_password }}
     name: influxdb_slurm
     ds_type: influxdb
     url: http://localhost:8086
