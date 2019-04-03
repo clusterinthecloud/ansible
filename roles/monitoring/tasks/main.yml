@@ -114,6 +114,7 @@
       echo "{{ grafana_admin_password }}"
     owner: opc
     mode: 0700
+  when: monitoring_role == "master"
 
 - name: Create influxdb telegraf datasource
   grafana_datasource:
@@ -129,6 +130,7 @@
 - name: Create database
   influxdb_database:
       database_name: slurm
+  when: monitoring_role == "master"
 
 - name: Create influxdb slurm datasource
   grafana_datasource:
