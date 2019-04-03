@@ -127,8 +127,20 @@
     database: telegraf
   when: monitoring_role == "master"
 
+- name: install pip
+  package:
+    name: python2-pip
+    state: present
+  when: monitoring_role == "master"
+
+- pip:
+    name: influxdb
+  when: monitoring_role == "master"
+
 - name: Create database
-  command: curl -i -XPOST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE slurm"
+  influxdb_database:
+      database_name: slurm
+  when: monitoring_role == "master"
 
 - name: Create influxdb slurm datasource
   grafana_datasource:
