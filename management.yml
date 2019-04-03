@@ -45,6 +45,7 @@
   hosts: all
   tags: finalise
   roles:
+    - sos
     - finalise
     - monitoring
     - clustershell
