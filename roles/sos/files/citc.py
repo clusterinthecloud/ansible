@@ -29,5 +29,9 @@ class Citc(Plugin, RedHatPlugin, DebianPlugin):
             '/home/opc/limits.yaml',
             '/home/opc/startnode.yaml',
             '/mnt/shared/etc/slurm/slurm.conf',
-            '/var/log/slurm/elastic.log'
+            '/var/log/slurm/elastic.log',
+            '/var/log/slurm/slurmctld.log',
+            '/etc/citc/mgmt_shape.yaml',
+            '/etc/citc/shapes.yaml',
+            '/etc/citc/startnode.yaml',
         ])
