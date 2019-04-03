@@ -1,6 +1,6 @@
 ---
 
-slurm_accounting_db_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,hexdigits') }}"
+slurm_accounting_db_password: "{{ lookup('password', '/tmp/slurmpasswordfile chars=ascii_letters,digits,hexdigits') }}"
 
 slurm_packages:
   - slurmctld
@@ -21,5 +21,6 @@ install_packages:
   - "@Development Tools"
 
 monitoring_role: master
+grafana_admin_password: "{{ lookup('password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
 
 bootstrap_ansible_pull_playbook: compute.yml

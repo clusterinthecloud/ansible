@@ -82,6 +82,39 @@
   notify:
     - restart firewalld
 
+- name: Check admin password
+  uri:
+    url: http://localhost:3000/api/admin/settings
+    user: admin
+    password: admin
+    force_basic_auth: "{{ grafana_admin_password }}"
+  ignore_errors: yes
+  register: grafana_password
+  when: monitoring_role == "master"
+
+- name: Set admin password
+  uri:
+    url: http://localhost:3000/api/user/password
+    user: admin
+    password: admin
+    force_basic_auth: yes
+    method: PUT
+    body_format: json
+    body: '{ "oldPassword": "admin", "newPassword": "{{ grafana_admin_password }}", "confirmNew": "{{ grafana_admin_password }}"}'
+  ignore_errors: '{{ ansible_check_mode }}'
+  when:
+    - monitoring_role == "master"
+    - grafana_password.status == 401
+
+- name: create get_secrets script
+  copy:
+    dest: /home/opc/get_secrets
+    content: |
+    #! /bin/bash
+    echo "{{ grafana_admin_password }}"
+    owner: opc
+    mode: 0700
+
 - name: Create influxdb datasource
   grafana_datasource:
     grafana_url: http://localhost:3000
