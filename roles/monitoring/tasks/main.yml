@@ -193,6 +193,5 @@
     grafana_password: "{{ grafana_admin_password }}"
     state: present
     path: /root/slurm_dashboard.json
-    message: Dashboard from import
     overwrite: yes
   when: monitoring_role == "master"
