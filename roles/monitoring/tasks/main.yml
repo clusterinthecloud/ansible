@@ -183,5 +183,23 @@
 - name: Copy in Slurm Grafana dashboard
   template:
     src: slurm_dashboard.json.j2
+    dest: /etc/citc/slurm_dashboard.json
+  when: monitoring_role == "master"
+
+- name: Import dashboard
+  copy:
     dest: /etc/grafana/provisioning/dashboards/slurm_dashboard.json
+    content: |
+      apiVersion: 1
+
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10 #how often Grafana will scan for changed dashboards
+        options:
+          path: /etc/citc/
+  notify: restart grafana
   when: monitoring_role == "master"
