@@ -188,7 +188,7 @@
 
 - name: Import dashboard
   copy:
-    dest: /etc/grafana/provisioning/dashboards/slurm_dashboard.json
+    dest: /etc/grafana/provisioning/dashboards/citc.yaml
     content: |
       apiVersion: 1
 
