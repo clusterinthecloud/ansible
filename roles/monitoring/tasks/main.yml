@@ -147,7 +147,7 @@
       done
 
       echo "nodestatuscount ${values:1}"
-    mode: a=,u+rwx
+    mode: a=rx,u+w
   when: monitoring_role == "master"
 
 - name: enable slurm monitoring in influx
