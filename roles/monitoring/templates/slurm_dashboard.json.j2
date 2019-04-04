@@ -22,7 +22,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "influxdb_slurm",
+      "datasource": "influxdb_telegraf",
       "decimals": 0,
       "fill": 10,
       "gridPos": {
@@ -82,7 +82,7 @@
           "groupBy": [
             {
               "params": [
-                "1m"
+                "10s"
               ],
               "type": "time"
             },
@@ -93,7 +93,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "count_idle",
+          "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -102,7 +102,7 @@
             [
               {
                 "params": [
-                  "value"
+                  "idle"
                 ],
                 "type": "field"
               },
@@ -119,7 +119,7 @@
           "groupBy": [
             {
               "params": [
-                "1m"
+                "10s"
               ],
               "type": "time"
             },
@@ -130,7 +130,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "count_idle#",
+          "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -139,7 +139,7 @@
             [
               {
                 "params": [
-                  "value"
+                  "idle#"
                 ],
                 "type": "field"
               },
@@ -156,7 +156,7 @@
           "groupBy": [
             {
               "params": [
-                "1m"
+                "10s"
               ],
               "type": "time"
             },
@@ -167,7 +167,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "count_allocated",
+          "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "D",
@@ -176,7 +176,7 @@
             [
               {
                 "params": [
-                  "value"
+                  "allocated"
                 ],
                 "type": "field"
               },
@@ -193,7 +193,7 @@
           "groupBy": [
             {
               "params": [
-                "1m"
+                "10s"
               ],
               "type": "time"
             },
@@ -204,7 +204,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "count_allocated#",
+          "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "C",
@@ -213,7 +213,7 @@
             [
               {
                 "params": [
-                  "value"
+                  "allocated#"
                 ],
                 "type": "field"
               },
@@ -230,7 +230,7 @@
           "groupBy": [
             {
               "params": [
-                "1m"
+                "10s"
               ],
               "type": "time"
             },
@@ -241,7 +241,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "count_down",
+          "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "E",
@@ -250,7 +250,7 @@
             [
               {
                 "params": [
-                  "value"
+                  "down"
                 ],
                 "type": "field"
               },

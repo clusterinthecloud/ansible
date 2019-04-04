@@ -127,33 +127,6 @@
     database: telegraf
   when: monitoring_role == "master"
 
-- name: install pip
-  package:
-    name: python2-pip
-    state: present
-  when: monitoring_role == "master"
-
-- name: install influxdb python bindings
-  pip:
-    name: influxdb
-  when: monitoring_role == "master"
-
-- name: Create database
-  influxdb_database:
-      database_name: slurm
-  when: monitoring_role == "master"
-
-- name: Create influxdb slurm datasource
-  grafana_datasource:
-    grafana_url: http://localhost:3000
-    grafana_user: admin
-    grafana_password: "{{ grafana_admin_password }}"
-    name: influxdb_slurm
-    ds_type: influxdb
-    url: http://localhost:8086
-    database: slurm
-  when: monitoring_role == "master"
-
 - name: install monitor_slurm script
   copy:
     dest: /usr/local/bin/monitor_slurm
@@ -162,24 +135,36 @@
       set -euo pipefail
       IFS=$'\n\t'
 
-      timestamp=$(echo $(date -u '+%s')000000000)
       data=$(sinfo --noheader --Format=StateLong,Nodes)
+
+      values=""
 
       for i in $data
       do
         state=$(echo $i | awk '{print $1}')
         count=$(echo $i | awk '{print $2}')
-        curl -i -XPOST 'http://localhost:8086/write?db=slurm' --data-binary "count_${state} value=${count} ${timestamp}"
+        values+=",${state}=${count}"
       done
+
+      echo "nodestatuscount ${values:1}"
     mode: a=,u+rwx
   when: monitoring_role == "master"
 
-# TODO Use https://github.com/influxdata/telegraf/tree/master/plugins/inputs/exec
-- name: run monitor_slurm on a cron
-  cron:
-    name: monitor_slurm
-    job: /usr/bin/timeout -sSIGINT 5s /usr/local/bin/monitor_slurm
-  when: monitoring_role == "master"
+- name: enable slurm monitoring in influx
+  ini_file:
+    path: /etc/telegraf/telegraf.conf
+    section: "[inputs.exec]"
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ keys|dict2items }}"
+  vars:
+    keys:
+      commands: '["/usr/local/bin/monitor_slurm"]'
+      timeout: '"5s"'
+      name_suffix: '"_slurm"'
+      data_format: '"influx"'
+  notify: restart telegraf
 
 - name: Copy in Slurm Grafana dashboard
   template:
