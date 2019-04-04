@@ -27,3 +27,18 @@
     user: opc
     state: present
     key: "{{ oci_ssh_key.ssh_public_key }}"
+
+- name: create default job in skel
+  copy:
+    dest: /etc/skel/job.slm
+    content: |
+      #! /bin/bash
+
+      #SBATCH --job-name=test
+      #SBATCH --nodes=1
+      #SBATCH --ntasks-per-node=2
+      #SBATCH --cpus-per-task=1
+      #SBATCH --time=5:00
+
+      srun -l hostname
+      sleep 60
