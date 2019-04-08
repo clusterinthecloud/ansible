@@ -1,0 +1,8 @@
+---
+- name: copy in CitC sosreport plugin
+  copy:
+    src: citc.py
+    dest: /usr/lib/python2.7/site-packages/sos/plugins/citc.py
+    owner: root
+    group: root
+    mode: 0644

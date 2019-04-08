@@ -45,9 +45,11 @@
   hosts: all
   tags: finalise
   roles:
+    - sos
     - finalise
     - monitoring
     - clustershell
+    - packages
     - debug-tools
     - lmod
     - easybuild

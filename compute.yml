@@ -15,5 +15,6 @@
     - ntp
     - sssd
     - lmod
+    - packages
     - slurm
     - monitoring
