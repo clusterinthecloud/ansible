@@ -23,11 +23,11 @@ def get_nodespace() -> Dict[str, str]:
     return load_yaml("/etc/citc/startnode.yaml")
 
 
-def get_subnet(oci_config, compartment_id: str, vcn_id: str, ad_number: str) -> str:
+def get_subnet(oci_config, compartment_id: str, vcn_id: str) -> str:
     """
     Get the relevant cluster subnet for a given compartment, VCN and AD
     """
-    return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.display_name == f"SubnetAD{ad_number}"][0]
+    return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.display_name == "Subnet"][0]
 
 def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
     """
@@ -51,7 +51,7 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
     ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
     ad = f"{nodespace['ad_root']}{ad_number}"
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], ad_number)
+    subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"])
     image_name = "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0" if "GPU" in shape else "Oracle-Linux-7.6-2019.02.20-0"
     image = get_images()[image_name][nodespace["region"]]
 
