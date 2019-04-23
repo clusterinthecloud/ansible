@@ -72,12 +72,16 @@ def serialize(data):
 
 
 def test_get_subnet(requests_mocker, oci_config):
-    subnet_id = "ocid0..subnet"
+    subnet1_id = "ocid0..subnet1"
+    subnet2_id = "ocid0..subnet2"
+    subnet3_id = "ocid0..subnet3"
 
     data = [
-        oci.core.models.Subnet(id="blah", display_name="Subnetblah"),
-        oci.core.models.Subnet(id="blah", display_name="Subnetfoo"),
-        oci.core.models.Subnet(id=subnet_id, display_name="Subnet"),
+        oci.core.models.Subnet(id="blah", display_name="Subnet3"),
+        oci.core.models.Subnet(id="blah", display_name="SubnetAD3X"),
+        oci.core.models.Subnet(id=subnet1_id, display_name="SubnetAD1"),
+        oci.core.models.Subnet(id=subnet2_id, display_name="SubnetAD2"),
+        oci.core.models.Subnet(id=subnet3_id, display_name="SubnetAD3"),
     ]
 
     requests_mocker.register_uri(
@@ -86,7 +90,9 @@ def test_get_subnet(requests_mocker, oci_config):
         text=json.dumps(serialize(data)),
     )
 
-    assert citc_oci.get_subnet(oci_config, "", "") == subnet_id
+    assert citc_oci.get_subnet(oci_config, "", "", "1") == subnet1_id
+    assert citc_oci.get_subnet(oci_config, "", "", "2") == subnet2_id
+    assert citc_oci.get_subnet(oci_config, "", "", "3") == subnet3_id
 
 
 @pytest.mark.parametrize(
@@ -112,7 +118,7 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
 
 
 def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
-    subnets = [oci.core.models.Subnet(id="ocid0..subnet", display_name="Subnet")]
+    subnets = [oci.core.models.Subnet(id="ocid0..subnet1", display_name="SubnetAD1")]
     requests_mocker.register_uri(
         "GET",
         "/20160918/subnets?compartmentId=&vcnId=",
@@ -129,7 +135,7 @@ def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
 
     node_config = citc_oci.create_node_config(oci_config, "foo1", None, nodespace, "")
 
-    assert node_config.subnet_id == "ocid0..subnet"
+    assert node_config.subnet_id == "ocid0..subnet1"
     assert node_config.availability_domain == "HERE-AD-1"
     assert node_config.shape == "shapeA"
 

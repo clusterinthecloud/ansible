@@ -8,6 +8,7 @@
 
 - hosts: compute
   roles:
+    - dhcp
     - filesystem
     - ssh
     #- security-updates

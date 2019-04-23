@@ -22,6 +22,7 @@
   hosts: all
   tags: common
   roles:
+    - dhcp
     - filesystem
     - ssh
     - security-updates
