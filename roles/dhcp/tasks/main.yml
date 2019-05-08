@@ -18,3 +18,9 @@
       subnetad1.clustervcn.oraclevcn.com
       subnetad2.clustervcn.oraclevcn.com
       subnetad3.clustervcn.oraclevcn.com
+
+- name: ensure OCI doesn't update /etc/resolv.conf
+  lineinfile:
+    path: /etc/oci-hostname.conf
+    regexp: '^PRESERVE_HOSTINFO'
+    line: 'PRESERVE_HOSTINFO=2'
