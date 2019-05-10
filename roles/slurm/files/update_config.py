@@ -26,7 +26,7 @@ def get_limits() -> Dict[str, Dict[str, str]]:
             if not isinstance(count, int):
                 raise SyntaxError
     for shape in limits:
-        if not re.match(r"", shape):
+        if re.match(r"\w{2}\.", shape) is None:
             raise ValueError
     return limits
 
