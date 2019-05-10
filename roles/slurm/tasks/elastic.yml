@@ -90,7 +90,7 @@
 
 - name: configure update_config script
   template:
-    src: update_config.j2
+    src: update_config.py
     dest: /usr/local/bin/update_config
     mode: 0755
 
