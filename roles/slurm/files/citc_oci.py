@@ -39,7 +39,7 @@ def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
     if not still_exist:
         return "TERMINATED"
     if len(still_exist) > 1:
-        log.error(f"{host}: Multiple matches found for {hostname}")
+        log.error(f"{hostname}: Multiple matches found for {hostname}")
     return still_exist[0].lifecycle_state
 
 
