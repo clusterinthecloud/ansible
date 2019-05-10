@@ -8,4 +8,4 @@
 - name: install lmod config
   copy:
     dest: /etc/profile.d/10-modules.sh
-    content: MODULEPATH={{ software_install_dir }}/modules/all
+    content: MODULEPATH={{ software_install_dir }}/manual_modules/
