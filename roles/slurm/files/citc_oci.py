@@ -105,8 +105,10 @@ async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_
 
     instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
 
+    loop = asyncio.get_event_loop()
     try:
-        instance = oci.core.ComputeClient(oci_config).launch_instance(instance_details).data
+        instance_result = await loop.run_in_executor(None, oci.core.ComputeClient(oci_config).launch_instance, instance_details)
+        instance = instance_result.data
     except oci.exceptions.ServiceError as e:
         log.error(f"{host}:  problem launching instance: {e}")
         return
