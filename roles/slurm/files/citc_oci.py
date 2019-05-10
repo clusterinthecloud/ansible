@@ -144,5 +144,6 @@ def get_images() -> Dict[str, Dict[str, str]]:
             "uk-london-1": "ocid1.image.oc1.uk-london-1.aaaaaaaarruepdlahln5fah4lvm7tsf4was3wdx75vfs6vljdke65imbqnhq",
             "us-ashburn-1": "ocid1.image.oc1.iad.aaaaaaaannaquxy7rrbrbngpaqp427mv426rlalgihxwdjrz3fr2iiaxah5a",
             "us-phoenix-1": "ocid1.image.oc1.phx.aaaaaaaacss7qgb6vhojblgcklnmcbchhei6wgqisqmdciu3l4spmroipghq",
+            "ap-tokyo-1": "ocid1.image.oc1.ap-tokyo-1.aaaaaaaairi7u3txkamxlw3kmw3dosbesrlm22vsh7yybhygzafd3awhlr5q",
         },
     }
