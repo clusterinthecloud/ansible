@@ -22,6 +22,7 @@ if unfinished_nodes:
 if not os.path.exists('/home/opc/limits.yaml'):
     print('Error: Could not find limits.yaml')
     print('Please create the file and rerun this script.')
+    print('See https://cluster-in-the-cloud.readthedocs.io/en/latest/finalise.html#setting-service-limits for details.')
     exit(1)
 
 subprocess.call(['sudo', '/usr/local/bin/update_config'])
