@@ -78,7 +78,7 @@
 
 - name: configure startnode script
   template:
-    src: startnode.j2
+    src: startnode.py
     dest: /usr/local/bin/startnode
     mode: 0755
 
@@ -90,7 +90,7 @@
 
 - name: configure update_config script
   template:
-    src: update_config.py
+    src: update_config.j2
     dest: /usr/local/bin/update_config
     mode: 0755
 
