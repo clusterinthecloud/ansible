@@ -16,7 +16,19 @@ def get_limits() -> Dict[str, Dict[str, str]]:
     Until OCI has an API to fetch service limits, we have to hard-code
     them in a file.
     """
-    return load_yaml("limits.yaml")
+    limits = load_yaml("limits.yaml")
+    for mappings in limits.values():
+        if not isinstance(mappings, dict):
+            raise SyntaxError
+        for ad, count in mappings.items():
+            if not isinstance(ad, int):
+                raise SyntaxError
+            if not isinstance(count, int):
+                raise SyntaxError
+    for shape in limits:
+        if not re.match(r"", shape):
+            raise ValueError
+    return limits
 
 
 def get_shapes() -> Dict[str, Dict[str, str]]:
@@ -78,7 +90,12 @@ if __name__ == "__main__":
 
     slurm_conf_filename = "/mnt/shared/etc/slurm/slurm.conf"
 
-    node_config = "\n".join(get_node_configs(get_limits(), get_shapes(), get_mgmt_info()))
+    try:
+        limits = get_limits()
+    except SyntaxError:
+        print("ERROR: Syntax error in `limits.yaml`.")
+        exit(1)
+    node_config = "\n".join(get_node_configs(limits, get_shapes(), get_mgmt_info()))
 
     chop = re.compile('(?<=# STARTNODES\n)(.*?)(?=\n?# ENDNODES)', re.DOTALL)
 
