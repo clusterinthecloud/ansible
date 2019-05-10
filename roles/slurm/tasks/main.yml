@@ -139,6 +139,12 @@
 - include_tasks: elastic.yml
   when: slurm_role == "mgmt"
 
+- name: start service slurmctld
+  service:
+    name: slurmctld
+    enabled: yes
+  when: slurm_role == "mgmt"
+
 - name: start service slurmdbd
   service:
     name: slurmdbd
