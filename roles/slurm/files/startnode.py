@@ -1,5 +1,6 @@
 #! /opt/oci/bin/python
 
+import asyncio
 import logging
 import subprocess
 import sys
@@ -16,8 +17,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     log.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 
-def main() -> None:
-
+async def main() -> None:
     oci_config = oci.config.from_file()
 
     nodespace = citc_oci.get_nodespace()
@@ -29,17 +29,23 @@ def main() -> None:
 
     hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=subprocess.PIPE).stdout.decode().split()
 
-    for host in hosts:
+    await asyncio.gather(*(
         citc_oci.start_node(oci_config, log, host, nodespace, ssh_keys)
-
+        for host in hosts
+    ))
 
 sys.excepthook = handle_exception
 
 if __name__ == "__main__":
-    main()
     log = logging.getLogger("startnode")
     log.setLevel(logging.INFO)
     handler = logging.FileHandler('/var/log/slurm/elastic.log')
     formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
+
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.close()
