@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import re
 import subprocess
@@ -93,7 +94,7 @@ async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_
 
     while get_node_state(oci_config, log, nodespace["compartment_id"], host) == "TERMINATING":
         log.info(f"{host}:  host is currently terminating. Waiting...")
-        time.sleep(5)
+        await asyncio.sleep(5)
 
     node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host)
     if node_state != "TERMINATED":
@@ -114,7 +115,7 @@ async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_
         node_id = instance.id
         while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
             log.info(f"{host}:  No VNIC attachment yet. Waiting...")
-            time.sleep(5)
+            await asyncio.sleep(5)
 
         vnic_id = oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data[0].vnic_id
         private_ip = oci.core.VirtualNetworkClient(oci_config).get_vnic(vnic_id).data.private_ip
