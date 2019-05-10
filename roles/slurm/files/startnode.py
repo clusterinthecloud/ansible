@@ -17,12 +17,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 
 def main() -> None:
-    log = logging.getLogger("startnode")
-    log.setLevel(logging.INFO)
-    handler = logging.FileHandler('/var/log/slurm/elastic.log')
-    formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
 
     oci_config = oci.config.from_file()
 
@@ -43,3 +37,9 @@ sys.excepthook = handle_exception
 
 if __name__ == "__main__":
     main()
+    log = logging.getLogger("startnode")
+    log.setLevel(logging.INFO)
+    handler = logging.FileHandler('/var/log/slurm/elastic.log')
+    formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
