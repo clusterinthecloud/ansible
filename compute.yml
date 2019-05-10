@@ -13,6 +13,7 @@
     #- security-updates
     - ntp
     - sssd
+    - lmod
     - packages
     - slurm
     - monitoring
