@@ -106,8 +106,13 @@ async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_
     instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
 
     loop = asyncio.get_event_loop()
+    retry_strategy_builder = oci.retry.RetryStrategyBuilder()
+    retry_strategy_builder.add_max_attempts(max_attempts=10).add_total_elapsed_time(total_elapsed_time_seconds=600)
+    retry_strategy = retry_strategy_builder.get_retry_strategy()
+    client = oci.core.ComputeClient(oci_config, retry_strategy=retry_strategy)
+
     try:
-        instance_result = await loop.run_in_executor(None, oci.core.ComputeClient(oci_config, retry_strategy=oci.retry.DEFAULT_RETRY_STRATEGY).launch_instance, instance_details)
+        instance_result = await loop.run_in_executor(None, client.launch_instance, instance_details)
         instance = instance_result.data
     except oci.exceptions.ServiceError as e:
         log.error(f"{host}:  problem launching instance: {e}")
