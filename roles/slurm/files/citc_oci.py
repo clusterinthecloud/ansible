@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import re
 import subprocess
@@ -39,7 +40,7 @@ def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
     if not still_exist:
         return "TERMINATED"
     if len(still_exist) > 1:
-        log.error(f"Multiple matches found for {hostname}")
+        log.error(f"{hostname}: Multiple matches found for {hostname}")
     return still_exist[0].lifecycle_state
 
 
@@ -88,41 +89,48 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     return ip, dns_ip, slurm_ip
 
 
-def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
-    log.info(f"Starting {host}")
+async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
+    log.info(f"{host}: Starting")
 
     while get_node_state(oci_config, log, nodespace["compartment_id"], host) == "TERMINATING":
-        log.info(" host is currently terminating. Waiting...")
-        time.sleep(5)
+        log.info(f"{host}:  host is currently terminating. Waiting...")
+        await asyncio.sleep(5)
 
     node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host)
     if node_state != "TERMINATED":
-        log.warning(f" host is already running with state {node_state}")
+        log.warning(f"{host}:  host is already running with state {node_state}")
         return
 
     ip, _dns_ip, slurm_ip = get_ip(host)
 
     instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
 
+    loop = asyncio.get_event_loop()
+    retry_strategy_builder = oci.retry.RetryStrategyBuilder()
+    retry_strategy_builder.add_max_attempts(max_attempts=10).add_total_elapsed_time(total_elapsed_time_seconds=600)
+    retry_strategy = retry_strategy_builder.get_retry_strategy()
+    client = oci.core.ComputeClient(oci_config, retry_strategy=retry_strategy)
+
     try:
-        instance = oci.core.ComputeClient(oci_config).launch_instance(instance_details).data
+        instance_result = await loop.run_in_executor(None, client.launch_instance, instance_details)
+        instance = instance_result.data
     except oci.exceptions.ServiceError as e:
-        log.error(f" problem launching instance: {e}")
+        log.error(f"{host}:  problem launching instance: {e}")
         return
 
     if not slurm_ip:
         node_id = instance.id
         while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
-            log.info(" No VNIC attachment yet. Waiting...")
-            time.sleep(5)
+            log.info(f"{host}:  No VNIC attachment yet. Waiting...")
+            await asyncio.sleep(5)
 
         vnic_id = oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data[0].vnic_id
         private_ip = oci.core.VirtualNetworkClient(oci_config).get_vnic(vnic_id).data.private_ip
 
-        log.info(f"  Private IP {private_ip}")
+        log.info(f"{host}:   Private IP {private_ip}")
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
 
-    log.info(f" Started {host}")
+    log.info(f"{host}:  Started")
     return instance
 
 

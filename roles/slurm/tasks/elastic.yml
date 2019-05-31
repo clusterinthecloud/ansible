@@ -77,8 +77,8 @@
     dest: /opt/oci/lib/python3.6/site-packages/citc_oci.py
 
 - name: configure startnode script
-  template:
-    src: startnode.j2
+  copy:
+    src: startnode.py
     dest: /usr/local/bin/startnode
     mode: 0755
 
