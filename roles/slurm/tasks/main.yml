@@ -140,10 +140,10 @@
   when: slurm_role == "mgmt" 
 
 - include_tasks: elastic_oci.yml
-  when: slurm_role == "mgmt" and cloud == "oracle"
+  when: slurm_role == "mgmt" and csp == "oracle"
 
 - include_tasks: elastic_gcp.yml
-  when: slurm_role == "mgmt" and cloud == "gcp"
+  when: slurm_role == "mgmt" and csp == "google-cloud"
 
 - name: start service slurmdbd
   service:
