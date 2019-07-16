@@ -137,7 +137,10 @@
     - restart slurmd
 
 - include_tasks: elastic.yml
-  when: slurm_role == "mgmt"
+  when: slurm_role == "mgmt" and cloud == "oracle"
+
+- include_tasks: elastic_gcp.yml
+  when: slurm_role == "mgmt" and cloud == "gcp"
 
 - name: start service slurmctld
   service:

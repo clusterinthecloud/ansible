@@ -1,0 +1,158 @@
+---
+- name: install Python 3.6
+  yum:
+    name:
+      - python36
+      - python36-pip
+      - python36-setuptools
+    state: installed
+
+- name: install tools
+  pip:
+    name:
+      - google-api-python-client
+      - google-auth-httplib2
+      - google-auth-oauthlib
+      - PyYAML
+    virtualenv: /opt/oci
+    virtualenv_command: /bin/python36 -m venv
+
+- name: create oci config directory
+  file:
+    path: "{{ slurm_elastic.oracle.config_directory }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: configure OCI config file
+  copy:
+    src: /home/opc/config
+    dest: "{{ slurm_elastic.oracle.config_directory }}/config"
+    owner: slurm
+    group: slurm
+    mode: 0400
+
+- name: create citc config dir
+  file:
+    path: /etc/citc
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: copy mgmt_shape.yaml
+  copy:
+    src: /home/opc/mgmt_shape.yaml
+    dest: /etc/citc/mgmt_shape.yaml
+    owner: slurm
+    group: slurm
+    mode: 0744
+
+- name: copy shapes.yaml
+  copy:
+    src: /home/opc/shapes.yaml
+    dest: /etc/citc/shapes.yaml
+    owner: slurm
+    group: slurm
+    mode: 0744
+
+- name: copy startnode.yaml
+  copy:
+    src: /home/opc/startnode.yaml
+    dest: /etc/citc/startnode.yaml
+    owner: slurm
+    group: slurm
+    mode: 0744
+
+- name: install startnode support module
+  copy:
+    src: citc_gcp.py   ### should have this to be generic
+    dest: /opt/oci/lib/python3.6/site-packages/citc_gcp.py
+
+- name: configure startnode script
+  template:
+    src: startnode.j2
+    dest: /usr/local/bin/startnode
+    mode: 0755
+
+- name: configure stopnode script
+  template:
+    src: stopnode.j2
+    dest: /usr/local/bin/stopnode
+    mode: 0755
+
+- name: configure update_config script
+  template:
+    src: update_config.j2
+    dest: /usr/local/bin/update_config
+    mode: 0755
+
+# TODO Replace this with openssh_keypair when we use Ansible 2.8
+- name: generate SSH host keys for compute nodespace
+  shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
+  args:
+    creates: "{{ item.path }}"
+  with_items:
+    - {"type": "ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
+    - {"type": "rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
+    - {"type": "ecdsa", "size": 521, "path": "/home/slurm/ssh_host_ecdsa_key"}
+
+- name: set ownership of host files
+  file:
+    path: "{{ item }}"
+    owner: slurm
+    group: slurm
+  loop:
+    - /home/slurm/ssh_host_ed25519_key
+    - /home/slurm/ssh_host_ed25519_key.pub
+    - /home/slurm/ssh_host_rsa_key
+    - /home/slurm/ssh_host_rsa_key.pub
+    - /home/slurm/ssh_host_ecdsa_key
+    - /home/slurm/ssh_host_ecdsa_key.pub
+
+- name: load the startnode config
+  include_vars:
+    file: /etc/citc/startnode.yaml
+    name: startnode_config
+
+- name: create cloud-init bootstrap script
+  copy:
+    content: |
+      #! /bin/bash
+
+      date
+
+      cat > /etc/ssh/ssh_host_ecdsa_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ecdsa_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key.pub') }}
+      EOF
+      cat > /etc/ssh/ssh_host_rsa_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_rsa_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_rsa_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_rsa_key.pub') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ed25519_key << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key') }}
+      EOF
+      cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
+      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
+      EOF
+      chmod 640 /etc/ssh/ssh_host_*
+      chmod 644 /etc/ssh/ssh_host_*.pub
+
+      yum install -y ansible git
+      cat > /root/hosts <<EOF
+      [compute]
+      $(hostname -f)
+      EOF
+      python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
+        --checkout={{ startnode_config.ansible_branch }} \
+        --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
+
+      date
+    dest: /home/slurm/bootstrap.sh
+    owner: slurm

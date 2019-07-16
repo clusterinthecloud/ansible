@@ -4,9 +4,9 @@ import asyncio
 import logging
 import subprocess
 import sys
-
-import citc_oci
-import oci
+import citc_gcp
+#import citc_oci
+#import oci
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):
@@ -18,9 +18,9 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 
 async def main() -> None:
-    oci_config = oci.config.from_file()
+    #oci_config = oci.config.from_file()
 
-    nodespace = citc_oci.get_nodespace()
+    nodespace = citc_.get_nodespace()
 
     keys_file = "/home/slurm/opc_authorized_keys"
 
@@ -30,7 +30,7 @@ async def main() -> None:
     hosts = subprocess.run(["scontrol", "show", "hostnames", sys.argv[1]], stdout=subprocess.PIPE).stdout.decode().split()
 
     await asyncio.gather(*(
-        citc_oci.start_node(oci_config, log, host, nodespace, ssh_keys)
+        citc_gcp.start_node( log, host, nodespace, ssh_keys)
         for host in hosts
     ))
 
