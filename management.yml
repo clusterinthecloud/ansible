@@ -51,3 +51,4 @@
     - clustershell
     - packages
     - debug-tools
+    - lmod

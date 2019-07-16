@@ -1,0 +1,11 @@
+---
+
+- name: install Lmod
+  package:
+    name: Lmod
+    state: present
+
+- name: install lmod config
+  copy:
+    dest: /etc/profile.d/10-modules.sh
+    content: MODULEPATH={{ software_install_dir }}/manual_modules/

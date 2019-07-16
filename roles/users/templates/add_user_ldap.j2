@@ -54,7 +54,7 @@ cp -r /etc/skel/. /mnt/shared/home/${USER}/
 mkdir ${HOMEROOT}/${USER}/.ssh
 chmod 700 ${HOMEROOT}/${USER}/.ssh
 
-wget ${SSHKEYS} --output-document=${HOMEROOT}/${USER}/.ssh/authorized_keys --quiet
+curl --silent --output ${HOMEROOT}/${USER}/.ssh/authorized_keys ${SSHKEYS}
 chmod 600 ${HOMEROOT}/${USER}/.ssh/authorized_keys
 
 chown -R ${USER}:users ${HOMEROOT}/${USER}
