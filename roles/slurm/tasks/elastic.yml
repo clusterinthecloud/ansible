@@ -7,37 +7,13 @@
       - python36-setuptools
     state: installed
 
-- name: install OCI tools
+- name: install common tools
   pip:
     name:
-      - oci
       - PyYAML
-    virtualenv: /opt/oci
+    virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python36 -m venv
 
-- name: create oci config directory
-  file:
-    path: "{{ slurm_elastic.oracle.config_directory }}"
-    state: directory
-    owner: slurm
-    group: slurm
-    mode: 0755
-
-- name: copy OCI private key
-  copy:
-    src: /home/opc/oci_api_key.pem
-    dest: "{{ slurm_elastic.oracle.config_directory }}/oci_api_key.pem"
-    owner: slurm
-    group: slurm
-    mode: 0400
-
-- name: configure OCI config file
-  copy:
-    src: /home/opc/config
-    dest: "{{ slurm_elastic.oracle.config_directory }}/config"
-    owner: slurm
-    group: slurm
-    mode: 0400
 
 - name: create citc config dir
   file:
@@ -70,11 +46,6 @@
     owner: slurm
     group: slurm
     mode: 0744
-
-- name: install startnode support module
-  copy:
-    src: citc_oci.py
-    dest: /opt/oci/lib/python3.6/site-packages/citc_oci.py
 
 - name: configure startnode script
   copy:
