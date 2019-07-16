@@ -9,6 +9,7 @@ import json
 import googleapiclient.discovery
 import logging
 import yaml
+import os
 import asyncio
 
 __all__ = ["get_nodespace", "start_node"]
@@ -136,8 +137,14 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
 
 
 def get_build():
-    credentials = service_account.Credentials.from_service_account_file(
-            '/home/davidy/secrets/ex-eccoe-university-bristol-52b726c8a1f3.json')
+
+    service_account_file = os.environ.get('SA_LOCATION', None)
+    if service_account_file:
+        credentials = service_account.Credentials.from_service_account_file(
+            service_account_file)
+    else:
+        credentials = None
+
     compute = googleapiclient.discovery.build('compute', 'v1', 
         credentials=credentials, cache_discovery=False)
     
@@ -205,10 +212,39 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
     log.info(f" Started {host}")
     return vm_ip
 
+def terminate_instance(log, hosts, nodespace = None):
+
+
+    gce_compute = get_build()
+
+    if not nodespace:
+        nodespace = get_nodespace()
+
+    project=nodespace["compartment_id"]
+    zone=nodespace["zone"]
+
+    for host in hosts:
+        log.info(f"Stopping {host}")
+
+
+        try:
+            response = gce_compute.instances()\
+                              .delete(project=project,
+                                       zone=zone,
+                                       instance=host)\
+                                       .execute()
+        except Exception as e:
+            log.error(f" problem while stopping: {e}")
+            continue
+
+    log.info(f" Stopped {host}")
+
 
 # [START run]
 async def do_create_instance():
 
+    
+    os.environ['SA_LOCATION'] = '/home/davidy/secrets/ex-eccoe-university-bristol-52b726c8a1f3.json'
     logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
     log = logging.getLogger("startnode")    
     
@@ -224,6 +260,11 @@ async def do_create_instance():
    
 
     log.info(f'Instances in project done')
+
+    log.info(f'Terminating')
+    terminate_instance(log, hosts, nodespace=get_nodespace('test_nodespace.yaml'))
+
+
     
 
 if __name__ == '__main__':   
