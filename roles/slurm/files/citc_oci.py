@@ -89,8 +89,9 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     return ip, dns_ip, slurm_ip
 
 
-async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
+async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     log.info(f"{host}: Starting")
+    oci_config = oci.config.from_file()
 
     while get_node_state(oci_config, log, nodespace["compartment_id"], host) == "TERMINATING":
         log.info(f"{host}:  host is currently terminating. Waiting...")
