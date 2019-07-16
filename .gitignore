@@ -1,4 +1,5 @@
 *.log
 *.retry
 .vagrant/
+.vscode/
 build/
