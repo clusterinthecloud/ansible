@@ -9,6 +9,7 @@ import json
 import googleapiclient.discovery
 import logging
 import yaml
+import asyncio
 
 __all__ = ["get_nodespace", "start_node"]
 
@@ -72,9 +73,9 @@ def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: st
 
 def get_shape(hostname):
 
-    #features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
-    #shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    return('n1-standard-1')
+    features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
+    shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
+    return(shape)
 
 
 def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str):
@@ -206,24 +207,32 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
 
 
 # [START run]
-def do_create_instance():
+async def do_create_instance():
 
     logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
     log = logging.getLogger("startnode")    
     
-    
-    #project = 'ex-eccoe-university-bristol'
-    #zone = 'europe-west4-a'
-    name = 'dy-test-node1'
+
+    hosts = ['dy-test-node1']
     
     log.info('Creating instance.')
 
-    ip = start_node( log, name, get_nodespace('test_nodespace.yaml'), "")
+    await asyncio.gather(*(
+        start_node( log, host,  get_nodespace('test_nodespace.yaml'), "")
+        for host in hosts
+    ))
+   
 
-    log.info(f'Instances in project {ip}')
+    log.info(f'Instances in project done')
     
 
-if __name__ == '__main__':    
-    do_create_instance()
+if __name__ == '__main__':   
+
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(do_create_instance())
+    finally:
+        loop.close() 
+    
 
 
