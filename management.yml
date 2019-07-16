@@ -5,7 +5,7 @@
     - name: copy over finisher script
       copy:
         src: roles/finalise/files/finish.py
-        dest: /home/opc/finish
+        dest: /usr/local/bin/finish
         mode: 0755
     - name: set motd
       copy:
