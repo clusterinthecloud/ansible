@@ -134,6 +134,25 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
     log.info(f"{host}:  Started")
     return instance
 
+def terminate_instance(log, hosts) 
+
+    config = oci.config.from_file()
+
+    nodespace = citc_oci.get_nodespace()
+    for host in hosts:
+        log.info(f"Stopping {host}")
+
+        try:
+            matching_nodes = oci.core.ComputeClient(config).list_instances(nodespace["compartment_id"], display_name=host).data
+            node_id = [n.id for n in matching_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
+
+            oci.core.ComputeClient(config).terminate_instance(node_id)
+        except Exception as e:
+            log.error(f" problem while stopping: {e}")
+            continue
+
+    log.info(f" Stopped {host}")
+
 
 def get_images() -> Dict[str, Dict[str, str]]:
     """
