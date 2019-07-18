@@ -118,7 +118,8 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
                     {'type': 'ONE_TO_ONE_NAT', 'name': 'External NAT'}
                 ]
             }
-        ]
+        ],
+        'minCpuPlatform': 'Intel Skylake'
     }
 
     return config
