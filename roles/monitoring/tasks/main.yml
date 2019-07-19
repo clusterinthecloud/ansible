@@ -55,8 +55,8 @@
   yum_repository:
     name: grafana
     description: Grafana
-    baseurl: https://packagecloud.io/grafana/stable/el/7/$basearch
-    gpgkey: https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+    baseurl: https://packages.grafana.com/oss/rpm
+    gpgkey: https://packages.grafana.com/gpg.key
   when: monitoring_role == "master"
 
 - name: install grafana package
