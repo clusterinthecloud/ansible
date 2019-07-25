@@ -180,7 +180,8 @@ def test_get_ip(host_good, scontrol_good, expected, mocker):
     assert citc_oci.get_ip("foo") == expected
 
 
-def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
+@pytest.mark.asyncio
+async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
@@ -220,6 +221,6 @@ def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
         text=json.dumps(serialize(vnic)),
     )
 
-    instance = citc_oci.start_node(oci_config, mocker.Mock(), "foo", nodespace, "")
+    instance = await citc_oci.start_node(oci_config, mocker.Mock(), "foo", nodespace, "")
 
     assert instance.id == "ocid0..instance.foo"

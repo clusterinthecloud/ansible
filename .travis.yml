@@ -6,7 +6,7 @@ python:
   - "3.6"
   - "3.7"
 
-install: pip install oci pytest-mock pyyaml ansible-lint mypy requests_mock
+install: pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock
 
 script:
   - pytest

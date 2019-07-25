@@ -16,3 +16,5 @@ filesystem_target_address: fileserver
 filesystem_mount_point: /shared
 
 ansible_pull_repo: https://github.com/ACRC/slurm-ansible-playbook.git
+
+software_install_dir: /mnt/{{ filesystem_mount_point }}
