@@ -134,7 +134,7 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
     log.info(f"{host}:  Started")
     return instance
 
-def terminate_instance(log, hosts) 
+def terminate_instance(log, hosts):
 
     config = oci.config.from_file()
 
