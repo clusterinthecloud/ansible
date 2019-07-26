@@ -6,7 +6,7 @@
 - name: ensure fileserver name exists
   lineinfile:
     dest: /etc/hosts
-    line: "{{ ansible_local.citc.fileserver_ip }}	fileserver"
+    line: "{{ ansible_local.citc.fileserver_ip }} fileserver"
     state: present
   when: ansible_local['citc']['csp'] == "google"
 

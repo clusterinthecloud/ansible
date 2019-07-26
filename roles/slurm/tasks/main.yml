@@ -137,7 +137,7 @@
     - restart slurmd
 
 - include_tasks: elastic.yml
-  when: slurm_role == "mgmt" 
+  when: slurm_role == "mgmt"
 
 - include_tasks: elastic_oci.yml
   when: slurm_role == "mgmt" and csp == "oracle"
