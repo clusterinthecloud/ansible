@@ -22,11 +22,11 @@
   register: oci_ssh_key
   when:
     - "'management' in group_names"
-    - ansible_local['citc']['csp'] == "oci"
+    - ansible_local['citc']['csp'] == "oracle"
 
 - name: Set authorized key taken from file
   authorized_key:
     user: opc
     state: present
     key: "{{ oci_ssh_key.ssh_public_key }}"
-  when: ansible_local['citc']['csp'] == "oci"
+  when: ansible_local['citc']['csp'] == "oracle"
