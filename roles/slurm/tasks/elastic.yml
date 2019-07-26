@@ -14,7 +14,6 @@
     virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python36 -m venv
 
-
 - name: create citc config dir
   file:
     path: /etc/citc

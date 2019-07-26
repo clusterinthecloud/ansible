@@ -30,9 +30,8 @@
     group: slurm
     mode: 0400
 
-
 - name: install startnode support module
   copy:
     src: citc_oci.py
-    dest: /opt/oci/lib/python3.6/site-packages/citc_cloud.py
+    dest: /opt/cloud_sdk/lib/python3.6/site-packages/citc_cloud.py
 
