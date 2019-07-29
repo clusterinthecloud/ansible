@@ -179,12 +179,14 @@
   get_url:
     url: https://grafana.com/api/dashboards/928/revisions/3/download
     dest: /etc/citc/928.json
+  when: monitoring_role == "master"
 
-- name: Set Influx datasource
+- name: Set Influx datasource on dashboard
   replace:
     path: /etc/citc/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'
     replace: 'influxdb_telegraf'
+  when: monitoring_role == "master"
 
 - name: Import dashboard
   copy:
