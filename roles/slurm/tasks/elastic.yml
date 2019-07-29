@@ -125,6 +125,7 @@
       [compute]
       $(hostname -f)
       EOF
+      mkdir /etc/ansible/facts.d/
       cat > /etc/ansible/facts.d/citc.fact <<EOF
       {"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
       EOF
