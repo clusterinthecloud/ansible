@@ -8,8 +8,9 @@
     dest: /etc/hosts
     line: "{{ ansible_local.citc.fileserver_ip }} fileserver"
     state: present
-  when: ansible_local['citc']['csp'] == "google"
-
+  when:
+    - ansible_local.citc is defined
+    - ansible_local.citc.csp == "google"
 
 - name: Mount shared file system
   mount:
