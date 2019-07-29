@@ -1,4 +1,4 @@
-#! /opt/oci/bin/python
+#! /opt/cloud_sdk/bin/python
 
 import asyncio
 import logging
