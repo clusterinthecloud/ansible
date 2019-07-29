@@ -138,7 +138,7 @@ def terminate_instance(log, hosts):
 
     config = oci.config.from_file()
 
-    nodespace = citc_oci.get_nodespace()
+    nodespace = get_nodespace()
     for host in hosts:
         log.info(f"Stopping {host}")
 
