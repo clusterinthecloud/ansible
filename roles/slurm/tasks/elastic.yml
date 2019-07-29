@@ -120,6 +120,10 @@
       chmod 640 /etc/ssh/ssh_host_*
       chmod 644 /etc/ssh/ssh_host_*.pub
 
+      cat > /etc/ansible/facts.d/citc.fact <<EOF
+      {"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
+      EOF
+
       yum install -y ansible git
       cat > /root/hosts <<EOF
       [compute]
