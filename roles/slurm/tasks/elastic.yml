@@ -29,10 +29,11 @@
     owner: slurm
     group: slurm
     mode: 0744
+  when: '"/home/opc/mgmt_shape.yaml" is exists'
 
 - name: copy shapes.yaml
   copy:
-    src: /home/opc/shapes.yaml
+    src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
     owner: slurm
     group: slurm
@@ -40,7 +41,7 @@
 
 - name: copy startnode.yaml
   copy:
-    src: /home/opc/startnode.yaml
+    src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
     owner: slurm
     group: slurm
