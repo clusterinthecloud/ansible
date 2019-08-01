@@ -2,9 +2,7 @@
 
 - name: install 389-ds-base
   package:
-    name:
-      - 389-ds-base
-      - 389-admin
+    name: 389-ds-base
 
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service
@@ -16,6 +14,6 @@
     dest: /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
-- name: run setup-ds-admin.pl
-  command: setup-ds-admin.pl --silent --file=/root/389ds.inf
+- name: run setup-ds.pl
+  command: setup-ds.pl --silent --file=/root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
