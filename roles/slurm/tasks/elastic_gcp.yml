@@ -5,10 +5,10 @@
       - google-api-python-client
       - google-auth-httplib2
       - google-auth-oauthlib
-    virtualenv: /opt/coud_sdk
+    virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python36 -m venv
 
 - name: install startnode support module
   copy:
-    src: citc_gcp.py   ### should have this to be generic
-    dest: /opt/oci/lib/python3.6/site-packages/citc_cloud.py
+    src: citc_gcp.py  # should have this to be generic
+    dest: /opt/cloud_sdk/lib/python3.6/site-packages/citc_cloud.py
