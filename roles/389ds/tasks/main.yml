@@ -1,8 +1,8 @@
 # Install 389-ds
 
-- name: install 389-ds
+- name: install 389-ds-base
   package:
-    name=389-ds
+    name=389-ds-base
 
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service
