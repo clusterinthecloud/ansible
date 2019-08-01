@@ -108,11 +108,10 @@
 
 - name: create get_secrets script
   copy:
-    dest: /home/opc/get_secrets
+    dest: /usr/local/sbin/get_secrets
     content: |
       #! /bin/bash
       echo "{{ grafana_admin_password }}"
-    owner: opc
     mode: 0700
   when: monitoring_role == "master"
 
