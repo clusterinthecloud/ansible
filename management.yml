@@ -53,10 +53,10 @@
   hosts: all
   tags: finalise
   roles:
-    - sos
     - finalise
     - monitoring
     - clustershell
     - packages
+    - sos
     - debug-tools
     - lmod
