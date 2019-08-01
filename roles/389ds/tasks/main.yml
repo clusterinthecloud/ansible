@@ -2,7 +2,9 @@
 
 - name: install 389-ds-base
   package:
-    name=389-ds-base
+    name:
+      - 389-ds-base
+      - 389-admin
 
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service
