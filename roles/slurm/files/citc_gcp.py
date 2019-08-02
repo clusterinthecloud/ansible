@@ -33,7 +33,7 @@ def get_subnet(gce_compute, compartment_id: str, subnet: str) -> str:
     return f"global/networks/{subnet}"
 
 
-def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
+def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[Dict]:
     filter_clause = f'(name={hostname})'
 
     result = gce_compute.instances().list(project=compartment_id, zone=zone, filter=filter_clause).execute()
@@ -42,7 +42,7 @@ def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) ->
     return item
 
 
-def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
+def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
@@ -81,7 +81,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     zone = nodespace["zone"]
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
-        user_data = f.read()
+        user_data = f.read().decode()
 
     machine_type = f"zones/{zone}/machineTypes/{shape}"
 
@@ -175,12 +175,12 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     gce_compute = get_build()
 
-    while get_node_state(gce_compute, log, project, zone, host) == "TERMINATING":
-        log.info(" host is currently terminating. Waiting...")
+    while get_node_state(gce_compute, log, project, zone, host) == "STOPPING":
+        log.info(" host is currently stopping. Waiting...")
         time.sleep(5)
 
     node_state = get_node_state(gce_compute, log, project, zone, host)
-    if node_state:
+    if node_state is not None:
         log.warning(f" host is already running with state {node_state}")
         return
 
