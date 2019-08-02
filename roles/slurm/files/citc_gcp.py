@@ -1,4 +1,3 @@
-import base64
 import re
 import subprocess
 import time
@@ -150,7 +149,7 @@ def get_build():
     return compute
 
 
-def wait_for_operation(compute, log, project, zone, operation):
+async def wait_for_operation(compute, log, project, zone, operation):
     log.info('Waiting for operation to finish...')
     while True:
         result = compute.zoneOperations().get(
@@ -175,9 +174,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     gce_compute = get_build()
 
-    while get_node_state(gce_compute, log, project, zone, host) == "STOPPING":
-        log.info(" host is currently stopping. Waiting...")
-        time.sleep(5)
+    while get_node_state(gce_compute, log, project, zone, host) in ["STOPPING", "TERMINATED"]:
+        log.info(" host is currently being deleted. Waiting...")
+        await asyncio.sleep(5)
 
     node_state = get_node_state(gce_compute, log, project, zone, host)
     if node_state is not None:
@@ -189,11 +188,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     instance_details = create_node_config(gce_compute, host, ip, nodespace, ssh_keys)
 
     try:
-        response = gce_compute.instances().insert(
-            project=project,
-            zone=zone,
-            body=instance_details).execute()
-        wait_for_operation(gce_compute, log, project, zone, response['name'])
+        inserter = gce_compute.instances().insert(project=project, zone=zone, body=instance_details)
+        response = await loop.run_in_executor(None, inserter.execute)
+        await loop.run_in_executor(None, wait_for_operation, gce_compute, log, project, zone, response['name'])
         vm_ip = get_ip_for_vm(gce_compute, log, project, zone, host)
     except Exception as e:
         log.error(f" problem launching instance: {e}")
