@@ -26,7 +26,7 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_subnet(gce_compute, compartment_id: str, subnet:str) -> str:
+def get_subnet(gce_compute, compartment_id: str, subnet: str) -> str:
     """
     Get the relevant cluster subnet for a given compartment, VCN and AD
     """
@@ -37,9 +37,8 @@ def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) ->
     filter_clause = f'(name={hostname})'
 
     result = gce_compute.instances().list(project=compartment_id, zone=zone, filter=filter_clause).execute()
-    log.info(f'get status {result}')
     item = result['items'][0] if 'items' in result else None
-    log.info(f'get items {item} ')
+    log.debug(f'get items {item}')
     return item
 
 
@@ -52,8 +51,7 @@ def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: s
     item = get_node(gce_compute, log, compartment_id, zone, hostname)
 
     if item:
-        status = item['status']
-        return status
+        return item['status']
     return None
 
 
@@ -71,7 +69,7 @@ def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: st
 def get_shape(hostname):
     features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    return(shape)
+    return shape
 
 
 def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str):
@@ -79,7 +77,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
     shape = get_shape(hostname)
-    subnet = get_subnet(gce_compute, nodespace["compartment_id"],nodespace["subnet"])
+    subnet = get_subnet(gce_compute, nodespace["compartment_id"], nodespace["subnet"])
     zone = nodespace["zone"]
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
@@ -213,7 +211,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     return vm_ip
 
 
-def terminate_instance(log, hosts, nodespace = None):
+def terminate_instance(log, hosts, nodespace=None):
     gce_compute = get_build()
 
     if not nodespace:
@@ -226,11 +224,11 @@ def terminate_instance(log, hosts, nodespace = None):
         log.info(f"Stopping {host}")
 
         try:
-            response = gce_compute.instances()\
-                              .delete(project=project,
-                                       zone=zone,
-                                       instance=host)\
-                                       .execute()
+            response = gce_compute.instances() \
+                .delete(project=project,
+                        zone=zone,
+                        instance=host) \
+                .execute()
         except Exception as e:
             log.error(f" problem while stopping: {e}")
             continue
@@ -241,7 +239,7 @@ def terminate_instance(log, hosts, nodespace = None):
 # [START run]
 async def do_create_instance():
     os.environ['SA_LOCATION'] = '/home/davidy/secrets/ex-eccoe-university-bristol-52b726c8a1f3.json'
-    logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
     log = logging.getLogger("startnode")
 
     hosts = ['dy-test-node1']
@@ -249,7 +247,7 @@ async def do_create_instance():
     log.info('Creating instance.')
 
     await asyncio.gather(*(
-        start_node( log, host,  get_nodespace('test_nodespace.yaml'), "")
+        start_node(log, host, get_nodespace('test_nodespace.yaml'), "")
         for host in hosts
     ))
 
