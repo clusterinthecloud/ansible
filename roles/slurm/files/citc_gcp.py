@@ -82,8 +82,8 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     subnet = get_subnet(gce_compute, nodespace["compartment_id"],nodespace["subnet"])
     zone = nodespace["zone"]
 
-    #with open("/home/slurm/bootstrap.sh", "rb") as f:
-    #    user_data = base64.b64encode(f.read()).decode()
+    with open("/home/slurm/bootstrap.sh", "rb") as f:
+        user_data = f.read()
 
     machine_type = f"zones/{zone}/machineTypes/{shape}"
 
@@ -114,7 +114,14 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
                 ]
             }
         ],
-        'minCpuPlatform': 'Intel Skylake'
+        'minCpuPlatform': 'Intel Skylake',
+
+        'metadata': {
+            'items': [{
+                'key': 'startup-script',
+                'value': user_data
+            }]
+        },
     }
 
     return config
