@@ -4,8 +4,6 @@ import subprocess
 import time
 from typing import Dict, Optional, Tuple
 from google.oauth2 import service_account
-from google.auth.transport.requests import AuthorizedSession
-import json
 import googleapiclient.discovery
 import logging
 import yaml
@@ -35,12 +33,10 @@ def get_subnet(gce_compute, compartment_id: str, subnet:str) -> str:
     return f"global/networks/{subnet}"
 
 
-
-
 def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
     filter_clause = f'(name={hostname})'
-    
-    result = gce_compute.instances().list(project=compartment_id,zone=zone, filter=filter_clause).execute()
+
+    result = gce_compute.instances().list(project=compartment_id, zone=zone, filter=filter_clause).execute()
     log.info(f'get status {result}')
     item = result['items'][0] if 'items' in result else None
     log.info(f'get items {item} ')
@@ -54,7 +50,7 @@ def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: s
     """
 
     item = get_node(gce_compute, log, compartment_id, zone, hostname)
-    
+
     if item:
         status = item['status']
         return status
@@ -62,18 +58,17 @@ def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: s
 
 
 def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
-    
     filter_clause = f'(name={hostname})'
     item = get_node(gce_compute, log, compartment_id, zone, hostname)
-    
+
     network = item['networkInterfaces'][0]
     log.info(f'network {network}')
     ip = network['networkIP']
     log.info(f'ip address = {ip}')
     return ip
 
-def get_shape(hostname):
 
+def get_shape(hostname):
     features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     return(shape)
@@ -91,7 +86,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     #    user_data = base64.b64encode(f.read()).decode()
 
     machine_type = f"zones/{zone}/machineTypes/{shape}"
-    
+
     image_response = gce_compute.images().getFromFamily(
         project='gce-uefi-images', family='centos-7').execute()
     source_disk_image = image_response['selfLink']
@@ -113,7 +108,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
             {
                 'network': subnet,
                 'addressType': 'INTERNAL',
-                'address': ip,            
+                'address': ip,
                 'accessConfigs': [
                     {'type': 'ONE_TO_ONE_NAT', 'name': 'External NAT'}
                 ]
@@ -138,7 +133,6 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
 
 
 def get_build():
-
     service_account_file = os.environ.get('SA_LOCATION', None)
     if service_account_file:
         credentials = service_account.Credentials.from_service_account_file(
@@ -146,11 +140,10 @@ def get_build():
     else:
         credentials = None
 
-    compute = googleapiclient.discovery.build('compute', 'v1', 
-        credentials=credentials, cache_discovery=False)
-    
+    compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials, cache_discovery=False)
 
-    return(compute)
+    return compute
+
 
 def wait_for_operation(compute, log, project, zone, operation):
     log.info('Waiting for operation to finish...')
@@ -168,13 +161,13 @@ def wait_for_operation(compute, log, project, zone, operation):
 
         time.sleep(1)
 
-async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
-    
-    project=nodespace["compartment_id"]
-    zone=nodespace["zone"]
+
+async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
+    project = nodespace["compartment_id"]
+    zone = nodespace["zone"]
 
     log.info(f"Starting {host} in {project} {zone}")
-    
+
     gce_compute = get_build()
 
     while get_node_state(gce_compute, log, project, zone, host) == "TERMINATING":
@@ -190,7 +183,6 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
 
     instance_details = create_node_config(gce_compute, host, ip, nodespace, ssh_keys)
 
-
     try:
         response = gce_compute.instances().insert(
             project=project,
@@ -202,7 +194,7 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
         log.error(f" problem launching instance: {e}")
         return
 
-    if not slurm_ip:        
+    if not slurm_ip:
         private_ip = vm_ip
 
         log.info(f"  Private IP {private_ip}")
@@ -213,20 +205,18 @@ async def start_node( log, host: str, nodespace: Dict[str, str], ssh_keys: str) 
     log.info(f" Started {host}")
     return vm_ip
 
+
 def terminate_instance(log, hosts, nodespace = None):
-
-
     gce_compute = get_build()
 
     if not nodespace:
         nodespace = get_nodespace()
 
-    project=nodespace["compartment_id"]
-    zone=nodespace["zone"]
+    project = nodespace["compartment_id"]
+    zone = nodespace["zone"]
 
     for host in hosts:
         log.info(f"Stopping {host}")
-
 
         try:
             response = gce_compute.instances()\
@@ -243,22 +233,18 @@ def terminate_instance(log, hosts, nodespace = None):
 
 # [START run]
 async def do_create_instance():
-
-    
     os.environ['SA_LOCATION'] = '/home/davidy/secrets/ex-eccoe-university-bristol-52b726c8a1f3.json'
     logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
-    log = logging.getLogger("startnode")    
-    
+    log = logging.getLogger("startnode")
 
     hosts = ['dy-test-node1']
-    
+
     log.info('Creating instance.')
 
     await asyncio.gather(*(
         start_node( log, host,  get_nodespace('test_nodespace.yaml'), "")
         for host in hosts
     ))
-   
 
     log.info(f'Instances in project done')
 
@@ -266,15 +252,9 @@ async def do_create_instance():
     terminate_instance(log, hosts, nodespace=get_nodespace('test_nodespace.yaml'))
 
 
-    
-
-if __name__ == '__main__':   
-
+if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(do_create_instance())
     finally:
-        loop.close() 
-    
-
-
+        loop.close()
