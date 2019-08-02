@@ -17,7 +17,6 @@ install_packages:
   - mpich-devel
   - openmpi-devel
   - openmpi3-devel
-  - devtoolset-8
   - "@Development Tools"
   - sos
 

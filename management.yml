@@ -57,6 +57,7 @@
     - monitoring
     - clustershell
     - packages
+    - devtoolset
     - sos
     - debug-tools
     - lmod
