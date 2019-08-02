@@ -55,13 +55,11 @@ def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: s
 
 
 def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
-    filter_clause = f'(name={hostname})'
     item = get_node(gce_compute, log, compartment_id, zone, hostname)
 
     network = item['networkInterfaces'][0]
-    log.info(f'network {network}')
+    log.debug(f'network {network}')
     ip = network['networkIP']
-    log.info(f'ip address = {ip}')
     return ip
 
 
@@ -187,25 +185,26 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     instance_details = create_node_config(gce_compute, host, ip, nodespace, ssh_keys)
 
+    loop = asyncio.get_event_loop()
+
     try:
         inserter = gce_compute.instances().insert(project=project, zone=zone, body=instance_details)
         response = await loop.run_in_executor(None, inserter.execute)
-        await loop.run_in_executor(None, wait_for_operation, gce_compute, log, project, zone, response['name'])
-        vm_ip = get_ip_for_vm(gce_compute, log, project, zone, host)
     except Exception as e:
         log.error(f" problem launching instance: {e}")
         return
 
     if not slurm_ip:
-        private_ip = vm_ip
+        while not get_node(gce_compute, log, project, zone, host)['networkInterfaces'][0].get("networkIP"):
+            log.info(f"{host}:  No VNIC attachment yet. Waiting...")
+            await asyncio.sleep(5)
+        vm_ip = get_ip_for_vm(gce_compute, log, project, zone, host)
 
-        log.info(f"  Private IP {private_ip}")
+        log.info(f"  Private IP {vm_ip}")
 
-        ## Can't we just update this anyway?
-        subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
+        subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={vm_ip}"])
 
     log.info(f" Started {host}")
-    return vm_ip
 
 
 def terminate_instance(log, hosts, nodespace=None):
