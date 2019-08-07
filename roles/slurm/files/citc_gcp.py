@@ -29,7 +29,7 @@ def get_subnet(gce_compute, compartment_id: str, subnet: str) -> str:
     """
     Get the relevant cluster subnet for a given compartment, VCN and AD
     """
-    return f"global/networks/{subnet}"
+    return subnet
 
 
 def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[Dict]:
@@ -101,9 +101,9 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
         ],
         'networkInterfaces': [
             {
-                'network': subnet,
-                'addressType': 'INTERNAL',
-                'address': ip,
+                'subnetwork': subnet,
+                'addressType': 'INTERNAL',  # Can't find this in the docs...
+                'address': ip,  # should be networkIP?
                 'accessConfigs': [
                     {'type': 'ONE_TO_ONE_NAT', 'name': 'External NAT'}
                 ]
