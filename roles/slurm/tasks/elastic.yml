@@ -118,7 +118,7 @@
       cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
       {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
       EOF
-      chmod 640 /etc/ssh/ssh_host_*
+      chmod 600 /etc/ssh/ssh_host_*
       chmod 644 /etc/ssh/ssh_host_*.pub
 
       yum install -y ansible git
