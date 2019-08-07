@@ -117,6 +117,12 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
                 'value': user_data
             }]
         },
+
+        'tags': {
+            "items": [
+                "compute",
+            ],
+        },
     }
 
     return config
