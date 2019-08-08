@@ -12,3 +12,17 @@
   copy:
     src: citc_gcp.py  # should have this to be generic
     dest: /opt/cloud_sdk/lib/python3.6/site-packages/citc_cloud.py
+
+- name: copy mgmt-sa-credentials.json
+  copy:
+    src: /tmp/mgmt-sa-credentials.json
+    dest: /home/slurm/mgmt-sa-credentials.json
+    owner: slurm
+    group: slurm
+    mode: 0744
+  when: '"/tmp/mgmt-sa-credentials.json" is exists'
+
+- name: delete public mgmt-sa-credentials.json
+  file:
+    path: /tmp/mgmt-sa-credentials.json
+    state: absent
