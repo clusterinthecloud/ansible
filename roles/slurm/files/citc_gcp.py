@@ -2,8 +2,8 @@ import re
 import subprocess
 import time
 from typing import Dict, Optional, Tuple
-from google.oauth2 import service_account
-import googleapiclient.discovery
+from google.oauth2 import service_account  # type: ignore
+import googleapiclient.discovery  # type: ignore
 import logging
 import yaml
 import os
@@ -26,7 +26,7 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[Dict]:
+def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Dict:
     filter_clause = f'(name={hostname})'
 
     result = gce_compute.instances().list(project=compartment_id, zone=zone, filter=filter_clause).execute()
