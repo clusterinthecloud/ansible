@@ -26,13 +26,6 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_subnet(gce_compute, compartment_id: str, subnet: str) -> str:
-    """
-    Get the relevant cluster subnet for a given compartment, VCN and AD
-    """
-    return subnet
-
-
 def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[Dict]:
     filter_clause = f'(name={hostname})'
 
@@ -75,7 +68,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
     shape = get_shape(hostname)
-    subnet = get_subnet(gce_compute, nodespace["compartment_id"], nodespace["subnet"])
+    subnet = nodespace["subnet"]
     zone = nodespace["zone"]
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
@@ -111,14 +104,12 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
             }
         ],
         'minCpuPlatform': 'Intel Skylake',
-
         'metadata': {
             'items': [{
                 'key': 'startup-script',
                 'value': user_data
             }]
         },
-
         'tags': {
             "items": [
                 "compute",
@@ -151,23 +142,6 @@ def get_build():
     compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials, cache_discovery=False)
 
     return compute
-
-
-async def wait_for_operation(compute, log, project, zone, operation):
-    log.info('Waiting for operation to finish...')
-    while True:
-        result = compute.zoneOperations().get(
-            project=project,
-            zone=zone,
-            operation=operation).execute()
-        log.info("Wait result=%s", result)
-        if result['status'] == 'DONE':
-            logging.info("done.")
-            if 'error' in result:
-                raise Exception(result['error'])
-            return result
-
-        time.sleep(1)
 
 
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
