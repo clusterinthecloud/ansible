@@ -7,6 +7,7 @@ import googleapiclient.discovery
 import logging
 import yaml
 import os
+from pathlib import Path
 import asyncio
 
 __all__ = ["get_nodespace", "start_node"]
@@ -141,10 +142,9 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
 
 
 def get_build():
-    service_account_file = os.environ.get('SA_LOCATION', None)
-    if service_account_file:
-        credentials = service_account.Credentials.from_service_account_file(
-            service_account_file)
+    service_account_file = Path(os.environ.get('SA_LOCATION', '/home/slurm/mgmt-sa-credentials.json'))
+    if service_account_file.exists():
+        credentials = service_account.Credentials.from_service_account_file(service_account_file)
     else:
         credentials = None
 

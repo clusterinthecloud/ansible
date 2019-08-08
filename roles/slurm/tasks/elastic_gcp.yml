@@ -19,7 +19,7 @@
     dest: /home/slurm/mgmt-sa-credentials.json
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: 0700
   when: '"/tmp/mgmt-sa-credentials.json" is exists'
 
 - name: delete public mgmt-sa-credentials.json
