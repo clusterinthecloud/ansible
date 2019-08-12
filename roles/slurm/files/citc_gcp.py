@@ -76,8 +76,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
 
     machine_type = f"zones/{zone}/machineTypes/{shape}"
 
-    image_response = gce_compute.images().getFromFamily(
-        project='gce-uefi-images', family='centos-7').execute()
+    image_response = gce_compute.images().getFromFamily(project='gce-uefi-images', family='centos-7').execute()
     source_disk_image = image_response['selfLink']
 
     config = {
@@ -132,12 +131,15 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     return ip, dns_ip, slurm_ip
 
 
-def get_build():
+def get_credentials():
     service_account_file = Path(os.environ.get('SA_LOCATION', '/home/slurm/mgmt-sa-credentials.json'))
     if service_account_file.exists():
-        credentials = service_account.Credentials.from_service_account_file(service_account_file)
-    else:
-        credentials = None
+        return service_account.Credentials.from_service_account_file(service_account_file)
+    return None
+
+
+def get_build():
+    credentials = get_credentials()
 
     compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials, cache_discovery=False)
 
@@ -169,7 +171,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     try:
         inserter = gce_compute.instances().insert(project=project, zone=zone, body=instance_details)
-        response = await loop.run_in_executor(None, inserter.execute)
+        instance = await loop.run_in_executor(None, inserter.execute)
     except Exception as e:
         log.error(f" problem launching instance: {e}")
         return
@@ -185,6 +187,8 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={vm_ip}"])
 
     log.info(f" Started {host}")
+
+    return instance
 
 
 def terminate_instance(log, hosts, nodespace=None):
