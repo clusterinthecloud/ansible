@@ -12,7 +12,7 @@
     name:
       - PyYAML
     virtualenv: /opt/cloud_sdk
-    virtualenv_command: /bin/python36 -m venv
+    virtualenv_command: /bin/python3 -m venv
 
 - name: create citc config dir
   file:
