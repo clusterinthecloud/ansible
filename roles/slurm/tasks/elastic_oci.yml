@@ -4,7 +4,6 @@
     name:
       - oci
     virtualenv: /opt/cloud_sdk
-    virtualenv_command: /bin/python36 -m venv
 
 - name: create oci config directory
   file:

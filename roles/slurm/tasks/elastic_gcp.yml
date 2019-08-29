@@ -6,7 +6,6 @@
       - google-auth-httplib2
       - google-auth-oauthlib
     virtualenv: /opt/cloud_sdk
-    virtualenv_command: /bin/python36 -m venv
 
 - name: install startnode support module
   copy:
