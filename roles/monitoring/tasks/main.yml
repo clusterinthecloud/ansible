@@ -108,7 +108,7 @@
 
 - name: create get_secrets script
   copy:
-    dest: /usr/local/sbin/get_secrets
+    dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash
       echo "{{ grafana_admin_password }}"
