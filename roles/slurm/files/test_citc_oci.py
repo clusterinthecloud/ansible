@@ -115,7 +115,7 @@ def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
     subnets = [oci.core.models.Subnet(id="ocid0..subnet", display_name="Subnet")]
     requests_mocker.register_uri(
         "GET",
-        "/20160918/subnets?compartmentId=&vcnId=",
+        "/20160918/subnets?compartmentId=ocid1.compartment.oc1..aaaaa&vcnId=ocid1.vcn.oc1..aaaaa",
         text=json.dumps(serialize(subnets)),
     )
 
