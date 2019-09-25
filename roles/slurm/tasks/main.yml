@@ -139,6 +139,12 @@
 - include_tasks: elastic.yml
   when: slurm_role == "mgmt"
 
+- include_tasks: elastic_oci.yml
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "oracle"
+
+- include_tasks: elastic_gcp.yml
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "google"
+
 - name: start service slurmctld
   service:
     name: slurmctld

@@ -108,11 +108,10 @@
 
 - name: create get_secrets script
   copy:
-    dest: /home/opc/get_secrets
+    dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash
       echo "{{ grafana_admin_password }}"
-    owner: opc
     mode: 0700
   when: monitoring_role == "master"
 
@@ -181,7 +180,7 @@
     dest: /etc/citc/928.json
   when: monitoring_role == "master"
 
-- name: Set Influx datasource
+- name: Set Influx datasource on dashboard
   replace:
     path: /etc/citc/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'

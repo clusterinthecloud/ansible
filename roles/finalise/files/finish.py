@@ -19,8 +19,8 @@ if unfinished_nodes:
     print('For information about why they have not finished, SSH to that machine and check the file /root/ansible-pull.log')
     exit(1)
 
-if not os.path.exists('/home/opc/limits.yaml'):
-    print('Error: Could not find limits.yaml')
+if not os.path.exists('limits.yaml'):
+    print('Error: Could not find limits.yaml in this directory')
     print('Please create the file and rerun this script.')
     print('See https://cluster-in-the-cloud.readthedocs.io/en/latest/finalise.html#setting-service-limits for details.')
     exit(1)

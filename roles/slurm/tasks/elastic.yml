@@ -7,37 +7,12 @@
       - python36-setuptools
     state: installed
 
-- name: install OCI tools
+- name: install common tools
   pip:
     name:
-      - oci
       - PyYAML
-    virtualenv: /opt/oci
+    virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python3 -m venv
-
-- name: create oci config directory
-  file:
-    path: "{{ slurm_elastic.oracle.config_directory }}"
-    state: directory
-    owner: slurm
-    group: slurm
-    mode: 0755
-
-- name: copy OCI private key
-  copy:
-    src: /home/opc/oci_api_key.pem
-    dest: "{{ slurm_elastic.oracle.config_directory }}/oci_api_key.pem"
-    owner: slurm
-    group: slurm
-    mode: 0400
-
-- name: configure OCI config file
-  copy:
-    src: /home/opc/config
-    dest: "{{ slurm_elastic.oracle.config_directory }}/config"
-    owner: slurm
-    group: slurm
-    mode: 0400
 
 - name: create citc config dir
   file:
@@ -54,10 +29,11 @@
     owner: slurm
     group: slurm
     mode: 0744
+  when: '"/home/opc/mgmt_shape.yaml" is exists'
 
 - name: copy shapes.yaml
   copy:
-    src: /home/opc/shapes.yaml
+    src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
     owner: slurm
     group: slurm
@@ -65,16 +41,11 @@
 
 - name: copy startnode.yaml
   copy:
-    src: /home/opc/startnode.yaml
+    src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
     owner: slurm
     group: slurm
     mode: 0744
-
-- name: install startnode support module
-  copy:
-    src: citc_oci.py
-    dest: /opt/oci/lib/python3.6/site-packages/citc_oci.py
 
 - name: configure startnode script
   copy:
@@ -147,13 +118,17 @@
       cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
       {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
       EOF
-      chmod 640 /etc/ssh/ssh_host_*
+      chmod 600 /etc/ssh/ssh_host_*
       chmod 644 /etc/ssh/ssh_host_*.pub
 
       yum install -y ansible git
       cat > /root/hosts <<EOF
       [compute]
       $(hostname -f)
+      EOF
+      mkdir /etc/ansible/facts.d/
+      cat > /etc/ansible/facts.d/citc.fact <<EOF
+      {"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
       EOF
       python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
         --checkout={{ startnode_config.ansible_branch }} \
