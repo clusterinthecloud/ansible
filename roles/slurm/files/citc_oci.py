@@ -30,6 +30,7 @@ def get_subnet(oci_config, compartment_id: str, vcn_id: str, ad_number: str) -> 
     """
     return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.display_name == f"SubnetAD{ad_number}"][0]
 
+
 def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
     """
     Get the current node state of the VM for the given hostname
@@ -89,8 +90,9 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     return ip, dns_ip, slurm_ip
 
 
-async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
+async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     log.info(f"{host}: Starting")
+    oci_config = oci.config.from_file()
 
     while get_node_state(oci_config, log, nodespace["compartment_id"], host) == "TERMINATING":
         log.info(f"{host}:  host is currently terminating. Waiting...")
@@ -132,6 +134,25 @@ async def start_node(oci_config, log, host: str, nodespace: Dict[str, str], ssh_
 
     log.info(f"{host}:  Started")
     return instance
+
+def terminate_instance(log, hosts):
+
+    config = oci.config.from_file()
+
+    nodespace = get_nodespace()
+    for host in hosts:
+        log.info(f"Stopping {host}")
+
+        try:
+            matching_nodes = oci.core.ComputeClient(config).list_instances(nodespace["compartment_id"], display_name=host).data
+            node_id = [n.id for n in matching_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
+
+            oci.core.ComputeClient(config).terminate_instance(node_id)
+        except Exception as e:
+            log.error(f" problem while stopping: {e}")
+            continue
+
+    log.info(f" Stopped {host}")
 
 
 def get_images() -> Dict[str, Dict[str, str]]:

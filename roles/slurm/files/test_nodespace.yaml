@@ -1,0 +1,4 @@
+ad_root: "HERE-AD-"
+compartment_id: "ex-eccoe-university-bristol"
+zone: 'europe-west4-a'
+subnet: 'default'
