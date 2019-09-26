@@ -24,7 +24,9 @@ jobs:
     - name: Test with pytest
       run: pytest
     - name: Ansible lint
-      run: ansible-lint compute.yml
+      run: |
+        ansible-lint compute.yml
+        ansible-lint management.yml
     - name: Type check
       run: |
         mypy roles/slurm/files/citc_oci.py
