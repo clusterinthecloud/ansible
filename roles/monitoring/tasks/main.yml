@@ -55,8 +55,8 @@
   yum_repository:
     name: grafana
     description: Grafana
-    baseurl: https://packagecloud.io/grafana/stable/el/7/$basearch
-    gpgkey: https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+    baseurl: https://packages.grafana.com/oss/rpm
+    gpgkey: https://packages.grafana.com/gpg.key
   when: monitoring_role == "master"
 
 - name: install grafana package
@@ -108,11 +108,10 @@
 
 - name: create get_secrets script
   copy:
-    dest: /home/opc/get_secrets
+    dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash
       echo "{{ grafana_admin_password }}"
-    owner: opc
     mode: 0700
   when: monitoring_role == "master"
 
@@ -179,12 +178,14 @@
   get_url:
     url: https://grafana.com/api/dashboards/928/revisions/3/download
     dest: /etc/citc/928.json
+  when: monitoring_role == "master"
 
-- name: Set Influx datasource
+- name: Set Influx datasource on dashboard
   replace:
     path: /etc/citc/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'
     replace: 'influxdb_telegraf'
+  when: monitoring_role == "master"
 
 - name: Import dashboard
   copy:

@@ -1,0 +1,9 @@
+---
+- name: install SCL repo
+  package:
+    name: centos-release-scl
+  when: ansible_distribution == 'CentOS'
+
+- name: install devtoolset
+  package:
+    name: devtoolset-8

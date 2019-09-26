@@ -115,7 +115,7 @@ def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
     subnets = [oci.core.models.Subnet(id="ocid0..subnet", display_name="Subnet")]
     requests_mocker.register_uri(
         "GET",
-        "/20160918/subnets?compartmentId=&vcnId=",
+        "/20160918/subnets?compartmentId=ocid1.compartment.oc1..aaaaa&vcnId=ocid1.vcn.oc1..aaaaa",
         text=json.dumps(serialize(subnets)),
     )
 
@@ -182,6 +182,8 @@ def test_get_ip(host_good, scontrol_good, expected, mocker):
 
 @pytest.mark.asyncio
 async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
+    mocker.patch("oci.config.from_file", return_value=oci_config)
+
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
@@ -221,6 +223,6 @@ async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
         text=json.dumps(serialize(vnic)),
     )
 
-    instance = await citc_oci.start_node(oci_config, mocker.Mock(), "foo", nodespace, "")
+    instance = await citc_oci.start_node(mocker.Mock(), "foo", nodespace, "")
 
     assert instance.id == "ocid0..instance.foo"

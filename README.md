@@ -1,3 +1,3 @@
-# Addomer
+# Ansible configuration for Cluster in the Cloud
 
-Ansible scripts for Addomer.
+https://cluster-in-the-cloud.readthedocs.io
