@@ -18,13 +18,13 @@
     enabled: yes
     state: started
 
-- name: Add Slurm COPR repository
+- name: Add Slurm repository
   yum_repository:
     name: slurm
     description: Slurm
-    baseurl: https://copr-be.cloud.fedoraproject.org/results/milliams/citc/epel-7-$basearch/
+    baseurl: https://download.opensuse.org/repositories/home:/Milliams:/citc/CentOS%20EPEL/
     gpgcheck: yes
-    gpgkey: https://copr-be.cloud.fedoraproject.org/results/milliams/citc/pubkey.gpg
+    gpgkey: https://download.opensuse.org/repositories/home:/Milliams:/citc/CentOS%20EPEL/repodata/repomd.xml.key
 
 - name: create slurm group
   group:
