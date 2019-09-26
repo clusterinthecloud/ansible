@@ -165,6 +165,8 @@
     enabled: yes
   when: slurm_role == "compute"
 
+# As of Slurm 18.08 the slurmdbd service doesn't become available immediately
+# This ensures that the service is available before continuing
 - name: Wait for slurmdbd to start
   wait_for:
     port: 6819
