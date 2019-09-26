@@ -3,5 +3,5 @@
   yum:
     name: '*'
     security: yes
-    state: latest
+    state: latest  # noqa 403
     exclude: kernel*
