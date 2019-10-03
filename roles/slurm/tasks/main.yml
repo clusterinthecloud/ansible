@@ -127,11 +127,14 @@
 
 - name: open all ports
   firewalld:
-    port: 0-65535/tcp
+    port: "0-65535/{{ item }}"
     source: 10.0.0.0/8
     immediate: true
     permanent: true
     state: enabled
+  loop:
+    - tcp
+    - udp
   notify:
     - restart firewalld
     - restart slurmd
