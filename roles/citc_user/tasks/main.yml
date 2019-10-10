@@ -26,7 +26,7 @@
 - name: copy SSH public keys to citc user
   copy:
     src: /home/opc/.ssh/authorized_keys
-    dest: "{{ citc_user }}/.ssh/authorized_keys"
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
     mode: 0600
@@ -34,7 +34,7 @@
 - name: copy SSH public keys to citc user
   copy:
     src: /home/provisioner/.ssh/authorized_keys
-    dest: "{{ citc_user }}/.ssh/authorized_keys"
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
     mode: 0600
@@ -42,7 +42,7 @@
 - name: copy SSH public keys to citc user
   copy:
     src: /root/citc_authorized_keys
-    dest: "{{ citc_user }}/.ssh/authorized_keys"
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
     mode: 0600
