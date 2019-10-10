@@ -49,3 +49,10 @@
     group: citc
     mode: 0600
   when: '"/root/citc_authorized_keys" is exists'
+
+- name: Add citc to sudoers
+  copy:
+    content: |
+      citc ALL=(ALL) NOPASSWD:ALL
+    dest: /etc/sudoers.d/91-citc
+    validate: /usr/sbin/visudo -cf %s
