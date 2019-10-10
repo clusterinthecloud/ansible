@@ -21,6 +21,8 @@
   file:
     path: "{{ citc_user.home }}/.ssh"
     state: directory
+    owner: citc
+    group: citc
     mode: 0700
 
 - name: copy SSH public keys to citc user
