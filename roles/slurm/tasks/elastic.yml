@@ -121,6 +121,11 @@
       chmod 600 /etc/ssh/ssh_host_*
       chmod 644 /etc/ssh/ssh_host_*.pub
 
+      # Put the admin ssh keys somewhere that can be found
+      cat > /root/citc_authorized_keys << EOF
+      {{ lookup('file', '/home/citc/.ssh/authorized_keys') }}
+      EOF
+
       yum install -y ansible git
       cat > /root/hosts <<EOF
       [compute]
