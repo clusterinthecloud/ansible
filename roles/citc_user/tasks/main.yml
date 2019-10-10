@@ -1,0 +1,58 @@
+---
+
+- name: Create citc group
+  group:
+    name: citc
+    gid: 1005
+
+- name: Create the citc user
+  user:
+    name: citc
+    comment: CitC Admin
+    uid: 1005
+    group: citc
+    groups:
+      - adm
+      - wheel
+      - systemd-journal
+  register: citc_user
+
+- name: Create citc user .ssh dir
+  file:
+    path: "{{ citc_user.home }}/.ssh"
+    state: directory
+    owner: citc
+    group: citc
+    mode: 0700
+
+- name: copy SSH public keys to citc user
+  copy:
+    src: /home/opc/.ssh/authorized_keys
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
+    owner: citc
+    group: citc
+    mode: 0600
+  when: '"/home/opc/.ssh/authorized_keys" is exists'
+- name: copy SSH public keys to citc user
+  copy:
+    src: /home/provisioner/.ssh/authorized_keys
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
+    owner: citc
+    group: citc
+    mode: 0600
+  when: '"/home/provisioner/.ssh/authorized_keys" is exists'
+- name: copy SSH public keys to citc user
+  copy:
+    src: /root/citc_authorized_keys
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
+    owner: citc
+    group: citc
+    mode: 0600
+  when: '"/root/citc_authorized_keys" is exists'
+
+- name: Add citc to sudoers
+  copy:
+    content: |
+      citc ALL=(ALL) NOPASSWD:ALL
+    dest: /etc/sudoers.d/91-citc
+    validate: /usr/sbin/visudo -cf %s
