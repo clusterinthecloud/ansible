@@ -52,33 +52,20 @@
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [
+{% for entry in entries %}
         {
-          "alias": "idle",
-          "color": "#508642"
-        },
-        {
-          "alias": "idle#",
-          "color": "#9ac48a"
-        },
-        {
-          "alias": "allocated",
-          "color": "#e5ac0e"
-        },
-        {
-          "alias": "allocated#",
-          "color": "#f4d598"
-        },
-        {
-          "alias": "down",
-          "color": "#bf1b00"
-        }
+          "alias": "{{ entry.name }}",
+          "color": "{{ entry.colour }}"
+        }{{ "," if not loop.last else "" }}
+{% endfor %}
       ],
       "spaceLength": 10,
       "stack": true,
       "steppedLine": true,
       "targets": [
+{% for entry in entries %}
         {
-          "alias": "allocated",
+          "alias": "{{ entry.name }}",
           "groupBy": [
             {
               "params": [
@@ -96,13 +83,13 @@
           "measurement": "nodestatuscount_slurm",
           "orderByTime": "ASC",
           "policy": "default",
-          "refId": "D",
+          "refId": "{{ loop.index }}",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "allocated"
+                  "{{ entry.name }}"
                 ],
                 "type": "field"
               },
@@ -113,155 +100,8 @@
             ]
           ],
           "tags": []
-        },
-        {
-          "alias": "allocated#",
-          "groupBy": [
-            {
-              "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "0"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "nodestatuscount_slurm",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "C",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "allocated#"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "idle",
-          "groupBy": [
-            {
-              "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "0"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "nodestatuscount_slurm",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "idle"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "idle#",
-          "groupBy": [
-            {
-              "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "0"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "nodestatuscount_slurm",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "idle#"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "down",
-          "groupBy": [
-            {
-              "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "0"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "nodestatuscount_slurm",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "E",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "down"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        }
+        }{{ "," if not loop.last else "" }}
+{% endfor %}
       ],
       "thresholds": [],
       "timeFrom": null,

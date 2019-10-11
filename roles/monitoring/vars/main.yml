@@ -1,0 +1,15 @@
+entries:
+  - name: idle
+    colour: "#508642"
+  - name: idle#
+    colour: "#9ac48a"
+  - name: mix
+    colour: "#428675"
+  - name: mix#
+    colour: "#8ac4b6"
+  - name: allocated
+    colour: "#e5ac0e"
+  - name: allocated#
+    colour: "#f4d598"
+  - name: down
+    colour: "#bf1b00"
