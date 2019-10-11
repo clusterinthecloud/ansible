@@ -167,6 +167,7 @@
       name_suffix: '"_slurm"'
       data_format: '"influx"'
   notify: restart telegraf
+  when: monitoring_role == "master"
 
 - name: Copy in Slurm Grafana dashboard
   template:
