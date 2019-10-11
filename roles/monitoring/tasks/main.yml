@@ -27,7 +27,7 @@
     block: |
       $ModLoad imtcp
       $InputTCPServerRun 514
-  notify: restart telegraf
+  notify: restart rsyslog
   when: monitoring_role == "master"
 
 - name: configure compute nodes to send syslog
@@ -35,7 +35,7 @@
     path: /etc/rsyslog.conf
     regexp: '@@remote-host:514'
     line: '*.* @@mgmt:514'
-  notify: restart telegraf
+  notify: restart rsyslog
   when: monitoring_role != "master"
 
 - name: Add InfluxDB repository
