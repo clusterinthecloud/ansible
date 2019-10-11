@@ -21,6 +21,7 @@
     - { regexp: '#\$UDPServerRun 514',      replace: '$UDPServerRun 514'      }
     - { regexp: '#\$ModLoad imtcp',         replace: '$ModLoad imtcp'         }
     - { regexp: '#\$InputTCPServerRun 514', replace: '$InputTCPServerRun 514' }
+  notify: restart rsyslog
   when: monitoring_role == "master"
 
 - name: configure compute nodes to send syslog
