@@ -1,5 +1,43 @@
 ---
 
+- name: install rsyslog
+  yum:
+    name:
+      - rsyslog
+
+- name: enable the rsyslog service
+  service:
+    name: rsyslog
+    state: started
+    enabled: yes
+  
+- name: configure mgmt to recieve syslog on UDP
+  blockinfile:
+    path: /etc/rsyslog.conf
+    marker: "^# Provides UDP syslog reception"
+    block: |
+      $ModLoad imudp
+      $UDPServerRun 514
+  when: monitoring_role == "master"
+
+- name: configure mgmt to recieve syslog on UDP
+  blockinfile:
+    path: /etc/rsyslog.conf
+    marker: "^# Provides TCP syslog reception"
+    block: |
+      $ModLoad imtcp
+      $InputTCPServerRun 514
+  notify: restart telegraf
+  when: monitoring_role == "master"
+
+- name: configure compute nodes to send syslog
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regexp: '@@remote-host:514'
+    line: '*.* @@mgmt:514'
+  notify: restart telegraf
+  when: monitoring_role != "master"
+
 - name: Add InfluxDB repository
   yum_repository:
     name: influxdb

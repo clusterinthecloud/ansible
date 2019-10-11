@@ -1,5 +1,11 @@
 ---
 
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+
 - name: restart telegraf
   service:
     name: telegraf
