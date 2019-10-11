@@ -10,7 +10,7 @@
     name: rsyslog
     state: started
     enabled: yes
-  
+
 - name: configure mgmt to recieve syslog on UDP and TCP
   replace:
     path: /etc/rsyslog.conf
