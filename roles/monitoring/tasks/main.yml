@@ -1,5 +1,37 @@
 ---
 
+- name: install rsyslog
+  yum:
+    name:
+      - rsyslog
+
+- name: enable the rsyslog service
+  service:
+    name: rsyslog
+    state: started
+    enabled: yes
+
+- name: configure mgmt to recieve syslog on UDP and TCP
+  replace:
+    path: /etc/rsyslog.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - { regexp: '#\$ModLoad imudp',         replace: '$ModLoad imudp'         }
+    - { regexp: '#\$UDPServerRun 514',      replace: '$UDPServerRun 514'      }
+    - { regexp: '#\$ModLoad imtcp',         replace: '$ModLoad imtcp'         }
+    - { regexp: '#\$InputTCPServerRun 514', replace: '$InputTCPServerRun 514' }
+  notify: restart rsyslog
+  when: monitoring_role == "master"
+
+- name: configure compute nodes to send syslog
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regexp: '@@remote-host:514'
+    line: '*.* @@mgmt:514'
+  notify: restart rsyslog
+  when: monitoring_role != "master"
+
 - name: Add InfluxDB repository
   yum_repository:
     name: influxdb
