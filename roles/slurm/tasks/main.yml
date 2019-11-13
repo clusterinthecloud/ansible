@@ -4,11 +4,6 @@
     name: munge
     state: installed
 
-- name: install firewalld
-  yum:
-    name: firewalld
-    state: installed
-
 - name: copy in munge key
   copy:
     src: munge.key
@@ -20,6 +15,17 @@
 - name: start service munge
   service:
     name: munge
+    enabled: yes
+    state: started
+
+- name: install firewalld
+  yum:
+    name: firewalld
+    state: installed
+
+- name: start service firewalld
+  service:
+    name: firewalld
     enabled: yes
     state: started
 
