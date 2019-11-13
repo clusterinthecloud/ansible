@@ -43,7 +43,7 @@
   when: '"/home/provisioner/.ssh/authorized_keys" is exists'
 - name: copy SSH public keys to citc user
   copy:
-    src: /home/provisioner/.ssh/authorized_keys
+    src: /home/ec2-user/.ssh/authorized_keys
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
