@@ -4,6 +4,11 @@
     name: munge
     state: installed
 
+- name: install firewalld
+  yum:
+    name: firewalld
+    state: installed
+
 - name: copy in munge key
   copy:
     src: munge.key
