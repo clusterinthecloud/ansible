@@ -36,10 +36,10 @@ sys.excepthook = handle_exception
 if __name__ == "__main__":
     log = logging.getLogger("startnode")
     log.setLevel(logging.INFO)
-    #handler = logging.FileHandler('/var/log/slurm/elastic.log')
-    #formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
-    #handler.setFormatter(formatter)
-    #log.addHandler(handler)
+    handler = logging.FileHandler('/var/log/slurm/elastic.log')
+    formatter = logging.Formatter('%(asctime)s %(name)-10s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
 
     loop = asyncio.get_event_loop()
     try:
