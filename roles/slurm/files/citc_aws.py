@@ -55,15 +55,6 @@ def get_node_state(client, log, hostname: str) -> Optional[str]:
     return None
 
 
-def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
-    item = get_node(gce_compute, log, compartment_id, zone, hostname)
-
-    network = item['networkInterfaces'][0]
-    log.debug(f'network {network}')
-    ip = network['networkIP']
-    return ip
-
-
 def get_shape(hostname):
     features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
@@ -110,24 +101,6 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
 
     return config
 
-
-def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-    host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", hostname], stdout=subprocess.PIPE).stdout.decode().split()[-1])
-    dns_ip = host_dns_match.group(0) if host_dns_match else None
-
-    slurm_dns_match = re.search(r"NodeAddr=((\d+\.){3}\d+)", subprocess.run(["scontrol", "show", "node", hostname], stdout=subprocess.PIPE).stdout.decode())
-    slurm_ip = slurm_dns_match.group(1) if slurm_dns_match else None
-
-    ip = dns_ip or slurm_ip
-
-    return ip, dns_ip, slurm_ip
-
-
-def get_credentials():
-    service_account_file = Path(os.environ.get('SA_LOCATION', '/home/slurm/mgmt-sa-credentials.json'))
-    if service_account_file.exists():
-        return service_account.Credentials.from_service_account_file(service_account_file)
-    return None
 
 def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, ttl: int, action: str) -> None:
     response = client.change_resource_record_sets(
@@ -229,32 +202,3 @@ def terminate_instance(log, hosts, nodespace=None):
             continue
 
     log.info(f" Stopped {host}")
-
-
-# [START run]
-async def do_create_instance():
-    os.environ['SA_LOCATION'] = '/home/davidy/secrets/ex-eccoe-university-bristol-52b726c8a1f3.json'
-    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
-    log = logging.getLogger("startnode")
-
-    hosts = ['dy-test-node1']
-
-    log.info('Creating instance.')
-
-    await asyncio.gather(*(
-        start_node(log, host, get_nodespace('test_nodespace.yaml'), "")
-        for host in hosts
-    ))
-
-    log.info(f'Instances in project done')
-
-    log.info(f'Terminating')
-    terminate_instance(log, hosts, nodespace=get_nodespace('test_nodespace.yaml'))
-
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(do_create_instance())
-    finally:
-        loop.close()
