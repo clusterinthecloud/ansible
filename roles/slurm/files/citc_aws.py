@@ -68,9 +68,11 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = f.read().decode()
 
+    shape = get_shape(hostname)
+
     config = {
         "ImageId": "ami-040ba9174949f6de4",
-        "InstanceType": "t3.micro",
+        "InstanceType": shape,
         "KeyName": "ec2-user",
         "MinCount": 1,
         "MaxCount": 1,
@@ -93,8 +95,8 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
             {
                 "AssociatePublicIpAddress": True,
                 "DeviceIndex": 0,
-                "SubnetId": "subnet-0d9dc7a152ebd0d63",
-                "Groups": ["sg-05c317d0abb0846b0"],
+                "SubnetId": nodespace["subnet"],
+                "Groups": [nodespace["compute_security_group"]],
             },
         ],
     }
