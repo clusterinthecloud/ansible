@@ -1,0 +1,25 @@
+---
+- name: install tools
+  pip:
+    name:
+      - boto3
+    virtualenv: /opt/cloud_sdk
+
+- name: install startnode support module
+  copy:
+    src: citc_aws.py  # should have this to be generic
+    dest: /opt/cloud_sdk/lib/python3.6/site-packages/citc_cloud.py
+
+- name: copy aws-credentials.csv
+  copy:
+    src: /tmp/aws-credentials.csv
+    dest: /home/slurm/aws-credentials.csv
+    owner: slurm
+    group: slurm
+    mode: 0700
+  when: '"/tmp/aws-credentials.csv" is exists'
+
+- name: delete public aws-credentials.csv
+  file:
+    path: /tmp/aws-credentials.csv
+    state: absent

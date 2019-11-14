@@ -130,7 +130,9 @@
       amazon-linux-extras install -y ansible2
       amazon-linux-extras install -y epel
       yum install -y jq
-      name=$(aws ec2 describe-tags --region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region') --filters "Name=resource-id,Values=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)" --output text --query 'Tags[?Key==`Name`].Value')
+      region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
+      instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
+      name=$(aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}" --output text --query 'Tags[?Key==`Name`].Value')
       hostnamectl set-hostname ${name}
       {% endif %}
 

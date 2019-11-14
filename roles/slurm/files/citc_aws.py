@@ -154,7 +154,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     import configparser
     config = configparser.ConfigParser()
-    config.read('/tmp/aws-credentials.csv')
+    config.read('/home/slurm/aws-credentials.csv')
     client = boto3.client(
         "ec2",
         region_name=region,
