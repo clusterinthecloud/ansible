@@ -5,7 +5,7 @@ slurm_packages:
 
 slurm_role: compute
 
-install_packages:
+install_packages: []
   #- mpich-3.2
   #- openmpi3
 
