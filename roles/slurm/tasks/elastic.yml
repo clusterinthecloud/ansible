@@ -133,7 +133,9 @@
       region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
       instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
       name=$(aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}" --output text --query 'Tags[?Key==`Name`].Value')
-      hostnamectl set-hostname ${name}
+      #TODO the following should be dynamic
+      dns_zone=cluster.citc.local
+      hostnamectl set-hostname ${name}.${dns_zone}
       {% endif %}
 
       yum install -y ansible git
