@@ -19,7 +19,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 async def main() -> None:
     nodespace = citc_cloud.get_nodespace()
 
-    keys_file = "/home/citc/.ssh/authorized_keys"
+    keys_file = "/home/slurm/opc_authorized_keys"
 
     with open(keys_file) as kf:
         ssh_keys = kf.read()

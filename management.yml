@@ -49,6 +49,14 @@
         group: slurm
         mode: 0600
       when: '"/home/provisioner/.ssh/authorized_keys" is exists'
+    - name: copy SSH public keys to slurm account
+      copy:
+        src: /home/ec2-user/.ssh/authorized_keys
+        dest: /home/slurm/opc_authorized_keys
+        owner: slurm
+        group: slurm
+        mode: 0600
+      when: '"/home/ec2-user/.ssh/authorized_keys" is exists'
 
 - name: finalise
   hosts: all
