@@ -2,6 +2,10 @@
 
 - hosts: compute
   tasks:
+    - name: install libselinux-python
+      package:
+        name: libselinux-python
+        state: present
     - name: disable SELinux
       selinux:
         state: disabled
