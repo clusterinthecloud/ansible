@@ -83,9 +83,10 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         "KeyName": "ec2-user",
         "MinCount": 1,
         "MaxCount": 1,
-        #"SecurityGroupIds": ["sg-05c317d0abb0846b0"],
-        #"SubnetId": "subnet-0d9dc7a152ebd0d63",
         "UserData": user_data,
+        "IamInstanceProfile": {
+            'Name': "describe_tags",
+        },
         "TagSpecifications": [
             {
                 "ResourceType": "instance",
