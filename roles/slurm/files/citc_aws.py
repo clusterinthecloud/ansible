@@ -74,7 +74,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
-    with open("/home/citc/slurm-ansible-playbook/roles/slurm/files/bootstrap.sh", "rb") as f:
+    with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = f.read().decode()
 
     config = {
