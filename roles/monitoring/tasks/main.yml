@@ -36,7 +36,7 @@
   yum_repository:
     name: influxdb
     description: InfluxDB
-    baseurl: https://repos.influxdata.com/centos/$releasever/$basearch/stable/
+    baseurl: https://repos.influxdata.com/centos/7/$basearch/stable/
     gpgkey: https://repos.influxdata.com/influxdb.key
 
 - name: install telegraf package
