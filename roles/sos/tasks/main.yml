@@ -5,6 +5,12 @@
     state: present
   when: ansible_distribution != "Amazon"
 
+- name: install python2-pip
+  package:
+    name: python2-pip
+    state: present
+  when: ansible_distribution == "Amazon"
+
 - name: install sos (with pip)
   pip:
     name: sosreport
