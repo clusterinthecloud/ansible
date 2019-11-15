@@ -8,13 +8,9 @@
     name: centos-release-scl
   when: ansible_distribution == 'CentOS'
 
-- name: install scl repo
-  yum_repository:
-    name: scl
-    description: SCL
-    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/rh/
-  when: ansible_distribution == "Amazon"
-
+# Amazon does not support devtoolset-8 SCL
 - name: install devtoolset
   package:
     name: devtoolset-8
+  when: ansible_distribution != "Amazon"
+
