@@ -179,7 +179,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     log.info(f"  Private IP {vm_ip}")
 
-    r53_client = route_route53_client()
+    r53_client = route53_client()
 
     domain = "cluster.citc.local"
     fqdn = f"{host}.{domain}"
