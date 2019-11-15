@@ -19,9 +19,14 @@
     state: started
 
 - name: install firewalld
-  yum:
+  package:
     name: firewalld
-    state: installed
+    state: present
+
+- name: install python-firewall
+  package:
+    name: python-firewall
+    state: present
 
 - name: start service firewalld
   service:
