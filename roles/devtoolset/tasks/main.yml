@@ -12,7 +12,7 @@
   yum_repository:
     name: devtoolset-8
     description: devtoolset-8
-    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/rh/devtoolset-8/
+    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/rh/
   when: ansible_distribution == "Amazon"
 
 - name: install devtoolset
