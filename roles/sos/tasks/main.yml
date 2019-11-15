@@ -3,6 +3,12 @@
   package:
     name: sos
     state: present
+  when: ansible_distribution != "Amazon"
+
+- name: install sos (with pip)
+  pip:
+    name: sosreport
+  when: ansible_distribution == "Amazon"
 
 - name: copy in CitC sosreport plugin
   copy:
