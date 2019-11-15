@@ -25,7 +25,7 @@
 - name: Mount shared file system
   mount:
     path: /mnt/shared
-    src: "{{ ansible_local.citc.fileserver_ip }}:/"
+    src: "{{ filesystem_target_address }}:/"
     fstype: nfs
     opts: defaults,nofail,nosuid
     state: mounted
