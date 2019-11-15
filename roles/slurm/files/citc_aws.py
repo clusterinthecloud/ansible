@@ -123,7 +123,7 @@ def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, t
         }
     )
 
-def get_ec2_client(region: str):
+def ec2_client(region: str):
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
@@ -135,12 +135,23 @@ def get_ec2_client(region: str):
     )
     return client
 
+def route53_client(region: str):
+    import configparser
+    config = configparser.ConfigParser()
+    config.read('/home/slurm/aws-credentials.csv')
+    client = boto3.client(
+        "route53",
+        aws_access_key_id=config["default"]["aws_access_key_id"],
+        aws_secret_access_key=config["default"]["aws_secret_access_key"]
+    )
+    return client
+
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     region = nodespace["region"]
 
     log.info(f"Starting {host}")
 
-    client = get_ec2_client(region)
+    client = ec2_client(region)
 
     while get_node_state(client, log, host) in ["shutting-down", "stopping"]:
         log.info(" host is currently being deleted. Waiting...")
@@ -168,15 +179,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     log.info(f"  Private IP {vm_ip}")
 
-    route53_client = boto3.client(
-        "route53",
-        aws_access_key_id=config["default"]["aws_access_key_id"],
-        aws_secret_access_key=config["default"]["aws_secret_access_key"]
-    )
+    r53_client = route_route53_client()
 
     domain = "cluster.citc.local"
     fqdn = f"{host}.{domain}"
-    add_dns_record(route53_client, "Z081015635NMRHH9O1SXU", fqdn, "A", vm_ip, 300, "UPSERT")
+    add_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300, "UPSERT")
 
     subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={vm_ip}"])
 
@@ -191,7 +198,7 @@ def terminate_instance(log, hosts, nodespace=None):
 
     region = nodespace["region"]
 
-    client = get_ec2_client(region)
+    client = ec2_client(region)
 
     for host in hosts:
         log.info(f"Stopping {host}")
