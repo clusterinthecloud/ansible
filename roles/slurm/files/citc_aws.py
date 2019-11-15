@@ -123,11 +123,7 @@ def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, t
         }
     )
 
-async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
-    region = nodespace["region"]
-
-    log.info(f"Starting {host}")
-
+def get_ec2_client(region: str):
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
@@ -137,6 +133,14 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
         aws_access_key_id=config["default"]["aws_access_key_id"],
         aws_secret_access_key=config["default"]["aws_secret_access_key"]
     )
+    return client
+
+async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
+    region = nodespace["region"]
+
+    log.info(f"Starting {host}")
+
+    client = get_ec2_client(region)
 
     while get_node_state(client, log, host) in ["shutting-down", "stopping"]:
         log.info(" host is currently being deleted. Waiting...")
@@ -182,23 +186,19 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
 
 def terminate_instance(log, hosts, nodespace=None):
-    gce_compute = get_build()
-
     if not nodespace:
         nodespace = get_nodespace()
 
-    project = nodespace["compartment_id"]
-    zone = nodespace["zone"]
+    region = nodespace["region"]
+
+    client = get_ec2_client(region)
 
     for host in hosts:
         log.info(f"Stopping {host}")
 
         try:
-            response = gce_compute.instances() \
-                .delete(project=project,
-                        zone=zone,
-                        instance=host) \
-                .execute()
+            instance_id = get_node(client, log, host)["InstanceId"]
+            client.terminate_instances(InstanceIds=[instance_id])
         except Exception as e:
             log.error(f" problem while stopping: {e}")
             continue
