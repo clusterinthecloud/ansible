@@ -135,7 +135,7 @@ def ec2_client(region: str):
     )
     return client
 
-def route53_client(region: str):
+def route53_client():
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
