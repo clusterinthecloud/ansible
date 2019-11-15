@@ -15,11 +15,11 @@ slurm_elastic:
 
 install_packages:
   - xorg-x11-xauth
-  - mpich-3.2-devel
   - openmpi-devel
-  - openmpi3-devel
   - python3-devel
   - "@Development Tools"
+#  - openmpi3-devel
+#  - mpich-3.2-devel
 
 monitoring_role: master
 grafana_admin_password: "{{ lookup('password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
