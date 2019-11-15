@@ -1,8 +1,19 @@
 ---
+- name: install scl-utils
+  package:
+    name: scl-utils
+
 - name: install SCL repo
   package:
     name: centos-release-scl
   when: ansible_distribution == 'CentOS'
+
+- name: install devtoolset-8
+  yum_repository:
+    name: devtoolset-8
+    description: devtoolset-8
+    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/rh/devtoolset-8/
+  when: ansible_distribution == "Amazon"
 
 - name: install devtoolset
   package:
