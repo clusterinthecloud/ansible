@@ -13,7 +13,8 @@ slurm_partitions:
     default: YES
 
 filesystem_target_address: fileserver
-filesystem_mount_point: /shared
+# TODO Make this a map for each cloud provider
+filesystem_mount_point: /
 
 ansible_pull_repo: https://github.com/ACRC/slurm-ansible-playbook.git
 
