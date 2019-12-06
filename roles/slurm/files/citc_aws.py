@@ -54,7 +54,10 @@ def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
 
 
 def get_shape(hostname):
-    features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
+    features = subprocess.run(
+        ["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"],
+        stdout=subprocess.PIPE
+    ).stdout.decode().split(',')
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     return shape
 
@@ -111,7 +114,15 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     return config
 
 
-def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, ttl: int, action: str) -> None:
+def add_dns_record(
+    client,
+    zone_id: str,
+    rrname: str,
+    rrtype: str,
+    value: str,
+    ttl: int,
+    action: str
+) -> None:
     client.change_resource_record_sets(
         HostedZoneId=zone_id,
         ChangeBatch={
