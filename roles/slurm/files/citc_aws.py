@@ -187,7 +187,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     r53_client = route53_client()
 
-    domain = "cluster.citc.local"
+    domain = nodespace["dns_zone"]
     fqdn = f"{host}.{domain}"
     add_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300, "UPSERT")
 
