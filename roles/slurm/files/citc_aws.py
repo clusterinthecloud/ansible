@@ -1,11 +1,6 @@
-import re
 import subprocess
-import time
-from typing import Dict, Optional, Tuple
-import logging
+from typing import Dict, Optional
 import yaml
-import os
-from pathlib import Path
 import asyncio
 
 import boto3
@@ -26,29 +21,31 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(client, log, hostname: str) -> Dict:
-    
-    instance = client.describe_instances(Filters=
-            [
-                {
-                    "Name": "tag:Name",
-                    "Values": [hostname],
-                }
-            ]
-    )
+def get_node(client, log, hostname: str, cluster_id: str) -> Optional[Dict]:
+
+    instance = client.describe_instances(Filters=[
+        {
+            "Name": "tag:Name",
+            "Values": [hostname],
+        },
+        {
+            "Name": "tag:cluster",
+            "Values": [cluster_id],
+        },
+    ])
     #TODO check for multiple returned matches
     if instance["Reservations"]:
         return instance["Reservations"][0]["Instances"][0]
     return None
 
 
-def get_node_state(client, log, hostname: str) -> Optional[str]:
+def get_node_state(client, log, hostname: str, cluster_id: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
 
-    item = get_node(client, log,  hostname)
+    item = get_node(client, log,  hostname, cluster_id)
 
     if item is not None:
         return item['State']["Name"]
@@ -87,7 +84,15 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
                     {
                         "Key": "Name",
                         "Value": hostname
-                    }
+                    },
+                    {
+                        "Key": "cluster",
+                        "Value": nodespace["cluster_id"]
+                    },
+                    {
+                        "Key": "type",
+                        "Value": "compute"
+                    },
                 ]
             }
         ],
@@ -146,6 +151,7 @@ def route53_client():
     )
     return client
 
+
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     region = nodespace["region"]
 
@@ -153,11 +159,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     client = ec2_client(region)
 
-    while get_node_state(client, log, host) in ["shutting-down", "stopping"]:
+    while get_node_state(client, log, host, nodespace["cluster_id"]) in ["shutting-down", "stopping"]:
         log.info(" host is currently being deleted. Waiting...")
         await asyncio.sleep(5)
 
-    node_state = get_node_state(client, log, host)
+    node_state = get_node_state(client, log, host, nodespace["cluster_id"])
     if node_state in ["pending", "running", "rebooting", "stopped"]:
         log.warning(f" host already exists with state {node_state}")
         return
@@ -204,10 +210,10 @@ def terminate_instance(log, hosts, nodespace=None):
         log.info(f"Stopping {host}")
 
         try:
-            instance_id = get_node(client, log, host)["InstanceId"]
+            instance_id = get_node(client, log, host, nodespace["cluster_id"])["InstanceId"]
             client.terminate_instances(InstanceIds=[instance_id])
         except Exception as e:
             log.error(f" problem while stopping: {e}")
             continue
 
-    log.info(f" Stopped {host}")
+        log.info(f" Stopped {host}")
