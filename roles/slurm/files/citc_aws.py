@@ -121,15 +121,42 @@ def add_dns_record(
     rrtype: str,
     value: str,
     ttl: int,
-    action: str
+    action: str="UPSERT"
 ) -> None:
     client.change_resource_record_sets(
         HostedZoneId=zone_id,
         ChangeBatch={
-            'Comment': 'add %s -> %s' % (rrname, value),
+            'Comment': f'add {rrname} -> {value}',
             'Changes': [
                 {
                     'Action': action,
+                    'ResourceRecordSet': {
+                        'Name': rrname,
+                        'Type': rrtype,
+                        'TTL': ttl,
+                        'ResourceRecords': [{'Value': value}]
+                    }
+                }
+            ]
+        }
+    )
+
+
+def delete_dns_record(
+    client,
+    zone_id: str,
+    rrname: str,
+    rrtype: str,
+    value: str,
+    ttl: int
+) -> None:
+    client.change_resource_record_sets(
+        HostedZoneId=zone_id,
+        ChangeBatch={
+            'Comment': f'delete {rrname}: {value}',
+            'Changes': [
+                {
+                    'Action': "DELETE",
                     'ResourceRecordSet': {
                         'Name': rrname,
                         'Type': rrtype,
@@ -201,9 +228,8 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     r53_client = route53_client()
 
-    domain = nodespace["dns_zone"]
-    fqdn = f"{host}.{domain}"
-    add_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300, "UPSERT")
+    fqdn = f"{host}.{nodespace['dns_zone']}"
+    add_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300)
 
     subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={vm_ip}"])
 
@@ -224,8 +250,13 @@ def terminate_instance(log, hosts, nodespace=None):
         log.info(f"Stopping {host}")
 
         try:
-            instance_id = get_node(client, host, nodespace["cluster_id"])["InstanceId"]
+            instance = get_node(client, host, nodespace["cluster_id"])
+            instance_id = instance["InstanceId"]
+            vm_ip = instance["PrivateIpAddress"]
+            fqdn = f"{host}.{nodespace['dns_zone']}"
             client.terminate_instances(InstanceIds=[instance_id])
+            r53_client = route53_client()
+            delete_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300)
         except Exception as e:
             log.error(f" problem while stopping: {e}")
             continue
