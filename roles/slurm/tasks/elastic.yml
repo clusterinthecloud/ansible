@@ -54,8 +54,8 @@
     mode: 0755
 
 - name: configure stopnode script
-  template:
-    src: stopnode.j2
+  copy:
+    src: stopnode.py
     dest: /usr/local/bin/stopnode
     mode: 0755
 
