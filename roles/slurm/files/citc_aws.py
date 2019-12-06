@@ -21,7 +21,7 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(client, log, hostname: str, cluster_id: str) -> Optional[Dict]:
+def get_node(client, hostname: str, cluster_id: str) -> Optional[Dict]:
 
     instance = client.describe_instances(Filters=[
         {
@@ -33,19 +33,19 @@ def get_node(client, log, hostname: str, cluster_id: str) -> Optional[Dict]:
             "Values": [cluster_id],
         },
     ])
-    #TODO check for multiple returned matches
+    # TODO check for multiple returned matches
     if instance["Reservations"]:
         return instance["Reservations"][0]["Instances"][0]
     return None
 
 
-def get_node_state(client, log, hostname: str, cluster_id: str) -> Optional[str]:
+def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
 
-    item = get_node(client, log,  hostname, cluster_id)
+    item = get_node(client,  hostname, cluster_id)
 
     if item is not None:
         return item['State']["Name"]
@@ -66,9 +66,10 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         user_data = f.read().decode()
 
     shape = get_shape(hostname)
+    image = "ami-040ba9174949f6de4"  # TODO
 
     config = {
-        "ImageId": "ami-040ba9174949f6de4",
+        "ImageId": image,
         "InstanceType": shape,
         "KeyName": "ec2-user",
         "MinCount": 1,
@@ -110,9 +111,9 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
 
 
 def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, ttl: int, action: str) -> None:
-    response = client.change_resource_record_sets(
+    client.change_resource_record_sets(
         HostedZoneId=zone_id,
-        ChangeBatch= {
+        ChangeBatch={
             'Comment': 'add %s -> %s' % (rrname, value),
             'Changes': [
                 {
@@ -128,6 +129,7 @@ def add_dns_record(client, zone_id: str, rrname: str, rrtype: str, value: str, t
         }
     )
 
+
 def ec2_client(region: str):
     import configparser
     config = configparser.ConfigParser()
@@ -139,6 +141,7 @@ def ec2_client(region: str):
         aws_secret_access_key=config["default"]["aws_secret_access_key"]
     )
     return client
+
 
 def route53_client():
     import configparser
@@ -159,22 +162,21 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     client = ec2_client(region)
 
-    while get_node_state(client, log, host, nodespace["cluster_id"]) in ["shutting-down", "stopping"]:
+    while get_node_state(client, host, nodespace["cluster_id"]) in ["shutting-down", "stopping"]:
         log.info(" host is currently being deleted. Waiting...")
         await asyncio.sleep(5)
 
-    node_state = get_node_state(client, log, host, nodespace["cluster_id"])
+    node_state = get_node_state(client, host, nodespace["cluster_id"])
     if node_state in ["pending", "running", "rebooting", "stopped"]:
         log.warning(f" host already exists with state {node_state}")
         return
 
     instance_details = create_node_config(client, host, nodespace, ssh_keys)
 
-    loop = asyncio.get_event_loop()
+    # loop = asyncio.get_event_loop()  # TODO
 
     try:
-        #instance_result = await loop.run_in_executor(None, client.run_instances, **instance_details)
-        #TODO await
+        # instance_result = await loop.run_in_executor(None, client.run_instances, **instance_details)  # TODO await using `partial`
         instance_result = client.run_instances(**instance_details)
         instance = instance_result
     except Exception as e:
@@ -210,7 +212,7 @@ def terminate_instance(log, hosts, nodespace=None):
         log.info(f"Stopping {host}")
 
         try:
-            instance_id = get_node(client, log, host, nodespace["cluster_id"])["InstanceId"]
+            instance_id = get_node(client, host, nodespace["cluster_id"])["InstanceId"]
             client.terminate_instances(InstanceIds=[instance_id])
         except Exception as e:
             log.error(f" problem while stopping: {e}")
