@@ -1,3 +1,4 @@
+import functools
 import subprocess
 from typing import Dict, Optional
 import yaml
@@ -173,17 +174,17 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     instance_details = create_node_config(client, host, nodespace, ssh_keys)
 
-    # loop = asyncio.get_event_loop()  # TODO
+    loop = asyncio.get_event_loop()
 
     try:
-        # instance_result = await loop.run_in_executor(None, client.run_instances, **instance_details)  # TODO await using `partial`
-        instance_result = client.run_instances(**instance_details)
-        instance = instance_result
+        start_instance = functools.partial(client.run_instances, **instance_details)
+        instance_result = await loop.run_in_executor(None, start_instance)
+        instance = instance_result["Instances"][0]
     except Exception as e:
         log.error(f" problem launching instance: {e}")
         return
 
-    vm_ip = instance["Instances"][0]["PrivateIpAddress"]
+    vm_ip = instance["PrivateIpAddress"]
 
     log.info(f"  Private IP {vm_ip}")
 
