@@ -32,3 +32,8 @@ monitoring_role: master
 grafana_admin_password: "{{ lookup('password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
 
 bootstrap_ansible_pull_playbook: compute.yml
+
+admin_key_path:
+  oracle: /home/opc/.ssh/authorized_keys
+  google: /home/provisioner/.ssh/authorized_keys
+  aws: /home/ec2-user/.ssh/authorized_keys

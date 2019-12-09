@@ -17,3 +17,5 @@ mpi_packages:
   aws: []
 
 monitoring_role: client
+
+admin_key_path: /root/citc_authorized_keys

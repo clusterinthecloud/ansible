@@ -35,16 +35,11 @@
   tasks:
     - name: copy SSH public keys to slurm account
       copy:
-        src: "{{ item }}"
+        src: "{{ admin_key_path[ansible_local.citc.csp] }}"
         dest: /home/slurm/opc_authorized_keys
         owner: slurm
         group: slurm
         mode: 0600
-      when: '"{{ item }}" is exists'
-      loop:
-        - /home/opc/.ssh/authorized_keys
-        - /home/provisioner/.ssh/authorized_keys
-        - /home/ec2-user/.ssh/authorized_keys
 
 - name: finalise
   hosts: all
