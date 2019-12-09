@@ -13,4 +13,3 @@
   package:
     name: devtoolset-8
   when: ansible_distribution != "Amazon"
-
