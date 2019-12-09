@@ -20,5 +20,6 @@
     - sssd
     - lmod
     - packages
+    - mpi
     - slurm
     - monitoring

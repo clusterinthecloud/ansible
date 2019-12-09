@@ -6,7 +6,14 @@ slurm_packages:
 slurm_role: compute
 
 install_packages: []
-  #- mpich-3.2
-  #- openmpi3
+
+mpi_packages:
+  oracle:
+    - mpich-3.2
+    - openmpi3
+  google:
+    - mpich-3.2
+    - openmpi3
+  aws: []
 
 monitoring_role: client

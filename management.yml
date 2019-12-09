@@ -55,6 +55,7 @@
     - clustershell
     - packages
     - devtoolset
+    - mpi
     - sos
     - debug-tools
     - lmod
