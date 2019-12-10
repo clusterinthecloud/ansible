@@ -36,4 +36,4 @@ bootstrap_ansible_pull_playbook: compute.yml
 admin_key_path:
   oracle: /home/opc/.ssh/authorized_keys
   google: /home/provisioner/.ssh/authorized_keys
-  aws: /home/ec2-user/.ssh/authorized_keys
+  aws: /home/centos/.ssh/authorized_keys

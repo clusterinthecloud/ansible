@@ -70,7 +70,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         user_data = f.read().decode()
 
     shape = get_shape(hostname)
-    image = "ami-6e28b517"  # TODO
+    image = "ami-0ff760d16d9497662"  # TODO Owner: 679593333241 Description: CentOS Linux 7 x86_64 HVM EBS ENA 1901_01
 
     config = {
         "ImageId": image,
