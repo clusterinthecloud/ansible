@@ -18,6 +18,22 @@
     enabled: yes
     state: started
 
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+
+- name: install python-firewall
+  package:
+    name: python-firewall
+    state: present
+
+- name: start service firewalld
+  service:
+    name: firewalld
+    enabled: yes
+    state: started
+
 - name: Add Slurm repository
   yum_repository:
     name: slurm
