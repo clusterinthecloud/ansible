@@ -70,7 +70,16 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         user_data = f.read().decode()
 
     shape = get_shape(hostname)
-    image = "ami-040ba9174949f6de4"  # TODO
+    images = client.describe_images(
+        Filters=[
+            {'Name': 'product-code', 'Values': ['aw0evgkw8e5c1q413zgy5pjce']},
+            {'Name': 'architecture', 'Values': ['x86_64']},
+        ],
+        Owners=[
+            'aws-marketplace',
+        ],
+    )
+    image = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)[0]['ImageId']
 
     config = {
         "ImageId": image,
