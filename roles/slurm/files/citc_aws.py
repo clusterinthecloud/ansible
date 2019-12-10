@@ -72,12 +72,11 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     shape = get_shape(hostname)
     images = client.describe_images(
         Filters=[
-            {'Name': 'product-code', 'Values': ['aw0evgkw8e5c1q413zgy5pjce']},
+            {'Name': 'name', 'Values': ['CentOS Linux 7 x86_64 HVM EBS *']},
             {'Name': 'architecture', 'Values': ['x86_64']},
+            {'Name': 'root-device-type', 'Values': ['ebs']},
         ],
-        Owners=[
-            'aws-marketplace',
-        ],
+        Owners=['679593333241'],  # CentOS
     )
     image = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)[0]['ImageId']
 
