@@ -8,11 +8,6 @@
     path: /mnt{{ filesystem_mount_point }}/home
     state: directory
 
-- name: Ensure group "users" exists
-  group:
-    name: users
-    state: present
-
 - name: copy in LDAP add user script
   template:
     src: add_user_ldap.j2

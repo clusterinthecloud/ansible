@@ -1,15 +1,9 @@
 ---
-- name: install scl-utils
-  package:
-    name: scl-utils
-
 - name: install SCL repo
   package:
     name: centos-release-scl
   when: ansible_distribution == 'CentOS'
 
-# Amazon does not support devtoolset-8 SCL
 - name: install devtoolset
   package:
     name: devtoolset-8
-  when: ansible_distribution != "Amazon"
