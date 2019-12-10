@@ -70,7 +70,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         user_data = f.read().decode()
 
     shape = get_shape(hostname)
-    image = "ami-040ba9174949f6de4"  # TODO
+    image = "ami-6e28b517"  # TODO
 
     config = {
         "ImageId": image,
