@@ -127,8 +127,8 @@
       EOF
 
       {% if ansible_local.citc.csp == "aws" %}
-      amazon-linux-extras install -y ansible2
-      amazon-linux-extras install -y epel
+      #amazon-linux-extras install -y ansible2
+      #amazon-linux-extras install -y epel
       yum install -y jq
       region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
       instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
