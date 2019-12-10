@@ -83,7 +83,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     config = {
         "ImageId": image,
         "InstanceType": shape,
-        "KeyName": "ec2-user",
+        "KeyName": f"ec2-user-{nodespace['cluster_id']}",
         "MinCount": 1,
         "MaxCount": 1,
         "UserData": user_data,
