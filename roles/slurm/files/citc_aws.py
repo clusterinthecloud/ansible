@@ -5,8 +5,7 @@ import yaml
 import asyncio
 
 import boto3
-
-__all__ = ["get_nodespace", "start_node"]
+from mypy_boto3 import ec2, route53
 
 
 def load_yaml(filename: str) -> dict:
@@ -22,8 +21,7 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(client, hostname: str, cluster_id: str) -> Optional[Dict]:
-
+def get_node(client: ec2.Client, hostname: str, cluster_id: str):  # -> ec2.Instance?
     instance = client.describe_instances(Filters=[
         {
             "Name": "tag:Name",
@@ -40,7 +38,7 @@ def get_node(client, hostname: str, cluster_id: str) -> Optional[Dict]:
     return None
 
 
-def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
+def get_node_state(client: ec2.Client, hostname: str, cluster_id: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
@@ -62,7 +60,7 @@ def get_shape(hostname):
     return shape
 
 
-def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
+def create_node_config(client: ec2.Client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
@@ -123,13 +121,13 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
 
 
 def add_dns_record(
-    client,
+    client: route53.Client,
     zone_id: str,
     rrname: str,
-    rrtype: str,
+    rrtype,
     value: str,
     ttl: int,
-    action: str="UPSERT"
+    action="UPSERT"
 ) -> None:
     client.change_resource_record_sets(
         HostedZoneId=zone_id,
@@ -177,7 +175,7 @@ def delete_dns_record(
     )
 
 
-def ec2_client(region: str):
+def ec2_client(region: str) -> ec2.Client:
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
@@ -190,7 +188,7 @@ def ec2_client(region: str):
     return client
 
 
-def route53_client():
+def route53_client() -> route53.Client:
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
@@ -242,8 +240,6 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={vm_ip}"])
 
     log.info(f" Started {host}")
-
-    return instance
 
 
 def terminate_instance(log, hosts, nodespace=None):

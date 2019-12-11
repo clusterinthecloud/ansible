@@ -20,7 +20,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock google-api-python-client google-auth
+        pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock google-api-python-client google-auth boto3 "boto3-stubs[ec2,route53]"
+        python -m mypy_boto3
     - name: Test with pytest
       run: pytest
     - name: Ansible lint
@@ -31,3 +32,4 @@ jobs:
       run: |
         mypy roles/slurm/files/citc_oci.py
         mypy roles/slurm/files/citc_gcp.py
+        mypy roles/slurm/files/citc_aws.py
