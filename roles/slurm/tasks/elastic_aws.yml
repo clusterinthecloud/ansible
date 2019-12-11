@@ -3,6 +3,7 @@
   pip:
     name:
       - boto3
+      - mypy_boto3
     virtualenv: /opt/cloud_sdk
 
 - name: install startnode support module
