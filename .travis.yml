@@ -13,4 +13,5 @@ script:
   - ansible-lint compute.yml
   - mypy roles/slurm/files/citc_oci.py
   - mypy roles/slurm/files/citc_gcp.py
+  - python -m mypy_boto3
   - mypy roles/slurm/files/citc_aws.py
