@@ -18,6 +18,7 @@ install_packages:
   - openmpi-devel
   - python3-devel
   - "@Development Tools"
+  - vim
 
 mpi_packages:
   oracle:
