@@ -5,6 +5,7 @@ language: python
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
 
 install: pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock google-api-python-client google-auth boto3 "boto3-stubs[ec2,route53]"
 
