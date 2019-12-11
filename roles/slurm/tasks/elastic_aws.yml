@@ -6,6 +6,11 @@
       - mypy_boto3
     virtualenv: /opt/cloud_sdk
 
+- name: generate boto3 mypy stubs
+  command: /opt/cloud_sdk/bin/python -m mypy_boto3
+  register: result
+  changed_when: '"Discovered" in result.stdout'
+
 - name: install startnode support module
   copy:
     src: citc_aws.py  # should have this to be generic
