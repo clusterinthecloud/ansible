@@ -18,6 +18,22 @@
     enabled: yes
     state: started
 
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+
+- name: install python-firewall
+  package:
+    name: python-firewall
+    state: present
+
+- name: start service firewalld
+  service:
+    name: firewalld
+    enabled: yes
+    state: started
+
 - name: Add Slurm repository
   yum_repository:
     name: slurm
@@ -127,7 +143,7 @@
 
 - name: open all ports
   firewalld:
-    port: 0-65535/tcp
+    zone: trusted
     source: 10.0.0.0/8
     immediate: true
     permanent: true
@@ -144,6 +160,9 @@
 
 - include_tasks: elastic_gcp.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "google"
+
+- include_tasks: elastic_aws.yml
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "aws"
 
 - name: start service slurmctld
   service:

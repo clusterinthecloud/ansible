@@ -3,3 +3,6 @@
 .vagrant/
 .vscode/
 build/
+.idea
+.mypy_cache
+venv

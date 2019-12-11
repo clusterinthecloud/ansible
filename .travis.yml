@@ -5,11 +5,14 @@ language: python
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
 
-install: pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock google-api-python-client google-auth
+install: pip install oci pytest-mock pytest-asyncio pyyaml ansible-lint mypy requests_mock google-api-python-client google-auth boto3 "boto3-stubs[ec2,route53]"
 
 script:
   - pytest
   - ansible-lint compute.yml
   - mypy roles/slurm/files/citc_oci.py
   - mypy roles/slurm/files/citc_gcp.py
+  - python -m mypy_boto3
+  - mypy roles/slurm/files/citc_aws.py

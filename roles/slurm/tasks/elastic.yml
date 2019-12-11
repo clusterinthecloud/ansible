@@ -54,8 +54,8 @@
     mode: 0755
 
 - name: configure stopnode script
-  template:
-    src: stopnode.j2
+  copy:
+    src: stopnode.py
     dest: /usr/local/bin/stopnode
     mode: 0755
 
@@ -126,9 +126,19 @@
       {{ lookup('file', '/home/citc/.ssh/authorized_keys') }}
       EOF
 
+      {% if ansible_local.citc.csp == "aws" %}
+      yum install -y epel-release
+      yum install -y jq awscli
+      region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
+      instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
+      name=$(aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}" --output text --query 'Tags[?Key==`Name`].Value')
+      hostnamectl set-hostname ${name}
+      {% endif %}
+
       yum install -y ansible git
       cat > /root/hosts <<EOF
       [compute]
+      $(hostname)
       $(hostname -f)
       EOF
       mkdir /etc/ansible/facts.d/

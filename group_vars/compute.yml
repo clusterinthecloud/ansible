@@ -5,8 +5,17 @@ slurm_packages:
 
 slurm_role: compute
 
-install_packages:
-  - mpich-3.2
-  - openmpi3
+install_packages: []
+
+mpi_packages:
+  oracle:
+    - mpich-3.2
+    - openmpi3
+  google:
+    - mpich-3.2
+    - openmpi3
+  aws: []
 
 monitoring_role: client
+
+admin_key_path: /root/citc_authorized_keys

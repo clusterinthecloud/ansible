@@ -19,3 +19,15 @@
     fstype: nfs
     opts: defaults,nofail,nosuid
     state: mounted
+  when:
+    ansible_local.citc.csp != "aws"
+
+- name: Mount shared file system
+  mount:
+    path: /mnt/shared
+    src: "{{ filesystem_target_address }}:/"
+    fstype: nfs
+    opts: defaults,nofail,nosuid
+    state: mounted
+  when:
+    ansible_local.citc.csp == "aws"

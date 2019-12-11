@@ -15,14 +15,26 @@ slurm_elastic:
 
 install_packages:
   - xorg-x11-xauth
-  - mpich-3.2-devel
   - openmpi-devel
-  - openmpi3-devel
   - python3-devel
   - "@Development Tools"
-  - sos
+  - vim
+
+mpi_packages:
+  oracle:
+    - openmpi3-devel
+    - mpich-3.2-devel
+  google:
+    - openmpi3-devel
+    - mpich-3.2-devel
+  aws: []
 
 monitoring_role: master
 grafana_admin_password: "{{ lookup('password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
 
 bootstrap_ansible_pull_playbook: compute.yml
+
+admin_key_path:
+  oracle: /home/opc/.ssh/authorized_keys
+  google: /home/provisioner/.ssh/authorized_keys
+  aws: /home/centos/.ssh/authorized_keys

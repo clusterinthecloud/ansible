@@ -27,28 +27,20 @@
 
 - name: copy SSH public keys to citc user
   copy:
-    src: /home/opc/.ssh/authorized_keys
+    src: "{{ admin_key_path[ansible_local.citc.csp] }}"
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
     mode: 0600
-  when: '"/home/opc/.ssh/authorized_keys" is exists'
+  when: slurm_role == "mgmt"
 - name: copy SSH public keys to citc user
   copy:
-    src: /home/provisioner/.ssh/authorized_keys
+    src: "{{ admin_key_path }}"
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
     mode: 0600
-  when: '"/home/provisioner/.ssh/authorized_keys" is exists'
-- name: copy SSH public keys to citc user
-  copy:
-    src: /root/citc_authorized_keys
-    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
-    owner: citc
-    group: citc
-    mode: 0600
-  when: '"/root/citc_authorized_keys" is exists'
+  when: slurm_role == "compute"
 
 - name: Add citc to sudoers
   copy:

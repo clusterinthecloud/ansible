@@ -1,0 +1,5 @@
+---
+
+- name: install packages
+  package:
+    name: "{{ mpi_packages[ansible_local.citc.csp] }}"

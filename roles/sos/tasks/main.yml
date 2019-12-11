@@ -1,4 +1,9 @@
 ---
+- name: install sos
+  package:
+    name: sos
+    state: present
+
 - name: copy in CitC sosreport plugin
   copy:
     src: citc.py
