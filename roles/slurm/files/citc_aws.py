@@ -5,7 +5,7 @@ import yaml
 import asyncio
 
 import boto3
-from mypy_boto3 import ec2, route53
+#from mypy_boto3 import ec2, route53
 
 
 def load_yaml(filename: str) -> dict:
@@ -21,7 +21,7 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(client: ec2.Client, hostname: str, cluster_id: str):  # -> ec2.Instance?
+def get_node(client, hostname: str, cluster_id: str):  # -> ec2.Instance?
     instance = client.describe_instances(Filters=[
         {
             "Name": "tag:Name",
@@ -38,7 +38,7 @@ def get_node(client: ec2.Client, hostname: str, cluster_id: str):  # -> ec2.Inst
     return None
 
 
-def get_node_state(client: ec2.Client, hostname: str, cluster_id: str) -> Optional[str]:
+def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
@@ -60,7 +60,7 @@ def get_shape(hostname):
     return shape
 
 
-def create_node_config(client: ec2.Client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
+def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
@@ -121,7 +121,7 @@ def create_node_config(client: ec2.Client, hostname: str, nodespace: Dict[str, s
 
 
 def add_dns_record(
-    client: route53.Client,
+    client,
     zone_id: str,
     rrname: str,
     rrtype,
@@ -175,7 +175,7 @@ def delete_dns_record(
     )
 
 
-def ec2_client(region: str) -> ec2.Client:
+def ec2_client(region: str):
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
@@ -188,7 +188,7 @@ def ec2_client(region: str) -> ec2.Client:
     return client
 
 
-def route53_client() -> route53.Client:
+def route53_client():
     import configparser
     config = configparser.ConfigParser()
     config.read('/home/slurm/aws-credentials.csv')
