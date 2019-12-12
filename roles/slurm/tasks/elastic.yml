@@ -152,3 +152,9 @@
       date
     dest: /home/slurm/bootstrap.sh
     owner: slurm
+
+- name: copy list_nodes script
+  copy:
+    src: list_nodes.sh
+    dest: /usr/local/bin/list_nodes
+    mode: 0755
