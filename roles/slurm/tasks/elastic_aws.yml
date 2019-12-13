@@ -3,7 +3,7 @@
   pip:
     name:
       - boto3
-      - boto3-stubs[ec2,route53]
+      #- boto3-stubs[ec2,route53]
     virtualenv: /opt/cloud_sdk
 
 # This currently fails on Python 3.6
