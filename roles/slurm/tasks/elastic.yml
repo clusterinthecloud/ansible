@@ -11,7 +11,7 @@
   pip:
     name:
       - PyYAML
-      - https://github.com/milliams/python-citc/releases/download/0.2.0/citc-0.2.0-py3-none-any.whl
+      - https://github.com/milliams/python-citc/releases/download/0.2.1/citc-0.2.1-py3-none-any.whl
     virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python3 -m venv
   register: cloud_sdk_venv
