@@ -101,7 +101,7 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     data = [oci.core.models.Instance(lifecycle_state=state) for state in states]
     requests_mocker.register_uri(
         "GET",
-        "/20160918/instances/?compartmentId=ocid0..compartment&displayName=foo",
+        "/20160918/instances?compartmentId=ocid0..compartment&displayName=foo",
         text=json.dumps(serialize(data)),
     )
 
@@ -186,7 +186,7 @@ async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
 
     requests_mocker.register_uri(
         "GET",
-        "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
+        "/20160918/instances?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
         text=json.dumps(serialize([])),
     )
 
@@ -205,14 +205,14 @@ async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
     new_instance_response = oci.core.models.Instance(id="ocid0..instance.foo")
     requests_mocker.register_uri(
         "POST",
-        "/20160918/instances/",
+        "/20160918/instances",
         text=json.dumps(serialize(new_instance_response)),
     )
 
     vnic_attachments = [oci.core.models.VnicAttachment(vnic_id="ocid0..vnic")]
     requests_mocker.register_uri(
         "GET",
-        "/20160918/vnicAttachments/?compartmentId=ocid1.compartment.oc1..aaaaa&instanceId=ocid0..instance.foo",
+        "/20160918/vnicAttachments?compartmentId=ocid1.compartment.oc1..aaaaa&instanceId=ocid0..instance.foo",
         text=json.dumps(serialize(vnic_attachments)),
     )
 
