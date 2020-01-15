@@ -72,7 +72,8 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
         metadata={
             "ssh_authorized_keys": ssh_keys,
             "user_data": user_data,
-        }
+        },
+        freeform_tags={"type": "compute"},
     )
 
     return instance_details
