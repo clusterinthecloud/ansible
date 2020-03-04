@@ -4,8 +4,9 @@
   hosts: management
   tasks:
     - name: Download required roles
-      local_action: command ansible-galaxy install -r requirements.yml
+      command: ansible-galaxy install -r requirements.yml
       become: false
+      delegate_to: localhost
 
 - name: finisher script
   hosts: management
