@@ -44,3 +44,15 @@
     state: started
     enabled: yes
     daemon_reexec: yes
+
+- name: create webui database
+  mysql_db:
+    name: webui
+    state: present
+
+- name: create webui MySQL user
+  mysql_user:
+    name: webui
+    password: "{{ webui_db_password }}"
+    priv: 'webui.*:ALL'
+    state: present
