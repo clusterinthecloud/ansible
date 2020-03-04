@@ -9,6 +9,7 @@
     name:
       - django
       - gunicorn
+      - mysqlclient
     virtualenv: /opt/webui_venv
     virtualenv_command: /bin/python3 -m venv
   register: webui_venv
