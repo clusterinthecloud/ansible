@@ -29,12 +29,12 @@
     group: webui
 
 - name: install gunicorn service file
-  file:
+  copy:
     src: gunicorn.service
     dest: /etc/systemd/system/gunicorn.service
 
 - name: install gunicorn socket file
-  file:
+  copy:
     src: gunicorn.socket
     dest: /etc/systemd/system/gunicorn.socket
 
