@@ -6,7 +6,7 @@
   yum:
     name:
       - mariadb-server
-      - mariadb-libs
+      - mariadb-devel
     state: installed
 
 - name: start service mariadb
