@@ -1,0 +1,42 @@
+---
+
+- name: install webui
+  pip:
+    name:
+      - django
+      - gunicorn
+    virtualenv: /opt/webui_venv
+    virtualenv_command: /bin/python3 -m venv
+    register: webui_venv
+
+- name: checkout webui
+  git:
+    repo: git+git://github.com/milliams/citc-webui.git
+    dest: /opt/webui
+    version: master
+
+- name: Create webui group
+  group:
+    name: webui
+
+- name: Create the webui user
+  user:
+    name: webui
+    group: webui
+
+- name: install gunicorn service file
+  file:
+    src: gunicorn.service
+    dest: /etc/systemd/system/gunicorn.service
+
+- name: install gunicorn socket file
+  file:
+    src: gunicorn.socket
+    dest: /etc/systemd/system/gunicorn.socket
+
+- name: start and enable gunicorn
+  systemd:
+    name: gunicorn
+    state: started
+    enabled: yes
+    daemon_reexec: yes

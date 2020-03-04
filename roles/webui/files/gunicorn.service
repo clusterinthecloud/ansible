@@ -1,0 +1,19 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+Type=notify
+User=webui
+Group=webui
+RuntimeDirectory=gunicorn
+WorkingDirectory=/opt/webui
+ExecStart=/opt/webui_venv/bin//gunicorn webui.wsgi
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

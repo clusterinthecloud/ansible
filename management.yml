@@ -46,6 +46,7 @@
   tags: finalise
   roles:
     - finalise
+    - webui
     - monitoring
     - clustershell
     - packages
