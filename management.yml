@@ -1,4 +1,12 @@
 ---
+
+- name: install roles
+  hosts: management
+  tasks:
+    - name: Download required roles
+      local_action: command ansible-galaxy install -r requirements.yml
+      become: false
+
 - name: finisher script
   hosts: management
   tasks:

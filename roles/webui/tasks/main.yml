@@ -1,5 +1,9 @@
 ---
 
+- name: install nginx
+  include_role:
+    name: geerlingguy.nginx
+
 - name: install webui
   pip:
     name:
@@ -7,7 +11,7 @@
       - gunicorn
     virtualenv: /opt/webui_venv
     virtualenv_command: /bin/python3 -m venv
-    register: webui_venv
+  register: webui_venv
 
 - name: checkout webui
   git:

@@ -1,2 +1,2 @@
-dependencies:
-  - role: geerlingguy.nginx
+#dependencies:
+#  - role: geerlingguy.nginx
