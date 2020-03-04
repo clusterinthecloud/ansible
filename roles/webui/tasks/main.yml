@@ -28,6 +28,8 @@
     name: webui
     group: webui
 
+# TODO make checkout readable only by correct user
+
 - name: install gunicorn service file
   copy:
     src: gunicorn.service
@@ -53,6 +55,16 @@
 - name: create webui MySQL user
   mysql_user:
     name: webui
-    password: "{{ webui_db_password }}"
+    password: "{{ webui_database_password }}"
     priv: 'webui.*:ALL'
     state: present
+
+# TODO create secret key file https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/#secret-key
+
+- name: create webui mysql config
+  template:
+    src: my.cnf.j2
+    dest: /etc/citc/webui.my.cnf
+    owner: webui
+    group: webui
+    mode: "660"
