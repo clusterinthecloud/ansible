@@ -15,7 +15,7 @@
 
 - name: checkout webui
   git:
-    repo: git+git://github.com/milliams/citc-webui.git
+    repo: git://github.com/milliams/citc-webui.git
     dest: /opt/webui
     version: master
 
