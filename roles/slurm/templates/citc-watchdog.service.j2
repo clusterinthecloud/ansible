@@ -1,0 +1,12 @@
+[Unit]
+Description=Cluster in the Cloud Watchdog
+
+[Service]
+ExecStart={{ cloud_sdk_venv.virtualenv }}/bin/watchdog
+Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
+Type=simple
+User=slurm
+
+[Install]
+WantedBy=default.target

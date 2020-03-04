@@ -11,8 +11,16 @@
   pip:
     name:
       - PyYAML
+      - https://github.com/milliams/python-citc/releases/download/0.2.1/citc-0.2.1-py3-none-any.whl
     virtualenv: /opt/cloud_sdk
     virtualenv_command: /bin/python3 -m venv
+  register: cloud_sdk_venv
+
+- name: install watchdog service
+  template:
+    src: citc-watchdog.service.j2
+    dest: /usr/lib/systemd/system/citc-watchdog.service
+    mode: 0755
 
 - name: create citc config dir
   file:
@@ -158,3 +166,9 @@
     src: list_nodes.sh
     dest: /usr/local/bin/list_nodes
     mode: 0755
+
+- name: start and enable service citc-watchdog
+  service:
+    name: citc-watchdog
+    state: started
+    enabled: yes
