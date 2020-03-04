@@ -3,7 +3,7 @@ import base64
 import re
 import subprocess
 import time
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 
 import oci  # type: ignore
 import yaml
@@ -36,7 +36,7 @@ def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
-    matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
+    matches: List[oci.core.models.Instance] = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
     still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
     if not still_exist:
         return "TERMINATED"
