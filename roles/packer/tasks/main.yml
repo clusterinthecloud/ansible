@@ -1,4 +1,10 @@
 ---
---
+- name: Download and unarchive Packer.
+  unarchive:
+    src: https://releases.hashicorp.com/packer/1.5.4/packer_1.5.4_linux_amd64.zip
+    dest: /usr/local/bin/packer
+    remote_src: true
+    creates: /usr/local/bin/packer
 
-curl https://releases.hashicorp.com/packer/1.5.4/packer_1.5.4_linux_amd64.zip
+# copy template to /etc/citc/compute.yml#
+# # copy in packer run script
