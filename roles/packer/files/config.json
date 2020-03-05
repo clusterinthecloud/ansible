@@ -1,0 +1,10 @@
+{
+    "source_images_family": "centos-7",
+    
+    "destination_image_name": "citc-slurm-compute-v",
+    "destination_image_family": "citc-slurm-compute",
+    
+    "build_project_id": "ex-eccoe-university-bristol",
+    "zone": "europe-west2-a",
+    "region": "europe-west2"
+}

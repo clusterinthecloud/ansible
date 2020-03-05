@@ -1,6 +1,6 @@
 {
     "variables": {
-      "source_image": "{{env `PACKER_source_image`}}",
+      "source_images_family": "{{env `PACKER_source_images_family`}}",
       "source_image_project_id": "{{env `PACKER_source_image_project_id`}}",
       "destination_image_name": "{{env `PACKER_destination_image_name`}}",
       "destination_image_family": "{{env `PACKER_destination_image_family`}}",
@@ -8,8 +8,7 @@
       "ssh_password": "{{env `PACKER_ssh_password`}}",
       "build_project_id": "{{env `PACKER_build_project_id`}}",
       "zone": "{{env `PACKER_zone`}}",
-      "region": "{{env `PACKER_region`}}",
-      "build_project_subnet": "{{env `PACKER_build_project_subnet`}}"
+      "region": "{{env `PACKER_region`}}"
     },
 
     "sensitive-variables": ["ssh_username", "ssh_password"],
@@ -17,14 +16,13 @@
     "builders": [
       {
         "type": "googlecompute",
-        "source_image": "{{user `source_image`}}",
+        "source_images_family": "{{user `source_images_family`}}",
         "source_image_project_id": "{{user `source_image_project_id`}}",
         "ssh_username": "{{user `ssh_username`}}",
         "ssh_password": "{{user `ssh_password`}}",
         "project_id": "{{user `build_project_id`}}",
         "zone": "{{user `zone`}}",
         "region": "{{user `region`}}",
-        "subnetwork": "{{user `build_project_subnet`}}",
         "image_name": "{{user `destination_image_name`}}-{{timestamp}}",
         "image_family": "{{user `destination_image_family`}}"
       }
