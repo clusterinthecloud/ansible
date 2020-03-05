@@ -6,5 +6,25 @@
     remote_src: true
     creates: /usr/local/bin/packer
 
-# copy template to /etc/citc/compute.yml#
-# # copy in packer run script
+- name: create packer directory
+  file:
+    path: /etc/citc/packer/
+    state: directory
+    mode: 0755
+
+- name: copy in packer-build
+  copy:
+    src: packer-build.json
+    dest: /etc/citc/packer/build.json
+
+- name: copy in config 
+  template:
+    src: config.json.j2
+    dest: /etc/citc/packer/config.json
+
+- name: copy in packer run script
+  template:
+    src: run-packer.sh.j2
+    dest: /usr/local/bin/run-packer
+
+# run packer
