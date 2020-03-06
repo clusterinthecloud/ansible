@@ -1,26 +1,21 @@
 {
     "variables": {
-      "source_images_family": "{{env `PACKER_source_images_family`}}",
-      "source_image_project_id": "{{env `PACKER_source_image_project_id`}}",
+      "source_image_family": "{{env `PACKER_source_images_family`}}",
+      "account_file": "{{ env `PACKER_account_file` }}",
       "destination_image_name": "{{env `PACKER_destination_image_name`}}",
-      "destination_image_family": "{{env `PACKER_destination_image_family`}}",
-      "ssh_username": "{{env `PACKER_ssh_username`}}",
-      "ssh_password": "{{env `PACKER_ssh_password`}}",
-      "build_project_id": "{{env `PACKER_build_project_id`}}",
+      "destination_image_family": "{{env `PACKER_destination_image_family`}}",      
+      "project_id": "{{env `PACKER_project_id`}}",
       "zone": "{{env `PACKER_zone`}}",
       "region": "{{env `PACKER_region`}}"
-    },
-
-    "sensitive-variables": ["ssh_username", "ssh_password"],
+    },    
 
     "builders": [
       {
         "type": "googlecompute",
-        "source_images_family": "{{user `source_images_family`}}",
-        "source_image_project_id": "{{user `source_image_project_id`}}",
-        "ssh_username": "{{user `ssh_username`}}",
-        "ssh_password": "{{user `ssh_password`}}",
-        "project_id": "{{user `build_project_id`}}",
+        "account_file": "{{ user `account_file` }}",
+        "source_image_family": "{{user `source_image_family`}}",        
+        "ssh_username": "centos",        
+        "project_id": "{{user `project_id`}}",
         "zone": "{{user `zone`}}",
         "region": "{{user `region`}}",
         "image_name": "{{user `destination_image_name`}}-{{timestamp}}",
@@ -28,10 +23,18 @@
       }
     ],
 
+
     "provisioners": [
       {
-        "type": "ansible",
-        "playbook_file": "{{template_dir}}/../../ansible/docker-host/docker-host.yml"
+        "type": "shell-local",
+        "inline": [        
+          "git clone git@github.com:ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook"
+        ]
+      },
+      {
+        "type": "ansible-local",
+        "playbook_file": "compute.yml",
+        "staging_directory": "/tmp/slurm-ansible-playbook/"
       }
     ]
   }
