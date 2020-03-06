@@ -20,7 +20,7 @@
 - name: copy in packer-build
   copy:
     src: packer-build.json
-    dest: /etc/citc/packer/build.json
+    dest: /etc/citc/packer/packer-build.json
 
 - name: copy in config 
   template:
