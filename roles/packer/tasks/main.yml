@@ -6,6 +6,11 @@
     remote_src: true
     creates: /usr/local/bin/packer
 
+- name: ser permissions on packer
+  file:
+    path: /usr/local/bin/packer
+    mode: u=rwx,g=rx,o=rx
+
 - name: create packer directory
   file:
     path: /etc/citc/packer/
