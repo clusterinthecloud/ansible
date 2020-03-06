@@ -149,7 +149,6 @@
       cat > /root/hosts <<EOF
       [compute]
       $(hostname)
-      $(hostname -f)
       EOF
       mkdir /etc/ansible/facts.d/
       cat > /etc/ansible/facts.d/citc.fact <<EOF
