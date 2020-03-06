@@ -6,6 +6,11 @@
     remote_src: true
     creates: /usr/local/bin/packer
 
+- name: set permissions on packer
+  file:
+    path: /usr/local/bin/packer
+    mode: u=rwx,g=rx,o=rx
+
 - name: create packer directory
   file:
     path: /etc/citc/packer/
@@ -15,9 +20,9 @@
 - name: copy in packer-build
   copy:
     src: packer-build.json
-    dest: /etc/citc/packer/build.json
+    dest: /etc/citc/packer/packer-build.json
 
-- name: copy in config 
+- name: copy in config
   template:
     src: config.json.j2
     dest: /etc/citc/packer/config.json
