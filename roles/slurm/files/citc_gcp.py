@@ -26,8 +26,8 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
     return load_yaml(file)
 
 
-def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Dict:
-    filter_clause = f'(name={hostname})'
+def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str, cluster_id: str) -> Dict:
+    filter_clause = f"name={hostname} AND labels.cluster={cluster_id}"
 
     result = gce_compute.instances().list(project=compartment_id, zone=zone, filter=filter_clause).execute()
     item = result['items'][0] if 'items' in result else None
@@ -35,21 +35,21 @@ def get_node(gce_compute, log, compartment_id: str, zone: str, hostname: str) ->
     return item
 
 
-def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> Optional[str]:
+def get_node_state(gce_compute, log, compartment_id: str, zone: str, hostname: str, cluster_id: str) -> Optional[str]:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
 
-    item = get_node(gce_compute, log, compartment_id, zone, hostname)
+    item = get_node(gce_compute, log, compartment_id, zone, hostname, cluster_id)
 
     if item:
         return item['status']
     return None
 
 
-def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: str) -> str:
-    item = get_node(gce_compute, log, compartment_id, zone, hostname)
+def get_ip_for_vm(gce_compute, log, compartment_id: str, zone: str, hostname: str, cluster_id: str) -> str:
+    item = get_node(gce_compute, log, compartment_id, zone, hostname, cluster_id)
 
     network = item['networkInterfaces'][0]
     log.debug(f'network {network}')
@@ -111,9 +111,12 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
         },
         'tags': {
             "items": [
-                "compute",
+                f"compute-{nodespace['cluster_id']}",
             ],
         },
+        'labels': {
+            "cluster": nodespace['cluster_id']
+        }
     }
 
     return config
@@ -154,11 +157,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     gce_compute = get_build()
 
-    while get_node_state(gce_compute, log, project, zone, host) in ["STOPPING", "TERMINATED"]:
+    while get_node_state(gce_compute, log, project, zone, host, nodespace["cluster_id"]) in ["STOPPING", "TERMINATED"]:
         log.info(" host is currently being deleted. Waiting...")
         await asyncio.sleep(5)
 
-    node_state = get_node_state(gce_compute, log, project, zone, host)
+    node_state = get_node_state(gce_compute, log, project, zone, host, nodespace["cluster_id"])
     if node_state is not None:
         log.warning(f" host is already running with state {node_state}")
         return
@@ -177,10 +180,10 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
         return
 
     if not slurm_ip:
-        while not get_node(gce_compute, log, project, zone, host)['networkInterfaces'][0].get("networkIP"):
+        while not get_node(gce_compute, log, project, zone, host, nodespace["cluster_id"])['networkInterfaces'][0].get("networkIP"):
             log.info(f"{host}:  No VNIC attachment yet. Waiting...")
             await asyncio.sleep(5)
-        vm_ip = get_ip_for_vm(gce_compute, log, project, zone, host)
+        vm_ip = get_ip_for_vm(gce_compute, log, project, zone, host, nodespace["cluster_id"])
 
         log.info(f"  Private IP {vm_ip}")
 
