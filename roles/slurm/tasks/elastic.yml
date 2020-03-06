@@ -143,6 +143,8 @@
       hostnamectl set-hostname ${name}
       {% endif %}
 
+      # TODO remove once we image is built
+
       yum install -y ansible git
       cat > /root/hosts <<EOF
       [compute]
