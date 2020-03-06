@@ -42,6 +42,13 @@
     mode: 0600
   when: slurm_role == "compute"
 
+# For Google 1-click install, this is the user-provided SSH key file
+- name:
+  blockinfile:
+    block: "{{ lookup('file', '/home/provisioner/citc-admin.pub') }}"
+    dest: "{{ citc_user.home }}/.ssh/authorized_keys"
+  when: '"/home/provisioner/citc-admin.pub" is exists'
+
 - name: Add citc to sudoers
   copy:
     content: |
