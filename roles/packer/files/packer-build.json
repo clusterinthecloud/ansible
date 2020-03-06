@@ -8,7 +8,9 @@
       "zone": "{{env `PACKER_zone`}}",
       "region": "{{env `PACKER_region`}}",
       "csp": "{{env `PACKER_csp`}}",
-      "fileserver_ip": "{{env `PACKER_fileserver_ip`}}"
+      "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
+      "network": "{{env `PACKER_network`}}",
+      "subnetwork": "{{env `PACKER_subnetwork`}}"
     },    
 
     "builders": [
@@ -20,6 +22,8 @@
         "project_id": "{{user `project_id`}}",
         "zone": "{{user `zone`}}",
         "region": "{{user `region`}}",
+        "network": "{{user `network`}}",
+        "subnetwork": "{{user `subnetwork`}}",
         "image_name": "{{user `destination_image_name`}}-{{timestamp}}",
         "image_family": "{{user `destination_image_family`}}"
       }
@@ -45,9 +49,10 @@
           "sudo cat /tmp/hosts",
           "echo {\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
           "sudo mkdir -p /etc/ansible/facts.d/",
-          "sudo cat > /etc/ansible/facts.d/citc.fact <<EOF",
+          "echo 'packer' | sudo -S sh -c '",
+          "cat > /etc/ansible/facts.d/citc.fact <<EOF",
           "{\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
-          "EOF",
+          "EOF'",
           "sudo cat /etc/ansible/facts.d/citc.fact",
           "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
           "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --inventory=/tmp/hosts compute.yml",
