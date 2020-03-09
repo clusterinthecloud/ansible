@@ -2,4 +2,5 @@
 
 /usr/local/bin/packer build \
 	-var-file /etc/citc/packer/config.json \
+	-var account_file=/home/slurm/mgmt-sa-credentials.json \
 	/etc/citc/packer/packer-build.json
