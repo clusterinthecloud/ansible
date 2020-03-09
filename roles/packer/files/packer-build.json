@@ -11,7 +11,8 @@
       "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
       "network": "{{env `PACKER_network`}}",
       "subnetwork": "{{env `PACKER_subnetwork`}}",
-      "branch": "{{env `PACKER_branch`}}"
+      "branch": "{{env `PACKER_branch`}}",
+      "petname": "{{env `PACKER_petname`}}"
     },    
 
     "builders": [
@@ -23,10 +24,10 @@
         "project_id": "{{user `project_id`}}",
         "zone": "{{user `zone`}}",
         "region": "{{user `region`}}",
-        "network": "{{user `network`}}",
-        "subnetwork": "{{user `subnetwork`}}",
-        "image_name": "{{user `destination_image_name`}}-{{timestamp}}",
-        "image_family": "{{user `destination_image_family`}}"
+        "network": "{{user `network`}}-{{user `petname`}}",
+        "subnetwork": "{{user `subnetwork`}}-{{user `petname`}}",
+        "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{ isotime \"20060102\" }}",
+        "image_family": "{{user `destination_image_family`}}-{{user `petname`}}"
       }
     ],
 

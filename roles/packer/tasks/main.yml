@@ -35,4 +35,8 @@
     src: run-packer.sh.j2
     dest: /usr/local/bin/run-packer
 
+- name: set permissions on run-packer
+  file:
+    path: /usr/local/bin/run-packer
+    mode: u=rwx,g=rx,o=rx
 # run packer
