@@ -7,6 +7,7 @@ import subprocess
 
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
+# TODO need to check against petname
 all_nodes = {'mgmt'}
 
 unfinished_nodes = all_nodes - finished_nodes

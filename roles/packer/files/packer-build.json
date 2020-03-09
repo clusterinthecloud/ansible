@@ -10,7 +10,8 @@
       "csp": "{{env `PACKER_csp`}}",
       "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
       "network": "{{env `PACKER_network`}}",
-      "subnetwork": "{{env `PACKER_subnetwork`}}"
+      "subnetwork": "{{env `PACKER_subnetwork`}}",
+      "branch": "{{env `PACKER_branch`}}"
     },    
 
     "builders": [
@@ -55,7 +56,7 @@
           "EOF'",
           "sudo cat /etc/ansible/facts.d/citc.fact",
           "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
-          "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --inventory=/tmp/hosts compute.yml",
+          "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml",
           "#git clone https://github.com/ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook",
           "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute.yml "
         ]
