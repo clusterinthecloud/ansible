@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  tasks:
+    - name: disable SELinux
+      selinux:
+        state: disabled
+
+- hosts: all
+  roles:
+    - citc_user
+    - filesystem
+    - ssh
+    #- security-updates
+    - ntp
+    - sssd
+    - lmod
+    - packages
+    - mpi
+    - slurm
+    - monitoring
