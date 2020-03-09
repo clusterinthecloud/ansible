@@ -46,7 +46,7 @@
         "inline": [
           "echo 'packer' | sudo -S sh -c ' ",
           "cat > /tmp/hosts <<EOF",
-          "[compute]",
+          "[base]",
           "$(hostname)",
           "EOF'",
           "sudo yum install -y ansible git",
@@ -59,9 +59,9 @@
           "EOF'",
           "sudo cat /etc/ansible/facts.d/citc.fact",
           "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
-          "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml",
+          "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute_base.yml",
           "#git clone https://github.com/ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook",
-          "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute.yml "
+          "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute_base.yml "
         ]
       }
     ]
