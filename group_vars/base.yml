@@ -1,0 +1,21 @@
+---
+slurm_packages:
+  - slurmd
+  - libpmi
+
+slurm_role: base
+
+install_packages: []
+
+mpi_packages:
+  oracle:
+    - mpich-3.2
+    - openmpi3
+  google:
+    - mpich-3.2
+    - openmpi3
+  aws: []
+
+monitoring_role: client
+
+admin_key_path: /root/citc_authorized_keys
