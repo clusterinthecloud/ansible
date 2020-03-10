@@ -38,3 +38,48 @@ admin_key_path:
   oracle: /home/opc/.ssh/authorized_keys
   google: /home/provisioner/.ssh/authorized_keys
   aws: /home/centos/.ssh/authorized_keys
+
+nginx_http_template:
+  default:
+    template_file: http/default.conf.j2
+    conf_file_name: default.conf
+    conf_file_location: /etc/nginx/conf.d/
+    servers:
+      server1:
+        listen:
+          listen_localhost:
+            port: 80
+            opts:
+              - default_server
+        root: /opt/webui
+        server_name: localhost
+        error_page: 500 502 503 504 /500.html;
+        reverse_proxy:
+          locations:
+            default:
+              location: /
+              try_files: $uri @proxy_to_app;
+            backend:
+              location: @proxy_to_app
+              proxy_set_header:
+                header_x_forwarded_for:
+                  name: X-Forwarded-For
+                  value: $proxy_add_x_forwarded_for
+                header_x_forwarded_proto:
+                  name: X-Forwarded-Proto
+                  value: $scheme
+                header_host:
+                  name: Host
+                  value: $http_host
+              proxy_redirect: off
+              proxy_pass: http://app_server
+            error:
+              location: /500.html
+              root: /opt/webui
+    upstreams:
+      app_server:
+        name: app_server
+        servers:
+          gunicorn:
+            address: unix:/run/gunicorn.sock
+            health_check: fail_timeout=0
