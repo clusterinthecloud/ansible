@@ -30,9 +30,9 @@
     - 389ds
     - users
     - sssd
-    - mysql
-    - packer
+    - mysql    
     - slurm
+    - packer
   tasks:
     - name: copy SSH public keys to slurm account
       copy:
