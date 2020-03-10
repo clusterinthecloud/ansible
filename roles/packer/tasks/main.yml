@@ -25,6 +25,11 @@
     src: packer-build.json
     dest: /etc/citc/packer/packer-build.json
 
+- name: load the startnode config
+  include_vars:
+    file: /etc/citc/startnode.yaml
+    name: startnode_config
+
 - name: copy in config
   template:
     src: config.json.j2

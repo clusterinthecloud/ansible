@@ -1,6 +1,7 @@
-#! /usr/bin/env python2
+#! /opt/cloud_sdk/bin/python
 
 from __future__ import (absolute_import, division, print_function)
+from typing import Dict, Optional, Tuple
 import glob
 import os
 import subprocess
@@ -22,12 +23,14 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
 
-node = f'mgmt-{nodespace["cluster_id"]}'
+node = f'mgmt-{get_nodespace()["cluster_id"]}'
 
 
 all_nodes = {node}
 
 unfinished_nodes = all_nodes - finished_nodes
+
+
 
 if unfinished_nodes:
     print('Error: The following nodes have not reported finishing their setup:')
