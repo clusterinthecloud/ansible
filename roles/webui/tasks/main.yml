@@ -3,6 +3,9 @@
 - name: install nginx
   include_role:
     name: geerlingguy.nginx
+  vars:
+    nginx_upstreams: "{{ nginx_upstreams }}"
+    nginx_vhosts: "{{ nginx_vhosts }}"
 
 - name: install GCC
   package:
