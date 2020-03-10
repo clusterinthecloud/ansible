@@ -4,6 +4,11 @@
   include_role:
     name: geerlingguy.nginx
 
+- name: install GCC
+  package:
+    name: gcc
+    state: present
+
 - name: install webui
   pip:
     name:
