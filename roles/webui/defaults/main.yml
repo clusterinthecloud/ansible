@@ -12,9 +12,9 @@ nginx_upstreams:
 nginx_vhosts:
   - listen: "80"
     root: "/opt/webui"
-    error_page: ""
-    access_log: ""
-    error_log: ""
+    #error_page: ""
+    #access_log: ""
+    #error_log: ""
     state: "present"
     template: "{{ nginx_vhost_template }}"
     filename: "webui.conf"
