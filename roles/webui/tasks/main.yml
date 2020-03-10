@@ -9,6 +9,11 @@
     name: gcc
     state: present
 
+- name: install Python3 headers
+  package:
+    name: python3-devel
+    state: present
+
 - name: install webui
   pip:
     name:
