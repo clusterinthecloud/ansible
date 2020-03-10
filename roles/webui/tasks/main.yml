@@ -69,3 +69,11 @@
     owner: webui
     group: webui
     mode: "660"
+
+- name: open HTTP port in firewall
+  firewalld:
+    service: http
+    permanent: true
+    state: enabled
+  notify:
+    - restart firewalld
