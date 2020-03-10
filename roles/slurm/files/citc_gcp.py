@@ -70,13 +70,14 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
     shape = get_shape(hostname)
     subnet = nodespace["subnet"]
     zone = nodespace["zone"]
+    image_family = f'citc-slurm-compute-{nodespace["cluster_id"]}'
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = f.read().decode()
 
     machine_type = f"zones/{zone}/machineTypes/{shape}"
 
-    image_response = gce_compute.images().getFromFamily(project='gce-uefi-images', family='centos-7').execute()
+    image_response = gce_compute.images().getFromFamily(project=nodespace["compartment_id"], family=image_family).execute()
     source_disk_image = image_response['selfLink']
 
     config = {
@@ -152,8 +153,9 @@ def get_build():
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     project = nodespace["compartment_id"]
     zone = nodespace["zone"]
+    cluster_id = nodespace["cluster_id"]
 
-    log.info(f"Starting {host} in {project} {zone}")
+    log.info(f"Starting {host} in {project} {zone} cluster {cluster_id}")
 
     gce_compute = get_build()
 

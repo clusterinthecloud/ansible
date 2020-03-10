@@ -4,11 +4,28 @@ from __future__ import (absolute_import, division, print_function)
 import glob
 import os
 import subprocess
+import yaml
+
+def load_yaml(filename: str) -> dict:
+    with open(filename, "r") as f:
+        return yaml.safe_load(f)
+
+
+def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
+    """
+    Get the information about the space into which we were creating nodes
+    This will be static for all nodes in this cluster
+    """
+    return load_yaml(file)
+
 
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
-# TODO need to check against petname
-all_nodes = {'mgmt'}
+
+node = f'mgmt-{nodespace["cluster_id"]}'
+
+
+all_nodes = {node}
 
 unfinished_nodes = all_nodes - finished_nodes
 
