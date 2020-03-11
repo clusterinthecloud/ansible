@@ -1,18 +1,17 @@
-#! #! /usr/bin/env python2
+#! /usr/bin/env python2
 
 from __future__ import (absolute_import, division, print_function)
-from typing import Dict, Optional, Tuple
 import glob
 import os
 import subprocess
 import yaml
 
-def load_yaml(filename) -> dict:
+def load_yaml(filename):
     with open(filename, "r") as f:
         return yaml.safe_load(f)
 
 
-def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
+def get_nodespace(file="/etc/citc/startnode.yaml"):
     """
     Get the information about the space into which we were creating nodes
     This will be static for all nodes in this cluster
@@ -23,8 +22,26 @@ def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
 
-node = f'mgmt-{get_nodespace()["cluster_id"]}'
+nodespace=get_nodespace()
 
+node = "mgmt-" + nodespace["cluster_id"]
+
+all_nodes = {node}
+
+unfinished_nodes = all_nodes - finished_nodes
+
+
+
+if unfinished_nodes:
+    print('Error: The following nodes have not reported finishing their setup:')
+    for node in sorted(unfinished_nodes):
+        print(' ', node)
+    print('Please allow them to finish before continuing.')
+    print('For information about why they have not finished, SSH to that machine and check the file /root/ansible-pull.log')
+    exit(1)
+
+if not os.path.exists('limits.yaml'):
+    print('Error: Could not find limits.yaml in this directory')
 
 all_nodes = {node}
 
