@@ -4,3 +4,8 @@
   service:
     name: firewalld
     state: restarted
+
+- name: reload gunicorn
+  service:
+    name: gunicorn
+    state: reloaded

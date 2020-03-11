@@ -80,6 +80,7 @@
     force: yes
     dest: "{{ webui_dir }}"
     version: master
+  notify: reload gunicorn
 
 - name: set django to production mode
   lineinfile:
