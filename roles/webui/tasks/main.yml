@@ -4,6 +4,7 @@
   include_role:
     name: nginxinc.nginx
   vars:
+    nginx_http_template_enable: true
     nginx_http_template:
       default:
         template_file: http/default.conf.j2
