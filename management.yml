@@ -55,7 +55,6 @@
   tags: finalise
   roles:
     - finalise
-    - nginxinc.nginx
     - webui
     - monitoring
     - clustershell
