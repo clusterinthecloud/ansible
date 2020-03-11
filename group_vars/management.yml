@@ -53,14 +53,14 @@ nginx_http_template:
               - default_server
         root: /opt/webui
         server_name: localhost
-        error_page: 500 502 503 504 /500.html;
+        error_page: 500 502 503 504 /500.html
         reverse_proxy:
           locations:
             default:
               location: /
-              try_files: $uri @proxy_to_app;
+              try_files: $uri @proxy_to_app
             backend:
-              location: @proxy_to_app
+              location: "@proxy_to_app"
               proxy_set_header:
                 header_x_forwarded_for:
                   name: X-Forwarded-For
