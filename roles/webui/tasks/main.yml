@@ -28,6 +28,7 @@
                 error:
                   location: /500.html
                   root: /opt/webui
+              http_demo_conf: false
             reverse_proxy:
               locations:
                 backend:
