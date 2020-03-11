@@ -45,6 +45,7 @@
         upstreams:
           app_server:
             name: app_server
+            sticky_cookie: false
             servers:
               gunicorn:
                 address: unix:/run/gunicorn.sock
