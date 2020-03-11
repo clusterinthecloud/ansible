@@ -19,15 +19,12 @@
                   - default_server
             root: /opt/webui
             server_name: localhost
-            error_page: 500 502 503 504 /500.html
+            error_page: /opt/webui
             web_server:
               locations:
                 default:
                   location: /
                   try_files: $uri @proxy_to_app
-                error:
-                  location: /500.html
-                  root: /opt/webui
               http_demo_conf: false
             reverse_proxy:
               locations:
