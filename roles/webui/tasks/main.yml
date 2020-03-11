@@ -92,6 +92,25 @@
   register: collectstatic_result
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
 
+- name: run migrations
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
+    chdir: "{{ webui_dir }}"
+  register: migrate_result
+  changed_when: '"No migrations to apply" not in migrate_result.stdout'
+
+- name: does django citc user exist already
+  shell:
+    cmd: "{{ webui_venv.virtualenv }}"/bin/python manage.py dumpdata | jq '.[] | select(.model == "auth.user").fields | select(.username == "citc")'
+    chdir: "{{ webui_dir }}"
+  register: django_citc_user
+
+- name: create admin
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username=citc --email=citc@localhost --no-input"
+    chdir: "{{ webui_dir }}"
+  when: '"citc" not in django_citc_user.stdout'
+
 - name: Create webui group
   group:
     name: webui
