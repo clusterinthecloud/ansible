@@ -17,9 +17,9 @@
                 port: 80
                 opts:
                   - default_server
-            root: /opt/webui
+            root: "{{ webui_dir }}"
             server_name: localhost
-            error_page: /opt/webui
+            error_page: "{{ webui_dir }}"
             web_server:
               locations:
                 default:
@@ -77,18 +77,18 @@
 - name: checkout webui
   git:
     repo: git://github.com/milliams/citc-webui.git
-    dest: /opt/webui
+    dest: "{{ webui_dir }}"
     version: master
 
 - name: install webui dependencies
   pip:
-    requirements: /opt/webui/requirements.txt
+    requirements: "{{ webui_dir }}/requirements.txt"
     virtualenv: "{{ webui_venv.virtualenv }}"
 
 - name: collect static files
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input"
-    chdir: /opt/webui
+    chdir: "{{ webui_dir }}"
   register: collectstatic_result
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
 
