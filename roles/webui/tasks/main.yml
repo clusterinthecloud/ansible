@@ -66,12 +66,10 @@
     name: python3-devel
     state: present
 
-- name: install webui
+- name: install gunicorn
   pip:
     name:
-      - django
       - gunicorn
-      - mysqlclient
     virtualenv: /opt/webui_venv
     virtualenv_command: /bin/python3 -m venv
   register: webui_venv
@@ -81,6 +79,11 @@
     repo: git://github.com/milliams/citc-webui.git
     dest: /opt/webui
     version: master
+
+- name: install webui dependencies
+  pip:
+    requirements: /opt/webui/requirements.txt
+    virtualenv: "{{ webui_venv.virtualenv }}"
 
 - name: Create webui group
   group:
