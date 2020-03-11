@@ -25,6 +25,9 @@
                 default:
                   location: /
                   try_files: $uri @proxy_to_app
+                error:
+                  location: /500.html
+                  root: /opt/webui
             reverse_proxy:
               locations:
                 backend:
@@ -41,9 +44,6 @@
                       value: $http_host
                   proxy_redirect: off
                   proxy_pass: http://app_server
-                error:
-                  location: /500.html
-                  root: /opt/webui
         upstreams:
           app_server:
             name: app_server
