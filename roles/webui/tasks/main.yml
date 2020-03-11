@@ -80,6 +80,12 @@
     dest: "{{ webui_dir }}"
     version: master
 
+- name: set django to production mode
+  lineinfile:
+    path: "{{ webui_dir }}/webui/settings.py"
+    regexp: '^in_production = '
+    line: in_production = True
+
 - name: install webui dependencies
   pip:
     requirements: "{{ webui_dir }}/requirements.txt"
