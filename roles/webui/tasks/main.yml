@@ -48,6 +48,7 @@
             servers:
               gunicorn:
                 address: unix:/run/gunicorn.sock
+                port: 8080
                 health_check: fail_timeout=0
 
 - name: install GCC
