@@ -20,11 +20,13 @@
             root: /opt/webui
             server_name: localhost
             error_page: 500 502 503 504 /500.html
-            reverse_proxy:
+            web_server:
               locations:
                 default:
                   location: /
                   try_files: $uri @proxy_to_app
+            reverse_proxy:
+              locations:
                 backend:
                   location: "@proxy_to_app"
                   proxy_set_header:
