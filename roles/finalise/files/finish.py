@@ -1,4 +1,4 @@
-#! /opt/cloud_sdk/bin/python
+#! #! /usr/bin/env python2
 
 from __future__ import (absolute_import, division, print_function)
 from typing import Dict, Optional, Tuple
@@ -7,7 +7,7 @@ import os
 import subprocess
 import yaml
 
-def load_yaml(filename: str) -> dict:
+def load_yaml(filename) -> dict:
     with open(filename, "r") as f:
         return yaml.safe_load(f)
 
