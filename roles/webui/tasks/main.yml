@@ -88,6 +88,12 @@
     regexp: '^in_production = '
     line: in_production = True
 
+- name: set secret key
+  lineinfile:
+    path: "{{ webui_dir }}/webui/settings.py"
+    regexp: '^SECRET_KEY'
+    line: SECRET_KEY = "{{ lookup('password', '/etc/citc/webuisecretkeyfile chars=ascii_letters,digits,punctuation length=50') }}"
+
 - name: install webui dependencies
   pip:
     requirements: "{{ webui_dir }}/requirements.txt"
