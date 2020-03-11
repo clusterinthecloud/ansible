@@ -21,14 +21,14 @@ def get_nodespace(file="/etc/citc/startnode.yaml"):
 
 finished_nodes = set(os.path.basename(file) for file in glob.glob('/mnt/shared/finalised/*'))
 
-nodespace=get_nodespace()
+try:
+    nodespace=get_nodespace()
+    node = "mgmt-" + nodespace["cluster_id"]
+    all_nodes = {node}
+    unfinished_nodes = all_nodes - finished_nodes
 
-node = "mgmt-" + nodespace["cluster_id"]
-
-all_nodes = {node}
-
-unfinished_nodes = all_nodes - finished_nodes
-
+except IOError:
+    unfinished_nodes = {'mgmt-*'}    
 
 if unfinished_nodes:
     print('Error: The following nodes have not reported finishing their setup:')
