@@ -1,3 +1,5 @@
 ---
 
 webui_database_password: "{{ lookup('password', '/tmp/webuimysqlpasswordfile chars=ascii_letters,digits,hexdigits') }}"
+
+webui_dir: /opt/webui

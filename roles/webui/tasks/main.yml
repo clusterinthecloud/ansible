@@ -85,6 +85,13 @@
     requirements: /opt/webui/requirements.txt
     virtualenv: "{{ webui_venv.virtualenv }}"
 
+- name: collect static files
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input"
+    chdir: /opt/webui
+  register: collectstatic_result
+  changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
+
 - name: Create webui group
   group:
     name: webui
