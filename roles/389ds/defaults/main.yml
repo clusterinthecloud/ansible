@@ -1,0 +1,3 @@
+---
+
+ldap_dm_password: "{{ lookup('password', '/etc/citc/ldapdmpasswordfile chars=ascii_letters,digits') }}"
