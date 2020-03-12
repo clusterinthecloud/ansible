@@ -123,6 +123,18 @@
     group: webui
     mode: "660"
 
+- name: create webui database
+  mysql_db:
+    name: webui
+    state: present
+
+- name: create webui MySQL user
+  mysql_user:
+    name: webui
+    password: "{{ webui_database_password }}"
+    priv: 'webui.*:ALL'
+    state: present
+
 - name: run migrations
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
@@ -164,18 +176,6 @@
     state: started
     enabled: yes
     daemon_reexec: yes
-
-- name: create webui database
-  mysql_db:
-    name: webui
-    state: present
-
-- name: create webui MySQL user
-  mysql_user:
-    name: webui
-    password: "{{ webui_database_password }}"
-    priv: 'webui.*:ALL'
-    state: present
 
 - name: open HTTP port in firewall
   firewalld:
