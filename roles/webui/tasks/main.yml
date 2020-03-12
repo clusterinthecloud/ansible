@@ -74,6 +74,15 @@
     virtualenv_command: /bin/python3 -m venv
   register: webui_venv
 
+- name: Create webui group
+  group:
+    name: webui
+
+- name: Create the webui user
+  user:
+    name: webui
+    group: webui
+
 - name: checkout webui
   git:
     repo: git://github.com/milliams/citc-webui.git
@@ -136,15 +145,6 @@
       #! /bin/bash
       echo webui "{{ webui_superuser_password }}"
     mode: 0700
-
-- name: Create webui group
-  group:
-    name: webui
-
-- name: Create the webui user
-  user:
-    name: webui
-    group: webui
 
 # TODO make checkout readable only by correct user
 
