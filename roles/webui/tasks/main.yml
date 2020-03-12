@@ -158,6 +158,14 @@
       echo webui "{{ webui_superuser_password }}"
     mode: 0700
 
+- name: create webui config file
+  template:
+    src: webui.yaml.j2
+    dest: /etc/citc/webui.yaml
+    owner: webui
+    group: webui
+    mode: "660"
+
 # TODO make checkout readable only by correct user
 
 - name: install gunicorn service file
