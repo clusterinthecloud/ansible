@@ -147,6 +147,8 @@
       cat > /root/hosts <<EOF
       [compute]
       $(hostname)
+      [all:vars]
+      cluster_id={{ cluster_id }}
       EOF
       mkdir /etc/ansible/facts.d/
       cat > /etc/ansible/facts.d/citc.fact <<EOF

@@ -5,7 +5,7 @@ users: []
 slurm_version: 19.05
 
 slurm_cluster_name: cluster
-slurm_control_machine: mgmt
+slurm_control_machine: mgmt-{{ cluster_id }}
 
 slurm_partitions:
   - name: compute

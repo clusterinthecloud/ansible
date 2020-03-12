@@ -46,6 +46,8 @@
           "cat > /tmp/hosts <<EOF",
           "[base]",
           "$(hostname)",
+          "[all:vars]",
+          "cluster_id={{user `petname`}}",
           "EOF'",
           "sudo yum install -y ansible git",
           "sudo cat /tmp/hosts",
