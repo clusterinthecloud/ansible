@@ -106,6 +106,14 @@
   register: collectstatic_result
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
 
+- name: create webui mysql config
+  template:
+    src: my.cnf.j2
+    dest: /etc/citc/webui.my.cnf
+    owner: webui
+    group: webui
+    mode: "660"
+
 - name: run migrations
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
@@ -168,16 +176,6 @@
     password: "{{ webui_database_password }}"
     priv: 'webui.*:ALL'
     state: present
-
-# TODO create secret key file https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/#secret-key
-
-- name: create webui mysql config
-  template:
-    src: my.cnf.j2
-    dest: /etc/citc/webui.my.cnf
-    owner: webui
-    group: webui
-    mode: "660"
 
 - name: open HTTP port in firewall
   firewalld:
