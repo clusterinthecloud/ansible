@@ -172,6 +172,7 @@
   copy:
     src: create_home_dir.sh
     dest: /usr/local/libexec/create_home_dir
+    mode: go=r,u=rwx
   register: create_home_dir
 
 - name: Add create_home_dir for sudoers
@@ -185,6 +186,7 @@
   copy:
     src: set_ssh_key.sh
     dest: /usr/local/libexec/set_ssh_key
+    mode: go=r,u=rwx
   register: set_ssh_key
 
 - name: Add set_ssh_key for sudoers
