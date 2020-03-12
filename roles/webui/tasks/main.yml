@@ -85,8 +85,8 @@
 - name: set django to production mode
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
-    regexp: '^in_production = '
-    line: in_production = True
+    regexp: '^IN_PRODUCTION = '
+    line: IN_PRODUCTION = True
 
 - name: set secret key
   lineinfile:
