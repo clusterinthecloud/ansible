@@ -168,6 +168,32 @@
 
 # TODO make checkout readable only by correct user
 
+- name: create home dir creation script
+  copy:
+    src: create_home_dir.sh
+    dest: /usr/local/libexec/create_home_dir
+  register: create_home_dir
+
+- name: Add create_home_dir for sudoers
+  copy:
+    content: |
+      webui ALL=(root) NOPASSWD: {{ create_home_dir.dest }}
+    dest: /etc/sudoers.d/92-webui-create_home_dir
+    validate: /usr/sbin/visudo -cf %s
+
+- name: create ssh key setting script
+  copy:
+    src: set_ssh_key.sh
+    dest: /usr/local/libexec/set_ssh_key
+  register: set_ssh_key
+
+- name: Add set_ssh_key for sudoers
+  copy:
+    content: |
+      webui ALL=(root) NOPASSWD: {{ set_ssh_key.dest }}
+    dest: /etc/sudoers.d/92-webui-set_ssh_key
+    validate: /usr/sbin/visudo -cf %s
+
 - name: install gunicorn service file
   copy:
     src: gunicorn.service
