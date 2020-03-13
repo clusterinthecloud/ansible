@@ -1,51 +1,11 @@
 ---
-- name: create shared filesystem
+
+- name: create and configure NFS server
   hosts: nfsserver
-  tasks:
-    - name: Create /shared directory
-      file:
-        path: /shared
-        state: directory
-        mode: '01777'
-
-    - name: Create a new primary partition
-      parted:
-        device: /dev/sdb
-        number: 1
-        state: present
-
-    - name: Create ext4 filesystem on /dev/sdb1
-      filesystem:
-        fstype: ext4
-        dev: /dev/sdb1
-
-    - name: Mount the filesystem to /shared
-      mount:
-        fstype: ext4
-        src: /dev/sdb1
-        path: /shared
-        state: mounted
-    
-    - name: Install NFS server components
-      yum:
-        name: nfs-utils
-        state: latest
-
-    - name: Upgrade all packages
-      yum:
-        name: '*'
-        state: latest
-
-    - name: Create /etc/exports file to export NFS share
-      copy:
-        dest: "/etc/exports"
-        content: |
-          /shared  *(rw,sync,no_root_squash)
-
-    - name: Start nfs-server
-      service:
-        name: nfs-server
-        enabled: yes
-        state: started
-      
-   
+  roles:
+    - nfs-server
+    - ssh
+    #- security-updates
+    - ntp
+    - sssd
+    - monitoring
