@@ -29,11 +29,6 @@
     name: nfs-utils
     state: latest
 
-- name: Upgrade all packages
-  yum:
-    name: '*'
-    state: latest
-
 - name: Create /etc/exports file to export NFS share
   copy:
     dest: "/etc/exports"
