@@ -1,0 +1,11 @@
+---
+
+- name: create and configure NFS server
+  hosts: nfsserver
+  roles:
+    - nfs-server
+    - ssh
+    #- security-updates
+    - ntp
+    - sssd
+    - monitoring
