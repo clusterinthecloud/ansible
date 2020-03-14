@@ -13,11 +13,11 @@
     - ansible_local.citc.csp == "google"
 
 - name: Wait for fileserver to be ready checking nfs tcp port open (critical path - avoids race condition)
-    wait_for:
-      host: "fileserver"
-      port: 2049
-      delay: 30
-      state: started
+  wait_for:
+    host: "{{ ansible_local.citc.fileserver_ip }}"
+    port: 2049
+    delay: 30
+    state: started
 
 - name: Mount shared file system now that fileserver is ready
   mount:
