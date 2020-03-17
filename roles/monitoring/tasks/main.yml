@@ -198,21 +198,27 @@
   notify: restart telegraf
   when: monitoring_role == "master"
 
+- name: create directory for grafana dashboards
+  file:
+    path: /etc/citc/grafana
+    state: directory
+  when: monitoring_role == "master"
+
 - name: Copy in Slurm Grafana dashboard
   template:
     src: slurm_dashboard.json.j2
-    dest: /etc/citc/slurm_dashboard.json
+    dest: /etc/citc/grafana/slurm_dashboard.json
   when: monitoring_role == "master"
 
 - name: Download Telegraf dashboard
   get_url:
     url: https://grafana.com/api/dashboards/928/revisions/3/download
-    dest: /etc/citc/928.json
+    dest: /etc/citc/grafana/928.json
   when: monitoring_role == "master"
 
 - name: Set Influx datasource on dashboard
   replace:
-    path: /etc/citc/928.json
+    path: /etc/citc/grafana/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'
     replace: 'influxdb_telegraf'
   when: monitoring_role == "master"
@@ -231,6 +237,6 @@
         disableDeletion: false
         updateIntervalSeconds: 10 #how often Grafana will scan for changed dashboards
         options:
-          path: /etc/citc/
+          path: /etc/citc/grafana
   notify: restart grafana
   when: monitoring_role == "master"
