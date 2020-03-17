@@ -13,4 +13,4 @@
   service:
     name: slurmd
     state: restarted
-  when: slurm_role == "compute"
+  when: slurm_role == "compute" and packer_run is not defined

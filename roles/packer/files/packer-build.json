@@ -44,6 +44,7 @@
                 "$(hostname)",
                 "[all:vars]",
                 "cluster_id={{user `petname`}}",
+                "packer_run=yes",
                 "EOF'",
                 "sudo yum install -y ansible git",
                 "sudo cat /tmp/hosts",

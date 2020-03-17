@@ -183,6 +183,12 @@
     enabled: yes
   when: slurm_role == "compute"
 
+- name: enable service slurmd
+  service:
+    name: slurmd
+    state: started
+  when: slurm_role == "compute" and packer_run is not defined
+
 # As of Slurm 18.08 the slurmdbd service doesn't become available immediately
 # This ensures that the service is available before continuing
 - name: Wait for slurmdbd to start
