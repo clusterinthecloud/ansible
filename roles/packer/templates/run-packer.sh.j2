@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# {{ ansible_managed }}
+
 /usr/local/bin/packer build \
     -var-file /etc/citc/packer/config.json \
     -var account_file=/home/slurm/mgmt-sa-credentials.json \
