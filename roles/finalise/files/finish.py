@@ -6,6 +6,7 @@ import os
 import subprocess
 import yaml
 
+
 def load_yaml(filename):
     with open(filename, "r") as f:
         return yaml.safe_load(f)
@@ -26,9 +27,8 @@ try:
     node = "mgmt-" + nodespace["cluster_id"]
     all_nodes = {node}
     unfinished_nodes = all_nodes - finished_nodes
-
 except IOError:
-    unfinished_nodes = {'mgmt-*'}    
+    unfinished_nodes = {'mgmt-*'}
 
 if unfinished_nodes:
     print('Error: The following nodes have not reported finishing their setup:')
@@ -37,7 +37,6 @@ if unfinished_nodes:
     print('Please allow them to finish before continuing.')
     print('For information about why they have not finished, SSH to that machine and check the file /root/ansible-pull.log')
     exit(1)
-
 
 if not os.path.exists('limits.yaml'):
     print('Error: Could not find limits.yaml in this directory')

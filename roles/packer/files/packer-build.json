@@ -1,70 +1,64 @@
 {
     "variables": {
-      "source_image_family": "{{env `PACKER_source_images_family`}}",
-      "account_file": "{{ env `PACKER_account_file` }}",
-      "destination_image_name": "{{env `PACKER_destination_image_name`}}",
-      "destination_image_family": "{{env `PACKER_destination_image_family`}}",      
-      "project_id": "{{env `PACKER_project_id`}}",
-      "zone": "{{env `PACKER_zone`}}",      
-      "csp": "{{env `PACKER_csp`}}",
-      "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
-      "network": "{{env `PACKER_network`}}",
-      "subnetwork": "{{env `PACKER_subnetwork`}}",
-      "branch": "{{env `PACKER_branch`}}",
-      "petname": "{{env `PACKER_petname`}}"
-    },    
-
+        "source_image_family": "{{env `PACKER_source_images_family`}}",
+        "account_file": "{{ env `PACKER_account_file` }}",
+        "destination_image_name": "{{env `PACKER_destination_image_name`}}",
+        "destination_image_family": "{{env `PACKER_destination_image_family`}}",
+        "project_id": "{{env `PACKER_project_id`}}",
+        "zone": "{{env `PACKER_zone`}}",
+        "csp": "{{env `PACKER_csp`}}",
+        "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
+        "network": "{{env `PACKER_network`}}",
+        "subnetwork": "{{env `PACKER_subnetwork`}}",
+        "branch": "{{env `PACKER_branch`}}",
+        "petname": "{{env `PACKER_petname`}}"
+    },
     "builders": [
-      {
-        "type": "googlecompute",
-        "account_file": "{{ user `account_file` }}",
-        "source_image_family": "{{user `source_image_family`}}",        
-        "ssh_username": "centos",        
-        "project_id": "{{user `project_id`}}",
-        "zone": "{{user `zone`}}",        
-        "network": "{{user `network`}}-{{user `petname`}}",
-        "subnetwork": "{{user `subnetwork`}}-{{user `petname`}}",
-        "use_internal_ip": true,
-        "tags": "compute-{{user `petname`}}",
-        "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
-        "image_family": "{{user `destination_image_family`}}-{{user `petname`}}"
-      }
+        {
+            "type": "googlecompute",
+            "account_file": "{{ user `account_file` }}",
+            "source_image_family": "{{user `source_image_family`}}",
+            "ssh_username": "centos",
+            "project_id": "{{user `project_id`}}",
+            "zone": "{{user `zone`}}",
+            "network": "{{user `network`}}-{{user `petname`}}",
+            "subnetwork": "{{user `subnetwork`}}-{{user `petname`}}",
+            "use_internal_ip": true,
+            "tags": "compute-{{user `petname`}}",
+            "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
+            "image_family": "{{user `destination_image_family`}}-{{user `petname`}}"
+        }
     ],
-
-
     "provisioners": [
-
-      {
-        "destination": "/tmp/citc_authorized_keys",
-        "source": "/home/citc/.ssh/authorized_keys",
-        "type": "file"
-      },
-      {
-        "type": "shell",
-        "inline": [
-          "echo 'packer' | sudo -S sh -c ' ",
-          "cat > /tmp/hosts <<EOF",
-          "[base]",
-          "$(hostname)",
-          "[all:vars]",
-          "cluster_id={{user `petname`}}",
-          "EOF'",
-          "sudo yum install -y ansible git",
-          "sudo cat /tmp/hosts",
-          "echo {\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
-          "sudo mkdir -p /etc/ansible/facts.d/",
-          "echo 'packer' | sudo -S sh -c '",
-          "cat > /etc/ansible/facts.d/citc.fact <<EOF",
-          "{\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
-          "EOF'",
-          "sudo cat /etc/ansible/facts.d/citc.fact",
-          "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
-          "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute_base.yml",
-          "#git clone https://github.com/ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook",
-          "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute_base.yml "
-        ]
-      }
+        {
+            "destination": "/tmp/citc_authorized_keys",
+            "source": "/home/citc/.ssh/authorized_keys",
+            "type": "file"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "echo 'packer' | sudo -S sh -c ' ",
+                "cat > /tmp/hosts <<EOF",
+                "[compute]",
+                "$(hostname)",
+                "[all:vars]",
+                "cluster_id={{user `petname`}}",
+                "EOF'",
+                "sudo yum install -y ansible git",
+                "sudo cat /tmp/hosts",
+                "echo {\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
+                "sudo mkdir -p /etc/ansible/facts.d/",
+                "echo 'packer' | sudo -S sh -c '",
+                "cat > /etc/ansible/facts.d/citc.fact <<EOF",
+                "{\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
+                "EOF'",
+                "sudo cat /etc/ansible/facts.d/citc.fact",
+                "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
+                "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml",
+                "#git clone https://github.com/ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook",
+                "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute.yml "
+            ]
+        }
     ]
-  }
-
- 
+}

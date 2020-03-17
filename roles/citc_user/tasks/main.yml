@@ -33,7 +33,7 @@
     group: citc
     mode: 0600
   when: slurm_role == "mgmt"
-  
+
 - name: copy SSH public keys to citc user
   copy:
     src: "{{ admin_key_path }}"

@@ -41,7 +41,7 @@
     - 389ds
     - users
     - sssd
-    - mysql    
+    - mysql
     - slurm
     - packer
   tasks:

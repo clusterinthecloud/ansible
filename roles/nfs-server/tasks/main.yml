@@ -23,7 +23,7 @@
     src: /dev/sdb1
     path: /shared
     state: mounted
-    
+
 - name: Install NFS server components
   yum:
     name: nfs-utils
@@ -40,5 +40,3 @@
     name: nfs-server
     enabled: yes
     state: started
-      
-   
