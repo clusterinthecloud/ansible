@@ -44,7 +44,7 @@
   when: slurm_role == "compute"
 
 # For Google 1-click install, this is the user-provided SSH key file
-- name:
+- name: Copy in 1-click admin key
   blockinfile:
     block: "{{ lookup('file', '/home/provisioner/citc-admin.pub') }}"
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
