@@ -47,6 +47,7 @@ def nodespace():
         "zone": "europe-west4-a",
         "compartment_id": "myproj-123456",
         "subnet": "regions/europe-west4/subnetworks/citc-subnet",
+        "cluster_id": "happy-llama",
     }
 
 
@@ -64,9 +65,9 @@ async def test_start_node_fresh(gcp_config, mocker, requests_mocker, nodespace):
     # TODO: Use googleapiclient.http.HttpMock or similar?
     def request_mock(http, num_retries, req_type, sleep, rand, uri, method, *args, **kwargs):
         url = urlparse(uri)
-        if url.path == "/compute/v1/projects/myproj-123456/zones/europe-west4-a/instances" and url.query == "filter=%28name%3Dfoo%29&alt=json" and method == "GET":
+        if url.path == "/compute/v1/projects/myproj-123456/zones/europe-west4-a/instances" and url.query == "filter=name%3Dfoo+AND+labels.cluster%3Dhappy-llama&alt=json" and method == "GET":
             return httplib2.Response({'status': 200, 'reason': 'OK'}), json.dumps({})
-        if url.path == "/compute/v1/projects/gce-uefi-images/global/images/family/centos-7" and url.query == "alt=json" and method == "GET":
+        if url.path == "/compute/v1/projects/myproj-123456/global/images/family/citc-slurm-compute-happy-llama" and url.query == "alt=json" and method == "GET":
             return httplib2.Response({'status': 200, 'reason': 'OK'}), json.dumps({"selfLink": "foo"})
         if url.path == "/compute/v1/projects/myproj-123456/zones/europe-west4-a/instances" and method == "POST":
             return httplib2.Response({'status': 200, 'reason': 'OK'}), json.dumps({"id": "id-foo"})
