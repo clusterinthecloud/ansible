@@ -33,7 +33,7 @@
         {
             "type": "file",
             "source": "/home/citc/.ssh/authorized_keys",
-            "destination": "/root/citc_authorized_keys",
+            "destination": "/root/citc_authorized_keys"
         },
         {
             "type": "shell",
