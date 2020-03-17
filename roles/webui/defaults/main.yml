@@ -1,0 +1,5 @@
+---
+
+webui_database_password: "{{ lookup('password', '/tmp/webuimysqlpasswordfile chars=ascii_letters,digits,hexdigits') }}"
+webui_dir: /opt/webui
+webui_superuser_password: "{{ lookup('password', '/etc/citc/webuisuperuserpasswordfile chars=ascii_letters,digits,hexdigits') }}"

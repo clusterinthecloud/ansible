@@ -4,7 +4,7 @@ SuiteSpotUserID=dirsrv
 SuiteSpotGroup=dirsrv
 AdminDomain=citc.acrc.bristol.ac.uk
 ConfigDirectoryAdminID=admin
-ConfigDirectoryAdminPwd=testadminpassword
+ConfigDirectoryAdminPwd={{ ldap_dm_password }}
 ConfigDirectoryLdapURL=ldap://{{ansible_fqdn}}:389/o=NetscapeRoot
 
 [slapd]
@@ -14,7 +14,7 @@ ServerPort=389
 ServerIdentifier=mgmt
 Suffix=dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
 RootDN=cn=Directory Manager
-RootDNPwd=testadminpassword
+RootDNPwd={{ ldap_dm_password }}
 ds_bename=userRoot
 AddSampleEntries=No
 
@@ -22,4 +22,4 @@ AddSampleEntries=No
 Port=9830
 #ServerIpAddress=
 ServerAdminID=admin
-ServerAdminPwd=testadminpassword
+ServerAdminPwd={{ ldap_dm_password }}

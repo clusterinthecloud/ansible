@@ -1,4 +1,15 @@
 ---
+
+- name: install roles
+  hosts: management
+  tasks:
+    - name: Download required roles
+      command: ansible-galaxy install -r requirements.yml
+      register: galaxy_result
+      changed_when: '"was installed successfully" in galaxy_result.stdout'
+      become: false
+      delegate_to: localhost
+
 - name: finisher script
   hosts: management
   tasks:
@@ -46,6 +57,7 @@
   tags: finalise
   roles:
     - finalise
+    - webui
     - monitoring
     - clustershell
     - packages

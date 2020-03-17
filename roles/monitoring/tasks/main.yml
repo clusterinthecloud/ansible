@@ -138,13 +138,10 @@
     - monitoring_role == "master"
     - grafana_password.status == 401
 
-- name: create get_secrets script
-  copy:
-    dest: /usr/sbin/get_secrets
-    content: |
-      #! /bin/bash
-      echo "{{ grafana_admin_password }}"
-    mode: 0700
+- name: add grafana password to secrets
+  lineinfile:
+    path: /usr/sbin/get_secrets
+    line: echo grafana "{{ grafana_admin_password }}"
   when: monitoring_role == "master"
 
 - name: Create influxdb telegraf datasource

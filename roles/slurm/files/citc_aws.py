@@ -74,7 +74,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
             {'Name': 'architecture', 'Values': ['x86_64']},
             {'Name': 'root-device-type', 'Values': ['ebs']},
         ],
-        Owners=['aws-marketplace'],
+        Owners=['679593333241'],
     )
     image = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)[0]['ImageId']
 
