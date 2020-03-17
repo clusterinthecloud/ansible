@@ -177,10 +177,9 @@
     enabled: yes
   when: slurm_role == "mgmt"
 
-- name: start service slurmd
+- name: enable service slurmd
   service:
     name: slurmd
-    state: started
     enabled: yes
   when: slurm_role == "compute"
 
