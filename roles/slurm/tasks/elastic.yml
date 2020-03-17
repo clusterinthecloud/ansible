@@ -129,11 +129,6 @@
       chmod 600 /etc/ssh/ssh_host_*
       chmod 644 /etc/ssh/ssh_host_*.pub
 
-      # Put the admin ssh keys somewhere that can be found
-      cat > /root/citc_authorized_keys << EOF
-      {{ lookup('file', '/home/citc/.ssh/authorized_keys') }}
-      EOF
-
       {% if ansible_local.citc.csp == "aws" %}
       yum install -y epel-release
       yum install -y jq awscli
@@ -143,20 +138,20 @@
       hostnamectl set-hostname ${name}
       {% endif %}
 
-      yum install -y ansible git
-      cat > /root/hosts <<EOF
-      [compute]
-      $(hostname)
-      [all:vars]
-      cluster_id={{ cluster_id }}
-      EOF
-      mkdir /etc/ansible/facts.d/
-      cat > /etc/ansible/facts.d/citc.fact <<EOF
-      {"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
-      EOF
-      python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
-        --checkout={{ startnode_config.ansible_branch }} \
-        --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
+      #yum install -y ansible git
+      #cat > /root/hosts <<EOF
+      #[compute]
+      #$(hostname)
+      #[all:vars]
+      #cluster_id={{ cluster_id }}
+      #EOF
+      #mkdir /etc/ansible/facts.d/
+      #cat > /etc/ansible/facts.d/citc.fact <<EOF
+      #{"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
+      #EOF
+      #python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
+      #  --checkout={{ startnode_config.ansible_branch }} \
+      #  --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
 
       date
     dest: /home/slurm/bootstrap.sh
