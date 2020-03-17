@@ -8,7 +8,7 @@ users: []
 slurm_version: 19.05
 
 slurm_cluster_name: cluster
-slurm_control_machine: {{ mgmt_hostname }}
+slurm_control_machine: "{{ mgmt_hostname }}"
 
 slurm_partitions:
   - name: compute
