@@ -28,7 +28,7 @@
   lineinfile:
     path: /etc/rsyslog.conf
     regexp: '@@remote-host:514'
-    line: '*.* @@mgmt:514'
+    line: '*.* @@{{ mgmt_hostname }}:514'
   notify: restart rsyslog
   when: monitoring_role != "master"
 
@@ -79,7 +79,7 @@
     path: /etc/telegraf/telegraf.conf
     section: "[outputs.influxdb]"
     option: urls
-    value: '["http://mgmt:8086"]'
+    value: '["http://{{ mgmt_hostname }}:8086"]'
     backup: yes
   notify: restart telegraf
 

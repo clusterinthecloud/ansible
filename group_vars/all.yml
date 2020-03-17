@@ -1,11 +1,14 @@
 ---
+
+mgmt_hostname: mgmt-{{ cluster_id }}
+
 users: []
 
 # From https://www.schedmd.com/downloads.php
 slurm_version: 19.05
 
 slurm_cluster_name: cluster
-slurm_control_machine: mgmt-{{ cluster_id }}
+slurm_control_machine: {{ mgmt_hostname }}
 
 slurm_partitions:
   - name: compute

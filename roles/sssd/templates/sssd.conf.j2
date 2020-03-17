@@ -12,7 +12,7 @@ auth_provider = ldap
 chpass_provider = ldap
 
 ldap_search_base = dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
-ldap_uri = ldap://mgmt-{{ cluster_id }}
+ldap_uri = ldap://{{ mgmt_hostname }}
 ldap_access_filter = (objectClass=posixAccount)
 ldap_user_gecos = displayName
 
