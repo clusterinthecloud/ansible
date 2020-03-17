@@ -9,7 +9,7 @@ if [[ $# -ne 4 ]]; then
 fi
 
 ADMINNAME="cn=Directory Manager"
-ADMINPASSWORD=testadminpassword
+ADMINPASSWORD={{ ldap_dm_password }}
 
 USER=${1}
 SSHKEYS=${4}

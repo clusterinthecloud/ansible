@@ -1,0 +1,222 @@
+---
+
+- name: install nginx
+  include_role:
+    name: nginxinc.nginx
+  vars:
+    nginx_http_template_enable: true
+    nginx_http_template:
+      default:
+        template_file: http/default.conf.j2
+        conf_file_name: webui.conf
+        conf_file_location: /etc/nginx/conf.d/
+        servers:
+          server1:
+            listen:
+              listen_localhost:
+                port: 80
+                opts:
+                  - default_server
+            root: "{{ webui_dir }}"
+            server_name: localhost
+            error_page: "{{ webui_dir }}"
+            web_server:
+              locations:
+                default:
+                  location: /
+                  try_files: $uri @proxy_to_app
+              http_demo_conf: false
+            reverse_proxy:
+              locations:
+                backend:
+                  location: "@proxy_to_app"
+                  proxy_set_header:
+                    header_x_forwarded_for:
+                      name: X-Forwarded-For
+                      value: $proxy_add_x_forwarded_for
+                    header_x_forwarded_proto:
+                      name: X-Forwarded-Proto
+                      value: $scheme
+                    header_host:
+                      name: Host
+                      value: $http_host
+                  proxy_redirect: off
+                  proxy_pass: http://app_server
+        upstreams:
+          app_server:
+            name: app_server
+            sticky_cookie: false
+            custom_options:
+              - server unix:/run/gunicorn.sock fail_timeout=0
+            servers: []
+            # Should be able to replace custom_options with servers below
+            # See https://github.com/nginxinc/ansible-role-nginx/issues/232
+            #servers:
+            #  gunicorn:
+            #    address: unix:/run/gunicorn.sock
+            #    health_check: fail_timeout=0
+
+- name: install GCC
+  package:
+    name: gcc
+    state: present
+
+- name: install Python3 headers
+  package:
+    name: python3-devel
+    state: present
+
+- name: install gunicorn
+  pip:
+    name:
+      - gunicorn
+    virtualenv: /opt/webui_venv
+    virtualenv_command: /bin/python3 -m venv
+  register: webui_venv
+
+- name: Create webui group
+  group:
+    name: webui
+
+- name: Create the webui user
+  user:
+    name: webui
+    group: webui
+
+- name: checkout webui
+  git:
+    repo: git://github.com/milliams/citc-webui.git
+    force: yes
+    dest: "{{ webui_dir }}"
+    version: master
+  notify: reload gunicorn
+
+- name: set django to production mode
+  lineinfile:
+    path: "{{ webui_dir }}/webui/settings.py"
+    regexp: '^IN_PRODUCTION = '
+    line: IN_PRODUCTION = True
+
+- name: set secret key
+  lineinfile:
+    path: "{{ webui_dir }}/webui/settings.py"
+    regexp: '^SECRET_KEY'
+    line: SECRET_KEY = "{{ lookup('password', '/etc/citc/webuisecretkeyfile chars=ascii_letters,digits,punctuation length=50') }}"
+
+- name: install webui dependencies
+  pip:
+    requirements: "{{ webui_dir }}/requirements.txt"
+    virtualenv: "{{ webui_venv.virtualenv }}"
+
+- name: collect static files
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input"
+    chdir: "{{ webui_dir }}"
+  register: collectstatic_result
+  changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
+
+- name: create webui mysql config
+  template:
+    src: my.cnf.j2
+    dest: /etc/citc/webui.my.cnf
+    owner: webui
+    group: webui
+    mode: "660"
+
+- name: create webui database
+  mysql_db:
+    name: webui
+    state: present
+
+- name: create webui MySQL user
+  mysql_user:
+    name: webui
+    password: "{{ webui_database_password }}"
+    priv: 'webui.*:ALL'
+    state: present
+
+- name: run migrations
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
+    chdir: "{{ webui_dir }}"
+  register: migrate_result
+  changed_when: '"No migrations to apply" not in migrate_result.stdout'
+
+- name: create django admin
+  command:
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py ensure_adminuser --username citc --email citc@localhost --password {{ webui_superuser_password }}"
+    chdir: "{{ webui_dir }}"
+  no_log: True
+  register: createsuperuser_result
+  changed_when: '"Creating user" in createsuperuser_result.stdout'
+
+- name: create get_secrets script
+  copy:
+    dest: /usr/sbin/get_secrets
+    content: |
+      #! /bin/bash
+      echo webui "{{ webui_superuser_password }}"
+    mode: 0700
+
+- name: create webui config file
+  template:
+    src: webui.yaml.j2
+    dest: /etc/citc/webui.yaml
+    owner: webui
+    group: webui
+    mode: "660"
+
+# TODO make checkout readable only by correct user
+
+- name: create home dir creation script
+  copy:
+    src: create_home_dir.sh
+    dest: /usr/local/libexec/create_home_dir
+    mode: go=r,u=rwx
+  register: create_home_dir
+
+- name: Add create_home_dir for sudoers
+  copy:
+    content: |
+      webui ALL=(root) NOPASSWD: {{ create_home_dir.dest }}
+    dest: /etc/sudoers.d/92-webui-create_home_dir
+    validate: /usr/sbin/visudo -cf %s
+
+- name: create ssh key setting script
+  copy:
+    src: set_ssh_key.sh
+    dest: /usr/local/libexec/set_ssh_key
+    mode: go=r,u=rwx
+  register: set_ssh_key
+
+- name: Add set_ssh_key for sudoers
+  copy:
+    content: |
+      webui ALL=(root) NOPASSWD: {{ set_ssh_key.dest }}
+    dest: /etc/sudoers.d/92-webui-set_ssh_key
+    validate: /usr/sbin/visudo -cf %s
+
+- name: install gunicorn service file
+  copy:
+    src: gunicorn.service
+    dest: /etc/systemd/system/gunicorn.service
+
+- name: install gunicorn socket file
+  copy:
+    src: gunicorn.socket
+    dest: /etc/systemd/system/gunicorn.socket
+
+- name: start and enable gunicorn
+  systemd:
+    name: gunicorn
+    state: started
+    enabled: yes
+    daemon_reexec: yes
+
+- name: open HTTP port in firewall
+  firewalld:
+    service: http
+    permanent: true
+    state: enabled
+  notify:
+    - restart firewalld
