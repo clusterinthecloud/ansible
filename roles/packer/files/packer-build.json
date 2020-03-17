@@ -31,9 +31,9 @@
     ],
     "provisioners": [
         {
-            "destination": "/tmp/citc_authorized_keys",
+            "type": "file",
             "source": "/home/citc/.ssh/authorized_keys",
-            "type": "file"
+            "destination": "/root/citc_authorized_keys",
         },
         {
             "type": "shell",
@@ -55,10 +55,7 @@
                 "{\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
                 "EOF'",
                 "sudo cat /etc/ansible/facts.d/citc.fact",
-                "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys ",
-                "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml",
-                "#git clone https://github.com/ACRC/slurm-ansible-playbook.git /tmp/slurm-ansible-playbook",
-                "#sudo /usr/bin/ansible-playbook --inventory=/tmp/hosts /tmp/slurm-ansible-playbook/compute.yml "
+                "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml"
             ]
         }
     ]
