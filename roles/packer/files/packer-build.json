@@ -74,7 +74,8 @@
                 "filters": {
                     "tag:cluster": "{{user `petname`}}"
                 }
-            }
+            },
+            "associate_public_ip_address": true
         }
     ],
     "provisioners": [
