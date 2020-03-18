@@ -7,11 +7,8 @@
         "project_id": "{{env `PACKER_project_id`}}",
         "zone": "{{env `PACKER_zone`}}",
         "region": "{{env `PACKER_region`}}",
-        "csp": "{{env `PACKER_csp`}}",
-        "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
         "network": "{{env `PACKER_network`}}",
         "subnetwork": "{{env `PACKER_subnetwork`}}",
-        "branch": "{{env `PACKER_branch`}}",
         "petname": "{{env `PACKER_petname`}}"
     },
     "builders": [
