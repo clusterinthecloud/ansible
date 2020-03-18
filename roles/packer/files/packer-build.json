@@ -17,6 +17,7 @@
     "builders": [
         {
             "type": "googlecompute",
+            "name": "google",
             "account_file": "{{ user `account_file` }}",
             "source_image_family": "{{user `source_image_family`}}",
             "ssh_username": "centos",
@@ -37,6 +38,7 @@
         },
         {
             "type": "amazon-ebs",
+            "name": "aws",
             "ami_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
             "run_volume_tags": {
                 "cluster": "{{user `petname`}}"
