@@ -16,7 +16,6 @@
   wait_for:
     host: "{{ ansible_local.citc.fileserver_ip }}"
     port: 2049
-    delay: 30
     state: started
 
 - name: Mount shared file system now that fileserver is ready
