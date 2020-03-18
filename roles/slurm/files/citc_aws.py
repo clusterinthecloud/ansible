@@ -70,11 +70,10 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     shape = get_shape(hostname)
     images = client.describe_images(
         Filters=[
-            {'Name': 'product-code', 'Values': ['aw0evgkw8e5c1q413zgy5pjce']},
-            {'Name': 'architecture', 'Values': ['x86_64']},
-            {'Name': 'root-device-type', 'Values': ['ebs']},
+            {'Name': 'name', 'Values': ['citc-slurm-compute-*']},
+            {'Name': 'tag:cluster', 'Values': [nodespace['cluster_id']]},
         ],
-        Owners=['679593333241'],
+        Owners=['self'],
     )
     image = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)[0]['ImageId']
 
