@@ -85,7 +85,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         "MaxCount": 1,
         "UserData": user_data,
         "IamInstanceProfile": {
-            'Name': "describe_tags",
+            'Name': f"describe_tags-{nodespace['cluster_id']}",
         },
         "TagSpecifications": [
             {
