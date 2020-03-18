@@ -8,6 +8,9 @@ $(hostname)
 cluster_id={{user `petname`}}
 packer_run=yes
 EOF'
+{% if ansible_local.citc.csp == "aws" %}
+yum install -y epel-release
+{% endif %}
 sudo yum install -y ansible git
 sudo cat /tmp/hosts
 sudo mkdir -p /etc/ansible/facts.d/
