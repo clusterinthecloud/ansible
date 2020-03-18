@@ -1,6 +1,6 @@
 ---
 
-mgmt_hostname: mgmt-{{ cluster_id }}
+mgmt_hostname: {{ ansible_local.citc.mgmt_hostname }}
 
 users: []
 

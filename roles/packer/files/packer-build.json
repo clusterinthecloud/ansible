@@ -48,7 +48,7 @@
                 "EOF'",
                 "sudo yum install -y ansible git",
                 "sudo cat /tmp/hosts",
-                "echo {\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\" }",
+                "echo {\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\", \"mgmt_hostname\":\"{{user `mgmt_hostname`}}\" }",
                 "sudo mkdir -p /etc/ansible/facts.d/",
                 "echo 'packer' | sudo -S sh -c '",
                 "cat > /etc/ansible/facts.d/citc.fact <<EOF",

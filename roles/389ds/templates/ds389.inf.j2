@@ -11,7 +11,7 @@ ConfigDirectoryLdapURL=ldap://{{ansible_fqdn}}:389/o=NetscapeRoot
 SlapdConfigForMC=Yes
 UseExistingMC=0
 ServerPort=389
-ServerIdentifier=mgmt
+ServerIdentifier={{ mgmt_hostname }}
 Suffix=dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
 RootDN=cn=Directory Manager
 RootDNPwd={{ ldap_dm_password }}
