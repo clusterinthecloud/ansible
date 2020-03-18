@@ -86,26 +86,7 @@
         },
         {
             "type": "shell",
-            "inline": [
-                "echo 'packer' | sudo -S sh -c ' ",
-                "cat > /tmp/hosts <<EOF",
-                "[compute]",
-                "$(hostname)",
-                "[all:vars]",
-                "cluster_id={{user `petname`}}",
-                "packer_run=yes",
-                "EOF'",
-                "sudo yum install -y ansible git",
-                "sudo cat /tmp/hosts",
-                "sudo mkdir -p /etc/ansible/facts.d/",
-                "echo 'packer' | sudo -S sh -c '",
-                "cat > /etc/ansible/facts.d/citc.fact <<EOF",
-                "{\"csp\":\"{{user `csp` }}\", \"fileserver_ip\":\"{{user `fileserver_ip`}}\", \"mgmt_hostname\":\"{{user `mgmt_hostname`}}\" }",
-                "EOF'",
-                "sudo cat /etc/ansible/facts.d/citc.fact",
-                "sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys",
-                "sudo /usr/bin/ansible-pull --url=https://github.com/ACRC/slurm-ansible-playbook.git --checkout={{ user `branch` }} --inventory=/tmp/hosts compute.yml"
-            ]
+            "script": "/etc/citc/packer/run_ansible.sh"
         }
     ]
 }
