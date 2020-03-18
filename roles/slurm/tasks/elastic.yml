@@ -153,6 +153,9 @@
       #  --checkout={{ startnode_config.ansible_branch }} \
       #  --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
 
+      # Ensure that slurmd is running at this point
+      systemctl start slurmd
+
       date
     dest: /home/slurm/bootstrap.sh
     owner: slurm
