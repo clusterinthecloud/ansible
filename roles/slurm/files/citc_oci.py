@@ -31,12 +31,13 @@ def get_subnet(oci_config, compartment_id: str, vcn_id: str) -> str:
     return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.display_name == "Subnet"][0]
 
 
-def get_node_state(oci_config, log, compartment_id: str, hostname: str) -> str:
+def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_id: str) -> str:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
     matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
+    matches = [i for i in matches if i.freeform_tags.get("cluster") == cluster_id]
     still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
     if not still_exist:
         return "TERMINATED"
@@ -73,7 +74,10 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
             "ssh_authorized_keys": ssh_keys,
             "user_data": user_data,
         },
-        freeform_tags={"type": "compute"},
+        freeform_tags={
+            "type": "compute",
+            "cluster": nodespace["cluster_id"],
+        },
     )
 
     return instance_details
@@ -95,11 +99,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     log.info(f"{host}: Starting")
     oci_config = oci.config.from_file()
 
-    while get_node_state(oci_config, log, nodespace["compartment_id"], host) == "TERMINATING":
+    while get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"]) == "TERMINATING":
         log.info(f"{host}:  host is currently terminating. Waiting...")
         await asyncio.sleep(5)
 
-    node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host)
+    node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"])
     if node_state != "TERMINATED":
         log.warning(f"{host}:  host is already running with state {node_state}")
         return

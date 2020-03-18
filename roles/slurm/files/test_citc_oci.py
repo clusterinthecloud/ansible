@@ -55,6 +55,7 @@ def nodespace():
         "compartment_id": "ocid1.compartment.oc1..aaaaa",
         "vcn_id": "ocid1.vcn.oc1..aaaaa",
         "region": "uk-london-1",
+        "cluster_id": "curious-toucan",
     }
 
 
@@ -98,7 +99,7 @@ def test_get_subnet(requests_mocker, oci_config):
     ],
 )
 def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
-    data = [oci.core.models.Instance(lifecycle_state=state) for state in states]
+    data = [oci.core.models.Instance(lifecycle_state=state, freeform_tags={"cluster": "bar"}) for state in states]
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances?compartmentId=ocid0..compartment&displayName=foo",
@@ -106,7 +107,7 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
     )
 
     assert (
-        citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo")
+        citc_oci.get_node_state(oci_config, mocker.Mock(), "ocid0..compartment", "foo", "bar")
         == expected
     )
 
