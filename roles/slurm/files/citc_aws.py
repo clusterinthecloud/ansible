@@ -31,6 +31,10 @@ def get_node(client, hostname: str, cluster_id: str):  # -> ec2.Instance?
             "Name": "tag:cluster",
             "Values": [cluster_id],
         },
+        {
+            "Name": "instance-state-name",
+            "Values": ["pending", "running", "shutting-down", "stopping"],
+        },
     ])
     # TODO check for multiple returned matches
     if instance["Reservations"]:
@@ -211,7 +215,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
         await asyncio.sleep(5)
 
     node_state = get_node_state(client, host, nodespace["cluster_id"])
-    if node_state in ["pending", "running", "rebooting", "stopped"]:
+    if node_state in ["pending", "running"]:
         log.warning(f" host already exists with state {node_state}")
         return
 
