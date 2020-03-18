@@ -64,7 +64,17 @@
               "owners": ["679593333241"],
               "most_recent": true
             },
-            "ssh_username": "centos"
+            "ssh_username": "centos",
+            "vpc_filter": {
+                "filters": {
+                    "tag:cluster": "{{user `petname`}}"
+                }
+            },
+            "subnet_filter": {
+                "filters": {
+                    "tag:cluster": "{{user `petname`}}"
+                }
+            }
         }
     ],
     "provisioners": [
