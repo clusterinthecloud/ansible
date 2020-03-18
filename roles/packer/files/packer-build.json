@@ -26,7 +26,13 @@
             "use_internal_ip": true,
             "tags": "compute-{{user `petname`}}",
             "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
-            "image_family": "{{user `destination_image_family`}}-{{user `petname`}}"
+            "image_family": "{{user `destination_image_family`}}-{{user `petname`}}",
+            "labels": {
+                "cluster": "{{user `petname`}}"
+            },
+            "image_labels": {
+                "cluster": "{{user `petname`}}"
+            }
         }
     ],
     "provisioners": [
