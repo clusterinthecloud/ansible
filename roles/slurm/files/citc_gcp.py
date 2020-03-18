@@ -97,7 +97,7 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
             {
                 'subnetwork': subnet,
                 'addressType': 'INTERNAL',  # Can't find this in the docs...
-                'address': ip,  # should be networkIP?
+                'networkIP': ip,
                 'accessConfigs': [
                     {'type': 'ONE_TO_ONE_NAT', 'name': 'External NAT'}
                 ]
