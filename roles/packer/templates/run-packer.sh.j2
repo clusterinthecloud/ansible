@@ -2,6 +2,8 @@
 
 # {{ ansible_managed }}
 
+export AWS_SHARED_CREDENTIALS_FILE="home/slurm/aws-credentials.csv"
+
 /usr/local/bin/packer build \
     -var-file /etc/citc/packer/config.json \
     -var account_file=/home/slurm/mgmt-sa-credentials.json \

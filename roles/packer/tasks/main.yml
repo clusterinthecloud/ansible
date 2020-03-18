@@ -50,4 +50,3 @@
   register: packer_result
   changed_when: "packer_result.rc == 0"
   failed_when: "packer_result.rc != 0"
-  when: slurm_role == "mgmt"

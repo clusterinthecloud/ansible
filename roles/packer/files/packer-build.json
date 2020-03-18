@@ -1,11 +1,12 @@
 {
     "variables": {
-        "source_image_family": "{{env `PACKER_source_images_family`}}",
+        "source_image_family": "{{env `PACKER_source_image_family`}}",
         "account_file": "{{ env `PACKER_account_file` }}",
         "destination_image_name": "{{env `PACKER_destination_image_name`}}",
         "destination_image_family": "{{env `PACKER_destination_image_family`}}",
         "project_id": "{{env `PACKER_project_id`}}",
         "zone": "{{env `PACKER_zone`}}",
+        "region": "{{env `PACKER_region`}}",
         "csp": "{{env `PACKER_csp`}}",
         "fileserver_ip": "{{env `PACKER_fileserver_ip`}}",
         "network": "{{env `PACKER_network`}}",
@@ -32,6 +33,34 @@
             },
             "image_labels": {
                 "cluster": "{{user `petname`}}"
+            }
+        },
+        {
+            "type": "amazon-ebs",
+            "ami_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
+            "run_volume_tags": {
+                "cluster": "{{user `petname`}}"
+            },
+            "tags": {
+                "cluster": "{{user `petname`}}"
+            },
+            "snapshot_tags": {
+                "cluster": "{{user `petname`}}"
+            },
+            "run_tags": {
+                "cluster": "{{user `petname`}}"
+            },
+            "force_deregister": true,
+            "force_delete_snapshot": true,
+            "region": "{{user `region`}}",
+            "instance_type": "t2.nano",
+            "source_ami_filter": {
+              "filters": {
+                "product-code": ["aw0evgkw8e5c1q413zgy5pjce"],
+                "architecture": ["x86_64"]
+              },
+              "owners": ["679593333241"],
+              "most_recent": true
             }
         }
     ],
