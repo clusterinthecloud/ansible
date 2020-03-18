@@ -61,7 +61,8 @@
               },
               "owners": ["679593333241"],
               "most_recent": true
-            }
+            },
+            "ssh_username": "centos"
         }
     ],
     "provisioners": [
