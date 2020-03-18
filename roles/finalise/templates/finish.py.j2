@@ -1,0 +1,22 @@
+#! /usr/bin/env python2
+
+from __future__ import absolute_import, division, print_function
+import os
+import subprocess
+
+MGMT_HOSTNAME = "{{ mgmt_hostname }}"
+
+if os.path.isfile(MGMT_HOSTNAME):
+    print('Error: The management node has not finished its setup')
+    print('Please allow it to finish before continuing.')
+    print('For information about why they have not finished, check the file /root/ansible-pull.log')
+    exit(1)
+
+if not os.path.exists('limits.yaml'):
+    print('Error: Could not find limits.yaml in this directory')
+    print('Please create the file and rerun this script.')
+    print('See https://cluster-in-the-cloud.readthedocs.io/en/latest/finalise.html#setting-service-limits for details.')
+    exit(1)
+
+subprocess.call(['sudo', '/usr/local/bin/update_config'])
+subprocess.call(['sudo', 'systemctl', 'restart', 'slurmctld'])

@@ -14,8 +14,8 @@
   hosts: management
   tasks:
     - name: copy over finisher script
-      copy:
-        src: roles/finalise/files/finish.py
+      template:
+        src: roles/finalise/files/finish.py.j2
         dest: /usr/local/bin/finish
         mode: 0755
     - name: set motd
