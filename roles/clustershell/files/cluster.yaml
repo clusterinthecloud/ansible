@@ -1,2 +1,2 @@
 role:
-  mgmt: {{ mgmt_hostname }}
+  mgmt: "{{ mgmt_hostname }}"

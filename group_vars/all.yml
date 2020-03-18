@@ -1,6 +1,6 @@
 ---
 
-mgmt_hostname: {{ ansible_local.citc.mgmt_hostname }}
+mgmt_hostname: "{{ ansible_local.citc.mgmt_hostname }}"
 
 users: []
 
