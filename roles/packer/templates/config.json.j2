@@ -9,7 +9,7 @@
     "project_id": "{%- if startnode_config.compartment_id is defined -%}{{ startnode_config.compartment_id }}{%- endif -%}",
     "zone": "{%- if startnode_config.zone is defined -%}{{ startnode_config.zone }}{%- endif -%}",
     "region": "{%- if startnode_config.region is defined -%}{{ startnode_config.region }}{%- endif -%}",
-    "availability_domain": "{{ startnode_config.ad_root }}1",
+    "availability_domain": "{%- if startnode_config.ad_root is defined -%}{{ startnode_config.ad_root }}1{%- endif -%}",
     "cluster": "{{ startnode_config.cluster_id }}",
 
     "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}",
