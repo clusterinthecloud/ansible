@@ -6,7 +6,7 @@ import subprocess
 
 MGMT_HOSTNAME = "{{ mgmt_hostname }}"
 
-if os.path.isfile(MGMT_HOSTNAME):
+if not os.path.isfile("/mnt/shared/finalised/" + MGMT_HOSTNAME):
     print('Error: The management node has not finished its setup')
     print('Please allow it to finish before continuing.')
     print('For information about why they have not finished, check the file /root/ansible-pull.log')
