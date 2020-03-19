@@ -2,16 +2,25 @@
     "variables": {
         "source_image_family": "{{env `PACKER_source_image_family`}}",
         "account_file": "{{ env `PACKER_account_file` }}",
-        "destination_image_name": "{{env `PACKER_destination_image_name`}}",
         "destination_image_family": "{{env `PACKER_destination_image_family`}}",
         "project_id": "{{env `PACKER_project_id`}}",
         "zone": "{{env `PACKER_zone`}}",
-        "region": "{{env `PACKER_region`}}",
         "network": "{{env `PACKER_network`}}",
-        "availability_domain": "{{env `PACKER_availability_domain`}}",
         "subnetwork": "{{env `PACKER_subnetwork`}}",
-        "petname": "{{env `PACKER_petname`}}",
-        "base_image_ocid": "{{env `PACKER_base_image_ocid`}}"
+
+        "region": "{{env `PACKER_region`}}",
+        "instance_type": "{{env `PACKER_instance_type`}}",
+
+        "availability_domain": "{{env `PACKER_availability_domain`}}",
+        "base_image_ocid": "{{env `PACKER_base_image_ocid`}}",
+        "compartment_ocid": "{{env `PACKER_project_id`}}",
+        "subnet_ocid": "{{env `PACKER_subnetwork`}}",
+        "shape": "{{env `PACKER_shape`}}",
+        "access_cfg_file": "{{env `PACKER_access_cfg_file`}}",
+        "key_file": "{{env `PACKER_key_file`}}",
+
+        "destination_image_name": "{{env `PACKER_destination_image_name`}}",
+        "cluster": "{{env `PACKER_cluster`}}"
     },
     "builders": [
         {
@@ -22,39 +31,39 @@
             "ssh_username": "centos",
             "project_id": "{{user `project_id`}}",
             "zone": "{{user `zone`}}",
-            "network": "{{user `network`}}-{{user `petname`}}",
-            "subnetwork": "{{user `subnetwork`}}-{{user `petname`}}",
+            "network": "{{user `network`}}-{{user `cluster`}}",
+            "subnetwork": "{{user `subnetwork`}}-{{user `cluster`}}",
             "use_internal_ip": true,
-            "tags": "compute-{{user `petname`}}",
-            "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
-            "image_family": "{{user `destination_image_family`}}-{{user `petname`}}",
+            "tags": "compute-{{user `cluster`}}",
+            "image_name": "{{user `destination_image_name`}}-{{user `cluster`}}-v{{timestamp}}",
+            "image_family": "{{user `destination_image_family`}}-{{user `cluster`}}",
             "labels": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "image_labels": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             }
         },
         {
             "type": "amazon-ebs",
             "name": "aws",
-            "ami_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
+            "ami_name": "{{user `destination_image_name`}}-{{user `cluster`}}-v{{timestamp}}",
             "run_volume_tags": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "tags": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "snapshot_tags": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "run_tags": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "force_deregister": true,
             "force_delete_snapshot": true,
             "region": "{{user `region`}}",
-            "instance_type": "t2.nano",
+            "instance_type": "{{user `instance_type`}}",
             "source_ami_filter": {
               "filters": {
                 "product-code": "aw0evgkw8e5c1q413zgy5pjce",
@@ -66,12 +75,12 @@
             "ssh_username": "centos",
             "vpc_filter": {
                 "filters": {
-                    "tag:cluster": "{{user `petname`}}"
+                    "tag:cluster": "{{user `cluster`}}"
                 }
             },
             "subnet_filter": {
                 "filters": {
-                    "tag:cluster": "{{user `petname`}}"
+                    "tag:cluster": "{{user `cluster`}}"
                 }
             },
             "associate_public_ip_address": true
@@ -79,16 +88,16 @@
         {
             "type": "oracle-oci",
             "name": "oracle",
-            "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
+            "image_name": "{{user `destination_image_name`}}-{{user `cluster`}}-v{{timestamp}}",
             "availability_domain": "{{user `availability_domain`}}",
             "base_image_ocid": "{{user `base_image_ocid`}}",
-            "compartment_ocid": "{{user `project_id`}}",
-            "shape": "VM.Standard2.1",
-            "subnet_ocid": "{{user `subnetwork`}}",
+            "compartment_ocid": "{{user `compartment_ocid`}}",
+            "shape": "{{user `shape`}}",
+            "subnet_ocid": "{{user `subnet_ocid`}}",
             "access_cfg_file": "/home/slurm/.oci/config",
             "key_file": "/home/slurm/.oci/oci_api_key.pem",
             "tags": {
-                "cluster": "{{user `petname`}}"
+                "cluster": "{{user `cluster`}}"
             },
             "ssh_username": "opc"
         }

@@ -10,7 +10,11 @@
     "zone": "{%- if startnode_config.zone is defined -%}{{ startnode_config.zone }}{%- endif -%}",
     "region": "{%- if startnode_config.region is defined -%}{{ startnode_config.region }}{%- endif -%}",
     "availability_domain": "{{ startnode_config.ad_root }}1",
-    "petname": "{{ startnode_config.cluster_id }}",
+    "cluster": "{{ startnode_config.cluster_id }}",
 
-    "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}"
+    "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}",
+    "instance_type": "t2.nano",
+    "shape": "VM.Standard2.1",
+    "access_cfg_file": "/home/slurm/.oci/config",
+    "key_file": "/home/slurm/.oci/oci_api_key.pem"
 }
