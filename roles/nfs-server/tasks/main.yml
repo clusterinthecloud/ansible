@@ -27,7 +27,7 @@
 - name: Install NFS server components
   yum:
     name: nfs-utils
-    state: latest
+    state: present
 
 - name: Create /etc/exports file to export NFS share
   copy:
