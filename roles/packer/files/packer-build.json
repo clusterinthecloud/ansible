@@ -8,8 +8,10 @@
         "zone": "{{env `PACKER_zone`}}",
         "region": "{{env `PACKER_region`}}",
         "network": "{{env `PACKER_network`}}",
+        "availability_domain": "{{env `PACKER_availability_domain`}}",
         "subnetwork": "{{env `PACKER_subnetwork`}}",
-        "petname": "{{env `PACKER_petname`}}"
+        "petname": "{{env `PACKER_petname`}}",
+        "base_image_ocid": "{{env `PACKER_base_image_ocid`}}"
     },
     "builders": [
         {
@@ -73,6 +75,21 @@
                 }
             },
             "associate_public_ip_address": true
+        },
+        {
+            "type": "oracle-oci",
+            "name": "oracle",
+            "image_name": "{{user `destination_image_name`}}-{{user `petname`}}-v{{timestamp}}",
+            "availability_domain": "{{user `availability_domain`}}",
+            "base_image_ocid": "{{user `base_image_ocid`}}",
+            "compartment_ocid": "{{user `project_id`}}",
+            "shape": "VM.Standard2.1",
+            "subnet_ocid": "{{user `subnetwork`}}",
+            "access_cfg_file": "/home/slurm/.oci/config",
+            "key_file": "/home/slurm/.oci/oci_api_key.pem",
+            "tags": {
+                "cluster": "{{user `petname`}}"
+            }
         }
     ],
     "provisioners": [
