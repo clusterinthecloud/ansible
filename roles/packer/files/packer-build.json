@@ -13,7 +13,7 @@
 
         "availability_domain": "{{env `PACKER_availability_domain`}}",
         "base_image_ocid": "{{env `PACKER_base_image_ocid`}}",
-        "compartment_ocid": "{{env `PACKER_project_id`}}",
+        "compartment_ocid": "{{env `PACKER_compartment_ocid`}}",
         "subnet_ocid": "{{env `PACKER_subnet_ocid`}}",
         "shape": "{{env `PACKER_shape`}}",
         "access_cfg_file": "{{env `PACKER_access_cfg_file`}}",

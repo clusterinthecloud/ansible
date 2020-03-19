@@ -14,6 +14,7 @@
 
     "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}",
     "base_image_ocid_gpu": "{%- if oci_gpu_image_id is defined -%}{{ oci_gpu_image_id }}{%- endif -%}",
+    "compartment_ocid": "{%- if startnode_config.compartment_id is defined -%}{{ startnode_config.compartment_id }}{%- endif -%}",
     "subnet_ocid": "{%- if startnode_config.subnet_id is defined -%}{{ startnode_config.subnet_id }}{%- endif -%}",
     "instance_type": "t2.nano",
     "shape": "VM.Standard2.1",
