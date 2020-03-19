@@ -28,6 +28,7 @@ jobs:
       run: |
         ansible-lint compute.yml
         ansible-lint management.yml
+        ansible-lint nfsserver.yml
     - name: Type check
       run: |
         mypy roles/slurm/files/citc_oci.py
