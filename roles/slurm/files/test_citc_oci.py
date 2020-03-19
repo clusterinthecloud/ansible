@@ -120,6 +120,15 @@ def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
         text=json.dumps(serialize(subnets)),
     )
 
+    images = [
+        oci.core.models.Image(freeform_tags={"cluster": nodespace["cluster_id"]}, operating_system="Oracle Linux", display_name="citc-foo-bar")
+    ]
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/images?compartmentId=ocid1.compartment.oc1..aaaaa&operatingSystem=Oracle+Linux",
+        text=json.dumps(serialize(images)),
+    )
+
     mocker.patch(
         "subprocess.run",
         return_value=subprocess.CompletedProcess(
@@ -189,6 +198,15 @@ async def test_start_node_fresh(oci_config, mocker, requests_mocker, nodespace):
         "GET",
         "/20160918/instances?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
         text=json.dumps(serialize([])),
+    )
+
+    images = [
+        oci.core.models.Image(freeform_tags={"cluster": nodespace["cluster_id"]}, operating_system="Oracle Linux", display_name="citc-foo-bar")
+    ]
+    requests_mocker.register_uri(
+        "GET",
+        "/20160918/images?compartmentId=ocid1.compartment.oc1..aaaaa&operatingSystem=Oracle+Linux",
+        text=json.dumps(serialize(images)),
     )
 
     mocker.patch("citc_oci.get_ip", return_value=(None, None, None))

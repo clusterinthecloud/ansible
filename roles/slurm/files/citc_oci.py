@@ -3,7 +3,7 @@ import base64
 import re
 import subprocess
 import time
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 
 import oci  # type: ignore
 import yaml
@@ -46,6 +46,21 @@ def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_
     return still_exist[0].lifecycle_state
 
 
+def get_images(oci_config, compartment_id: str, cluster_id: str) -> Tuple[oci.core.models.Image, oci.core.models.Image]:
+    all_images = oci.pagination.list_call_get_all_results_generator(oci.core.ComputeClient(oci_config).list_images, 'record', compartment_id, operating_system="Oracle Linux")
+    our_images: List[oci.core.models.Image] = [i for i in all_images if i.freeform_tags.get("cluster") == cluster_id]
+    try:
+        non_gpu_image = [i for i in our_images if "GPU" not in i.display_name][0]
+    except IndexError:
+        non_gpu_image = None
+    try:
+        gpu_image = [i for i in our_images if "GPU" in i.display_name][0]
+    except IndexError:
+        gpu_image = None
+
+    return non_gpu_image, gpu_image
+
+
 def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> oci.core.models.LaunchInstanceDetails:
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
@@ -55,8 +70,8 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
     ad = f"{nodespace['ad_root']}{ad_number}"
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"])
-    image_name = "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0" if "GPU" in shape else "Oracle-Linux-7.6-2019.02.20-0"
-    image = get_images()[image_name][nodespace["region"]]
+    non_gpu_image, gpu_image = get_images(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
+    image = (gpu_image if "GPU" in shape else non_gpu_image).id  # This will raise an exception if the image is not found
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = base64.b64encode(f.read()).decode()
@@ -158,26 +173,3 @@ def terminate_instance(log, hosts):
             continue
 
     log.info(f" Stopped {host}")
-
-
-def get_images() -> Dict[str, Dict[str, str]]:
-    """
-    From https://docs.cloud.oracle.com/iaas/images/
-    """
-    return {
-        "Oracle-Linux-7.6-Gen2-GPU-2019.02.20-0": {
-            "ca-toronto-1": "ocid1.image.oc1.ca-toronto-1.aaaaaaaayeivcqwwqnuo6qkz2fwpmskhcwrlhxgwaibqbhwwkohepnlyxk5q",
-            "eu-frankfurt-1": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaayupoeyifqy7a6gyup3axhtnidjvfptj55e34bzgt7m7bv3gwv3wa",
-            "uk-london-1": "ocid1.image.oc1.uk-london-1.aaaaaaaap5kk2lbo5lj3k5ff5tl755a4cszjwd6zii7jlcp6nz3gogh54wtq",
-            "us-ashburn-1": "ocid1.image.oc1.iad.aaaaaaaab5l5wv7njknupfxvyynplhsygdz67uhfaz35nsnhsk3ufclqjaea",
-            "us-phoenix-1": "ocid1.image.oc1.phx.aaaaaaaahu7hv6lqbdyncgwehipwsuh3htfuxcoxbl4arcetx6hzixft366a",
-        },
-        "Oracle-Linux-7.6-2019.02.20-0": {
-            "ca-toronto-1": "ocid1.image.oc1.ca-toronto-1.aaaaaaaa7ac57wwwhputaufcbf633ojir6scqa4yv6iaqtn3u64wisqd3jjq",
-            "eu-frankfurt-1": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa527xpybx2azyhcz2oyk6f4lsvokyujajo73zuxnnhcnp7p24pgva",
-            "uk-london-1": "ocid1.image.oc1.uk-london-1.aaaaaaaarruepdlahln5fah4lvm7tsf4was3wdx75vfs6vljdke65imbqnhq",
-            "us-ashburn-1": "ocid1.image.oc1.iad.aaaaaaaannaquxy7rrbrbngpaqp427mv426rlalgihxwdjrz3fr2iiaxah5a",
-            "us-phoenix-1": "ocid1.image.oc1.phx.aaaaaaaacss7qgb6vhojblgcklnmcbchhei6wgqisqmdciu3l4spmroipghq",
-            "ap-tokyo-1": "ocid1.image.oc1.ap-tokyo-1.aaaaaaaairi7u3txkamxlw3kmw3dosbesrlm22vsh7yybhygzafd3awhlr5q",
-        },
-    }
