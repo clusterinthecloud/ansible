@@ -3,8 +3,8 @@
 
     "destination_image_name": "citc-slurm-compute",
     "destination_image_family": "citc-slurm-compute",
-    "network": "citc-net",
-    "subnetwork": "{%- if startnode_config.subnet_id is defined -%}{{ startnode_config.subnet_id }}{%- else -%}citc-subnet{%- endif -%}",
+    "network": "{%- if startnode_config.network_name is defined -%}{{ startnode_config.network_name }}{%- endif -%}",
+    "subnetwork": "{%- if startnode_config.subnet_name is defined -%}{{ startnode_config.subnet_name }}{%- endif -%}",
 
     "project_id": "{%- if startnode_config.compartment_id is defined -%}{{ startnode_config.compartment_id }}{%- endif -%}",
     "zone": "{%- if startnode_config.zone is defined -%}{{ startnode_config.zone }}{%- endif -%}",
@@ -14,6 +14,7 @@
 
     "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}",
     "base_image_ocid_gpu": "{%- if oci_gpu_image_id is defined -%}{{ oci_gpu_image_id }}{%- endif -%}",
+    "subnet_ocid": "{%- if startnode_config.subnet_id is defined -%}{{ startnode_config.subnet_id }}{%- endif -%}",
     "instance_type": "t2.nano",
     "shape": "VM.Standard2.1",
     "shape_gpu": "VM.GPU2.1",
