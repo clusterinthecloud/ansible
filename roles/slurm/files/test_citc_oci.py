@@ -76,9 +76,9 @@ def test_get_subnet(requests_mocker, oci_config):
     subnet_id = "ocid0..subnet"
 
     data = [
-        oci.core.models.Subnet(id="blah", display_name="Subnetblah"),
-        oci.core.models.Subnet(id="blah", display_name="Subnetfoo"),
-        oci.core.models.Subnet(id=subnet_id, display_name="Subnet"),
+        oci.core.models.Subnet(id="blah", display_name="Subnetblah", freeform_tags={"cluster": "none-here"}),
+        oci.core.models.Subnet(id="blah", display_name="Subnetfoo", freeform_tags={"cluster": "bin-bash"}),
+        oci.core.models.Subnet(id=subnet_id, display_name="Subnet", freeform_tags={"cluster": "foo-bar"}),
     ]
 
     requests_mocker.register_uri(
@@ -87,7 +87,7 @@ def test_get_subnet(requests_mocker, oci_config):
         text=json.dumps(serialize(data)),
     )
 
-    assert citc_oci.get_subnet(oci_config, "", "") == subnet_id
+    assert citc_oci.get_subnet(oci_config, "", "",  "foo-bar") == subnet_id
 
 
 @pytest.mark.parametrize(
@@ -113,7 +113,7 @@ def test_get_node_state(states, expected, mocker, requests_mocker, oci_config):
 
 
 def test_create_node_config(mocker, requests_mocker, oci_config, nodespace):
-    subnets = [oci.core.models.Subnet(id="ocid0..subnet", display_name="Subnet")]
+    subnets = [oci.core.models.Subnet(id="ocid0..subnet", display_name="Subnet", freeform_tags={"cluster": nodespace["cluster_id"]})]
     requests_mocker.register_uri(
         "GET",
         "/20160918/subnets?compartmentId=ocid1.compartment.oc1..aaaaa&vcnId=ocid1.vcn.oc1..aaaaa",
