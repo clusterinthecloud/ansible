@@ -13,8 +13,10 @@
     "cluster": "{{ startnode_config.cluster_id }}",
 
     "base_image_ocid": "{%- if oci_non_gpu_image_id is defined -%}{{ oci_non_gpu_image_id }}{%- endif -%}",
+    "base_image_ocid_gpu": "{%- if oci_gpu_image_id is defined -%}{{ oci_gpu_image_id }}{%- endif -%}",
     "instance_type": "t2.nano",
     "shape": "VM.Standard2.1",
+    "shape_gpu": "VM.GPU2.1",
     "access_cfg_file": "/home/slurm/.oci/config",
     "key_file": "/home/slurm/.oci/oci_api_key.pem"
 }

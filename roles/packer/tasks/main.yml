@@ -53,6 +53,13 @@
     jmesquery: 'data[?"operating-system"==`"Oracle Linux"` && "operating-system-version"==`"7.7"` && !contains("display-name", `GPU`)] | [0].id'
   when: ansible_local.citc.csp == "oracle"
 
+- name: get ID of OCI GPU image
+  set_fact:
+    oci_gpu_image_id: "{{ oci_images.stdout | from_json | json_query(jmesquery) }}"
+  vars:
+    jmesquery: 'data[?"operating-system"==`"Oracle Linux"` && "operating-system-version"==`"7.7"` && contains("display-name", `GPU`)] | [0].id'
+  when: ansible_local.citc.csp == "oracle"
+
 - name: copy in config
   template:
     src: config.json.j2
