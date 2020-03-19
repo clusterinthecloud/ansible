@@ -89,7 +89,8 @@
             "key_file": "/home/slurm/.oci/oci_api_key.pem",
             "tags": {
                 "cluster": "{{user `petname`}}"
-            }
+            },
+            "ssh_username": "opc"
         }
     ],
     "provisioners": [
