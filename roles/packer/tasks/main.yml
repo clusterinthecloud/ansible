@@ -2,12 +2,6 @@
 - name: Ensure unzip is installed.
   package: name=unzip state=present
 
-- name : install oci-cli
-  package:
-    name: python36-oci-cli
-    state: present
-  when: ansible_local.citc.csp == "oracle"
-
 - name: Download and unarchive Packer.
   unarchive:
     src: https://releases.hashicorp.com/packer/1.5.4/packer_1.5.4_linux_amd64.zip
@@ -41,14 +35,23 @@
     src: run_ansible.sh.j2
     dest: /etc/citc/packer/run_ansible.sh
 
+- name: install oci-cli
+  package:
+    name: python36-oci-cli
+    state: present
+  when: ansible_local.citc.csp == "oracle"
+
 - name: get image OCIDs on Oracle
-  command: oci --config-file=/home/slurm/.oci/config compute image list --compartment-id="{{ startnode_config.compartment_id }}"
+  command: "oci --config-file=/home/slurm/.oci/config compute image list --compartment-id={{ startnode_config.compartment_id }}"
   register: oci_images
   when: ansible_local.citc.csp == "oracle"
 
-- name: OCI images
-  debug:
-    msg: "{{ oci_images }}"
+- name: get ID of OCI non-GPU image
+  set_fact:
+    oci_non_gpu_image_id: "{{ oci_images.stdout | from_json | json_query(jmesquery) }}"
+  vars:
+    jmesquery: 'data[?"operating-system"==`"Oracle Linux"` && "operating-system-version"==`"7.7"` && !contains("display-name", `GPU`)] | [0].id'
+  when: ansible_local.citc.csp == "oracle"
 
 - name: copy in config
   template:
