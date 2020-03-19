@@ -4,10 +4,11 @@
     "destination_image_name": "citc-slurm-compute",
     "destination_image_family": "citc-slurm-compute",
     "network": "citc-net",
-    "subnetwork": "citc-subnet",
+    "subnetwork": "{%- if startnode_config.subnet_id is defined -%}{{ startnode_config.subnet_id }}{%- else -%}citc-subnet{%- endif -%}",
 
     "project_id": "{%- if startnode_config.compartment_id is defined -%}{{ startnode_config.compartment_id }}{%- endif -%}",
     "zone": "{%- if startnode_config.zone is defined -%}{{ startnode_config.zone }}{%- endif -%}",
     "region": "{%- if startnode_config.region is defined -%}{{ startnode_config.region }}{%- endif -%}",
+    "availability_domain": "{{ ad_root }}1"
     "petname": "{{ startnode_config.cluster_id }}"
 }
