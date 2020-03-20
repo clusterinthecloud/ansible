@@ -138,21 +138,6 @@
       hostnamectl set-hostname ${name}
       {% endif %}
 
-      #yum install -y ansible git
-      #cat > /root/hosts <<EOF
-      #[compute]
-      #$(hostname)
-      #[all:vars]
-      #cluster_id={{ cluster_id }}
-      #EOF
-      #mkdir /etc/ansible/facts.d/
-      #cat > /etc/ansible/facts.d/citc.fact <<EOF
-      #{"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}"}
-      #EOF
-      #python -u /usr/bin/ansible-pull --url={{ ansible_pull_repo }} \
-      #  --checkout={{ startnode_config.ansible_branch }} \
-      #  --inventory=/root/hosts {{ bootstrap_ansible_pull_playbook }} >> /root/ansible-pull.log
-
       # Ensure that slurmd is running at this point
       systemctl start slurmd
 
