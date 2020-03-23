@@ -35,6 +35,12 @@
     src: run_ansible.sh.j2
     dest: /etc/citc/packer/run_ansible.sh
 
+- name: copy in packer extra run script template (no force overwrite)
+  copy:
+    src: compute_image_extra.sh
+    dest: /home/citc/compute_image_extra.sh
+    force: no
+
 - name: install oci-cli
   package:
     name: python36-oci-cli

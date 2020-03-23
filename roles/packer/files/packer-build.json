@@ -111,6 +111,10 @@
         {
             "type": "shell",
             "script": "/etc/citc/packer/run_ansible.sh"
+        },
+        {
+            "type": "shell",
+            "script": "/home/citc/compute_image_extra.sh"
         }
     ]
 }
