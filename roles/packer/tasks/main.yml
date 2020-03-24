@@ -40,6 +40,8 @@
     src: compute_image_extra.sh
     dest: /home/citc/compute_image_extra.sh
     force: no
+    owner: citc
+    group: citc
 
 - name: install oci-cli
   package:
