@@ -1,0 +1,45 @@
+---
+
+- name: create CA key
+  openssl_privatekey:
+    path: /root/CA_key.pem
+  register: _ca_key
+
+- name: create the CA CSR
+  openssl_csr:
+    path: /root/CA.csr
+    privatekey_path: "{{ _ca_key.filename }}"
+    common_name: "citc-ca"
+  register: _ca_csr
+
+- name: sign the CA CSR
+  openssl_certificate:
+    path: /root/CA.crt
+    csr_path: "{{ _ca_csr.filename }}"
+    privatekey_path: "{{ _ca_key.filename }}"
+    provider: selfsigned
+  register: _ca_crt
+
+- name: create mgmt CSR signing key
+  openssl_privatekey:
+    path: /root/mgmt_host_key.pem
+  register: _mgmt_key
+
+- name: create the CSR for the LDAP server
+  openssl_csr:
+    path: /root/mgmt.csr
+    privatekey_path: "{{ _mgmt_key.filename }}"
+    common_name: "{{ mgmt_hostname }}"
+    subject_alt_name: 'DNS:{{ ansible_fqdn }},DNS:{{ ansible_hostname }}'
+  register: _mgmt_csr
+
+- name: sign the CSR for the LDAP server
+  openssl_certificate:
+    path: /root/mgmt.crt
+    csr_path: "{{ _mgmt_csr.filename }}"
+    provider: ownca
+    ownca_path: "{{ _ca_crt.filename }}"
+    ownca_privatekey_path: "{{ _ca_key.filename }}"
+  register: mgmt_crt
+
+# mgmt_crt -> ca_cert (CA.crt), ca_privatekey (CA_key.pem), filename (mgmt.crt)
