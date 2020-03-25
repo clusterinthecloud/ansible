@@ -42,4 +42,61 @@
     ownca_privatekey_path: "{{ _ca_key.filename }}"
   register: mgmt_crt
 
-# mgmt_crt -> ca_cert (CA.crt), ca_privatekey (CA_key.pem), filename (mgmt.crt)
+- name: import certificates
+  command: certutil -A -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -n "{{ item.name }}" -t "{{ item.trust_args }}" -i "{{ item.path }}" # noqa 301
+  loop:
+    - name: ca_cert
+      trust_args: "C,,"
+      path: "{{ mgmt_crt.ca_cert }}"
+    - name: Server-Cert
+      trust_args: ",,"
+      path: "{{ mgmt_crt.filename }}"
+
+- name: turn on nsslapd-security
+  ldap_attr:
+    server_uri: ldap://localhost
+    bind_dn: cn=Directory Manager
+    bind_pw: "{{ ldap_dm_password }}"
+    dn: cn=config
+    name: nsslapd-security
+    values: "on"
+    state: exact
+
+- name: set ssh encryption options
+  ldap_attr:
+    server_uri: ldap://localhost
+    bind_dn: cn=Directory Manager
+    bind_pw: "{{ ldap_dm_password }}"
+    dn: cn=encryption,cn=config
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
+    state: exact
+  with_dict:
+    nsSSLSessionTimeout: 0
+    nsSSLClientAuth: "off"
+    nsSSL3: "off"
+    nsSSL2: "off"
+
+- name: ensure RSA encryption object exists
+  ldap_entry:
+    dn: cn=RSA,cn=encryption,cn=config
+    objectClass:
+      - top
+      - nsEncryptionModule
+    bind_dn: cn=Directory Manager
+    bind_pw: "{{ ldap_dm_password }}"
+    server_uri: ldap://localhost
+
+- name: set ssh encryption options
+  ldap_attr:
+    server_uri: ldap://localhost
+    bind_dn: cn=Directory Manager
+    bind_pw: "{{ ldap_dm_password }}"
+    dn: cn=RSA,cn=encryption,cn=config
+    name: "{{ item.key }}"
+    values: "{{ item.value }}"
+    state: exact
+  with_dict:
+    nsSSLPersonalitySSL: Server-Cert
+    nsSSLToken: internal (software)
+    nsSSLActivation: "on"
