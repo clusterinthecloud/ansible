@@ -42,6 +42,21 @@
     dest: /etc/sudoers.d/92-webui-set_ssh_key
     validate: /usr/sbin/visudo -cf %s
 
+- name: create user password file creation script
+  copy:
+    src: set_password_file.sh
+    dest: /usr/local/libexec/set_password_file
+    mode: go=r,u=rwx
+    group: usermgmt
+  register: set_password_file
+
+- name: Add set_password_file for sudoers
+  copy:
+    content: |
+      %usermgmt ALL=(root) NOPASSWD: {{ set_password_file.dest }}
+    dest: /etc/sudoers.d/92-webui-set_password_file
+    validate: /usr/sbin/visudo -cf %s
+
 - name: copy in LDAP add user script
   template:
     src: add_user_ldap.j2

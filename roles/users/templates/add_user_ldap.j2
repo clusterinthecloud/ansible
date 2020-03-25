@@ -19,6 +19,11 @@ SURNAME=${3}
 
 HOMEROOT=/mnt/shared/home
 
+PASSWORD=$(openssl rand -base64 30)
+SALT="$(openssl rand -base64 3)"
+SHA1="$(printf "%s%s" "$PASSWORD" "$SALT" | openssl dgst -binary -sha1)"
+SHA1="$(printf "{SSHA}%s\n" "$(printf "%s%s" "$SHA1" "$SALT" | base64)")"
+
 BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
 
 if ldapsearch -x -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
@@ -44,8 +49,11 @@ uidNumber: ${UIDNUMBER}
 gidNumber: ${GIDNUMBER}
 homeDirectory: ${HOMEROOT}/${USER}
 loginShell: /bin/bash
+userPassword: {SSHA}${SHA1}
 EOF
 
 /usr/local/libexec/create_home_dir ${USER}
 
 curl --silent ${SSHKEYS} | /usr/local/libexec/set_ssh_key ${USER}
+
+echo "${PASSWORD}" | /usr/local/libexec/set_password_file
