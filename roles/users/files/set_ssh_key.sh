@@ -14,7 +14,7 @@ HOMEROOT=/mnt/shared/home
 USERHOME=${HOMEROOT}/${USER}
 USERSSH=${USERHOME}/.ssh
 
-mkdir ${USERSSH}
+mkdir -p ${USERSSH}
 chmod 700 ${USERSSH}
 
 rm -f ${USERSSH}/authorized_keys

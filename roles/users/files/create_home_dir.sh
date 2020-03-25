@@ -15,4 +15,4 @@ USER=${1}
 mkdir ${HOMEROOT}/${USER}
 chmod 700 ${HOMEROOT}/${USER}
 cp -r /etc/skel/. /mnt/shared/home/${USER}/
-chown -R ${USER}:users ${HOMEROOT}/${USER}
+timeout 30s bash -c "until sudo chown -R ${USER}:users ${HOMEROOT}/${USER}; do sleep 1; done"

@@ -28,9 +28,6 @@ else
     UIDNUMBER=10001
 fi
 
-mkdir ${HOMEROOT}/${USER}
-chmod 700 ${HOMEROOT}/${USER}
-
 ldapmodify -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -H ldap://localhost:389 <<EOF
 dn: cn=${USER},${BASEDN}
 changetype: add
@@ -49,12 +46,6 @@ homeDirectory: ${HOMEROOT}/${USER}
 loginShell: /bin/bash
 EOF
 
-cp -r /etc/skel/. /mnt/shared/home/${USER}/
+/usr/local/libexec/create_home_dir ${USER}
 
-mkdir ${HOMEROOT}/${USER}/.ssh
-chmod 700 ${HOMEROOT}/${USER}/.ssh
-
-curl --silent --output ${HOMEROOT}/${USER}/.ssh/authorized_keys ${SSHKEYS}
-chmod 600 ${HOMEROOT}/${USER}/.ssh/authorized_keys
-
-timeout 30s bash -c "until sudo chown -R ${USER}:users ${HOMEROOT}/${USER}; do sleep 1; done"
+curl --silent ${SSHKEYS} | /usr/local/libexec/set_ssh_key ${USER}
