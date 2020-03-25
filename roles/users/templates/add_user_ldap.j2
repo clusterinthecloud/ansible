@@ -20,9 +20,11 @@ SURNAME=${3}
 HOMEROOT=/mnt/shared/home
 
 PASSWORD=$(openssl rand -base64 30)
-SALT="$(openssl rand -base64 3)"
-SHA1="$(printf "%s%s" "$PASSWORD" "$SALT" | sha1sum | awk '{print $1}')"
-SHA1="$(printf "{SSHA}%s\n" "$(printf "%s%s" "$SHA1" "$SALT" | base64)")"
+SHA1="$(python3 - <<EOF
+import ldap3
+print(ldap3.utils.hashed.hashed(ldap3.HASHED_SALTED_SHA512, "${PASSWORD}"))
+EOF
+)"
 
 BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
 
@@ -49,7 +51,7 @@ uidNumber: ${UIDNUMBER}
 gidNumber: ${GIDNUMBER}
 homeDirectory: ${HOMEROOT}/${USER}
 loginShell: /bin/bash
-userPassword: {SSHA}${SHA1}
+userPassword: ${SHA1}
 EOF
 
 /usr/local/libexec/create_home_dir ${USER}

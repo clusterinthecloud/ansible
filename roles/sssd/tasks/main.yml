@@ -4,6 +4,9 @@
   package:
     name=sssd
 
+# authconfig --enablesssd --update
+# authconfig --enablesssdauth --update
+
 - name: copy sssd config template
   template:
     src: sssd.conf.j2

@@ -12,6 +12,11 @@
   group:
     name: usermgmt
 
+- name: install ldap3 in central Python 3
+  package:
+    name: python36-ldap3
+    state: present
+
 - name: create home dir creation script
   copy:
     src: create_home_dir.sh
