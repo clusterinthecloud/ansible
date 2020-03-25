@@ -56,4 +56,4 @@ EOF
 
 curl --silent ${SSHKEYS} | /usr/local/libexec/set_ssh_key ${USER}
 
-echo "${PASSWORD}" | /usr/local/libexec/set_password_file
+echo "${PASSWORD}" | /usr/local/libexec/set_password_file ${USER}
