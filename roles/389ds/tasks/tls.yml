@@ -1,5 +1,10 @@
 ---
 
+# This task list creates a private CA so that we can sign a server certificate for the
+# LDAP server on the mgmt node. The CA cert will need to be copied on to all compute
+# nodes and installed in the correct place.
+# This is needed as SSSD password auth only works over an encrypted connection.
+
 - name: create CA key
   openssl_privatekey:
     path: /root/CA_key.pem
