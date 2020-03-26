@@ -71,7 +71,10 @@
       path: "{{ mgmt_crt.ca_cert }}"
     - name: Server-Cert
       trust_args: ",,"
-      path: "{{ mgmt_cert_p12.filename }}"
+      path: "{{ mgmt_cert.filename }}"
+
+- name: import certificates
+  command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_cert_p12.filename }} # noqa 301
 
 - name: turn on nsslapd-security
   ldap_attr:
