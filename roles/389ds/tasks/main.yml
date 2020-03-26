@@ -19,3 +19,5 @@
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - include_tasks: tls.yml
+
+- meta: flush_handlers
