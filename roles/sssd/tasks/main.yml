@@ -4,6 +4,9 @@
   package:
     name=sssd
 
+- name: import CA cert into openldap cert store
+  command: certutil -A -d /etc/openldap/certs -n ca_cert -t "C,," -i "{{ mgmt_crt.ca_cert }}" # noqa 301
+
 # authconfig --enablesssd --update
 # authconfig --enablesssdauth --update
 
