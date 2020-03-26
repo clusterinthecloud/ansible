@@ -42,6 +42,16 @@
     ownca_privatekey_path: "{{ _ca_key.filename }}"
   register: mgmt_crt
 
+- name: Generate PKCS#12 file
+  openssl_pkcs12:
+    action: export
+    path: /root/mgmt.p12
+    privatekey_path: "{{ _mgmt_key.filename }}"
+    certificate_path: "{{ mgmt_crt.filename }}"
+    other_certificates: "{{ mgmt_crt.ca_cert }}"
+    state: present
+  register: mgmt_cert_p12
+
 - name: import certificates
   command: certutil -A -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -n "{{ item.name }}" -t "{{ item.trust_args }}" -i "{{ item.path }}" # noqa 301
   loop:
@@ -50,7 +60,7 @@
       path: "{{ mgmt_crt.ca_cert }}"
     - name: Server-Cert
       trust_args: ",,"
-      path: "{{ mgmt_crt.filename }}"
+      path: "{{ mgmt_cert_p12.filename }}"
 
 - name: turn on nsslapd-security
   ldap_attr:
