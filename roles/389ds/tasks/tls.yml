@@ -56,6 +56,7 @@
   openssl_pkcs12:
     action: export
     path: /root/mgmt.p12
+    friendly_name: mgmt
     privatekey_path: "{{ _mgmt_key.filename }}"
     certificate_path: "{{ mgmt_crt.filename }}"
     other_certificates: "{{ mgmt_crt.ca_cert }}"
