@@ -39,8 +39,8 @@
     - security-updates
     - ntp
     - 389ds
-    - users
     - sssd
+    - users
     - mysql
     - slurm
     - packer
