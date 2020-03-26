@@ -20,7 +20,8 @@
         "key_file": "{{env `PACKER_key_file`}}",
 
         "destination_image_name": "{{env `PACKER_destination_image_name`}}",
-        "cluster": "{{env `PACKER_cluster`}}"
+        "cluster": "{{env `PACKER_cluster`}}",
+        "ca_cert": "{{env `PACKER_ca_cert`}}"
     },
     "builders": [
         {
@@ -107,6 +108,11 @@
             "type": "file",
             "source": "/home/citc/.ssh/authorized_keys",
             "destination": "/tmp/citc_authorized_keys"
+        },
+        {
+            "type": "file",
+            "source": "{{user `ca_cert`}}",
+            "destination": "/tmp/CA.crt"
         },
         {
             "type": "shell",
