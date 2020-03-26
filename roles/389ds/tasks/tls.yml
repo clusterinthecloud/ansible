@@ -61,7 +61,7 @@
     certificate_path: "{{ mgmt_crt.filename }}"
     other_certificates: "{{ mgmt_crt.ca_cert }}"
     state: present
-  register: mgmt_cert_p12
+  register: mgmt_crt_p12
 
 - name: import certificates
   command: certutil -A -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -n "{{ item.name }}" -t "{{ item.trust_args }}" -i "{{ item.path }}" # noqa 301
@@ -71,10 +71,10 @@
       path: "{{ mgmt_crt.ca_cert }}"
     - name: Server-Cert
       trust_args: ",,"
-      path: "{{ mgmt_cert.filename }}"
+      path: "{{ mgmt_crt.filename }}"
 
 - name: import certificates
-  command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_cert_p12.filename }} # noqa 301
+  command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_crt_p12.filename }} # noqa 301
 
 - name: turn on nsslapd-security
   ldap_attr:
