@@ -42,6 +42,11 @@
     ownca_privatekey_path: "{{ _ca_key.filename }}"
   register: mgmt_crt
 
+- name: Ensure python OpenSSL dependencies are installed.
+  pip:
+    name: pyOpenSSL
+    state: present
+
 - name: Generate PKCS#12 file
   openssl_pkcs12:
     action: export
