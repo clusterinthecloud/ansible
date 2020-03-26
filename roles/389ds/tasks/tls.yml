@@ -77,6 +77,7 @@
     - name: Server-Cert
       trust_args: ",,"
       path: "{{ mgmt_crt.filename }}"
+  notify: restart dirsrv
 
 - name: import certificates
   command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_crt_p12.filename }} -W "" # noqa 301
@@ -90,6 +91,7 @@
     name: nsslapd-security
     values: "on"
     state: exact
+  notify: restart dirsrv
 
 - name: set ssh encryption options
   ldap_attr:
@@ -105,6 +107,7 @@
     nsSSLClientAuth: "off"
     nsSSL3: "off"
     nsSSL2: "off"
+  notify: restart dirsrv
 
 - name: ensure RSA encryption object exists
   ldap_entry:
@@ -115,6 +118,7 @@
     bind_dn: cn=Directory Manager
     bind_pw: "{{ ldap_dm_password }}"
     server_uri: ldap://localhost
+  notify: restart dirsrv
 
 - name: set ssh encryption options
   ldap_attr:
@@ -129,3 +133,4 @@
     nsSSLPersonalitySSL: Server-Cert
     nsSSLToken: internal (software)
     nsSSLActivation: "on"
+  notify: restart dirsrv
