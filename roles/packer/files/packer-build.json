@@ -13,9 +13,11 @@
 
         "availability_domain": "{{env `PACKER_availability_domain`}}",
         "base_image_ocid": "{{env `PACKER_base_image_ocid`}}",
+        "base_image_ocid_gpu": "{{env `PACKER_base_image_ocid_gpu`}}",
         "compartment_ocid": "{{env `PACKER_compartment_ocid`}}",
         "subnet_ocid": "{{env `PACKER_subnet_ocid`}}",
         "shape": "{{env `PACKER_shape`}}",
+        "shape_gpu": "{{env `PACKER_shape_gpu`}}",
         "access_cfg_file": "{{env `PACKER_access_cfg_file`}}",
         "key_file": "{{env `PACKER_key_file`}}",
 
@@ -94,6 +96,22 @@
             "base_image_ocid": "{{user `base_image_ocid`}}",
             "compartment_ocid": "{{user `compartment_ocid`}}",
             "shape": "{{user `shape`}}",
+            "subnet_ocid": "{{user `subnet_ocid`}}",
+            "access_cfg_file": "/home/slurm/.oci/config",
+            "key_file": "/home/slurm/.oci/oci_api_key.pem",
+            "tags": {
+                "cluster": "{{user `cluster`}}"
+            },
+            "ssh_username": "opc"
+        },
+        {
+            "type": "oracle-oci",
+            "name": "oracle-gpu",
+            "image_name": "{{user `destination_image_name`}}-{{user `cluster`}}-GPU-v{{timestamp}}",
+            "availability_domain": "{{user `availability_domain`}}",
+            "base_image_ocid": "{{user `base_image_ocid_gpu`}}",
+            "compartment_ocid": "{{user `compartment_ocid`}}",
+            "shape": "{{user `shape_gpu`}}",
             "subnet_ocid": "{{user `subnet_ocid`}}",
             "access_cfg_file": "/home/slurm/.oci/config",
             "key_file": "/home/slurm/.oci/oci_api_key.pem",
