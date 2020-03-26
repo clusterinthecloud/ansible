@@ -74,7 +74,7 @@
       path: "{{ mgmt_crt.filename }}"
 
 - name: import certificates
-  command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_crt_p12.filename }} # noqa 301
+  command: pk12util -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -i {{ mgmt_crt_p12.filename }} -W "" # noqa 301
 
 - name: turn on nsslapd-security
   ldap_attr:
