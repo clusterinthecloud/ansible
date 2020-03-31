@@ -58,6 +58,7 @@
   tags: finalise
   roles:
     - finalise
+    - apps
     - webui
     - monitoring
     - clustershell

@@ -1,0 +1,15 @@
+---
+
+- name: download app repo
+  git:
+    repo: https://github.com/clusterinthecloud/apps.git
+    dest: /opt/apps
+    version: master
+  register: apps
+
+- name: create apps venv
+  pip:
+    requirements: "{{ apps.dest }}/requirements.txt"
+    virtualenv: /opt/apps_venv
+    virtualenv_command: /bin/python3 -m venv
+  register: apps_venv
