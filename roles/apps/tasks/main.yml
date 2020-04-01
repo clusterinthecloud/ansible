@@ -6,10 +6,3 @@
     dest: /opt/apps
     version: master
   register: apps
-
-- name: create apps venv
-  pip:
-    name: /opt/apps
-    virtualenv: /opt/apps_venv
-    virtualenv_command: /bin/python3 -m venv
-  register: apps_venv
