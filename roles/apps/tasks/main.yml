@@ -9,7 +9,7 @@
 
 - name: create apps venv
   pip:
-    requirements: "{{ apps.dest }}/requirements.txt"
+    requirements: /opt/apps/requirements.txt
     virtualenv: /opt/apps_venv
     virtualenv_command: /bin/python3 -m venv
   register: apps_venv
