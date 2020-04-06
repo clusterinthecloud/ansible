@@ -9,9 +9,8 @@
   command:
     cmd: sh /tmp/Miniconda3.sh -b -p "/opt/miniconda"
     creates: /opt/miniconda
-  register: conda
 
 - name: set Python path fact
-  set_fact: python_bin="{{ conda }}/bin/python"
+  set_fact: python_bin=/opt/miniconda/bin/python
 - name: set Pvenv path fact
   set_fact: python_venv="{{ python_bin }} -m venv"
