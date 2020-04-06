@@ -40,6 +40,7 @@
     - ntp
     - 389ds
     - sssd
+    - python
     - users
     - mysql
     - slurm
