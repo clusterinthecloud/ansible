@@ -32,5 +32,5 @@
 - name: install startnode support module
   copy:
     src: citc_oci.py
-    dest: /opt/cloud_sdk/lib/python3.6/site-packages/citc_cloud.py
+    dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
 

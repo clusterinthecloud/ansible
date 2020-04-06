@@ -61,17 +61,12 @@
     name: gcc
     state: present
 
-- name: install Python3 headers
-  package:
-    name: python3-devel
-    state: present
-
 - name: install gunicorn
   pip:
     name:
       - gunicorn
     virtualenv: /opt/webui_venv
-    virtualenv_command: /bin/python3 -m venv
+    virtualenv_command: "{{ python_venv }}"
   register: webui_venv
 
 - name: Create webui group

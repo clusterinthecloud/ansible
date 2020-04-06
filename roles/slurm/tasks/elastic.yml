@@ -1,19 +1,11 @@
 ---
-- name: install Python 3.6
-  yum:
-    name:
-      - python36
-      - python36-pip
-      - python36-setuptools
-    state: installed
-
 - name: install common tools
   pip:
     name:
       - PyYAML
       - https://github.com/milliams/python-citc/releases/download/0.2.1/citc-0.2.1-py3-none-any.whl
     virtualenv: /opt/cloud_sdk
-    virtualenv_command: /bin/python3 -m venv
+    virtualenv_command: "{{ python_venv }}"
   register: cloud_sdk_venv
 
 - name: install watchdog service
