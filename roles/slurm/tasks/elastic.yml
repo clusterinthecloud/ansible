@@ -67,9 +67,9 @@
     dest: /usr/local/bin/stopnode
     mode: 0755
 
-- name: configure update_config script
-  template:
-    src: update_config.j2
+- name: install update_config script
+  copy:
+    src: update_config.py
     dest: /usr/local/bin/update_config
     mode: 0755
 
