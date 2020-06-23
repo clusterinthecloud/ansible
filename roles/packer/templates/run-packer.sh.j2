@@ -9,3 +9,13 @@ export AWS_SHARED_CREDENTIALS_FILE="/home/slurm/aws-credentials.csv"
     -var account_file=/home/slurm/mgmt-sa-credentials.json \
     -only={{ ansible_local.citc.csp }} \
     /etc/citc/packer/packer-build.json
+
+{% if ansible_local.citc.csp == "oracle" %}
+if [[ "$1" == "gpu" ]] ; then
+    /usr/local/bin/packer build \
+        -var-file /etc/citc/packer/config.json \
+        -var account_file=/home/slurm/mgmt-sa-credentials.json \
+        -only={{ ansible_local.citc.csp }}-gpu \
+        /etc/citc/packer/packer-build.json
+fi
+{% endif %}
