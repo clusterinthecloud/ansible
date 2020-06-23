@@ -69,7 +69,7 @@
             "instance_type": "{{user `instance_type`}}",
             "source_ami_filter": {
               "filters": {
-                "product-code": "aw0evgkw8e5c1q413zgy5pjce",
+                "name": "CentOS Linux 7 x86_64 HVM EBS *",
                 "architecture": "x86_64"
               },
               "owners": ["679593333241"],
