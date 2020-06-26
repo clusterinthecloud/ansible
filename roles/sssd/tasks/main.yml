@@ -6,8 +6,14 @@
       - sssd
       - nss-tools
 
-- name: import CA cert into openldap cert store
-  command: certutil -A -d /etc/openldap/certs -n ca_cert -t "C,," -i "{{ mgmt_crt.ca_cert if mgmt_crt is defined else '/tmp/CA.crt' }}" # noqa 301
+- name: copy CA cert to trust anchors
+  copy:
+    src: "{{ ca_cert}}"
+    dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
+    remote_src: yes
+
+- name: update CA trust anchors
+  command: update-ca-trust # noqa 301
 
 - name: enable SSSD auth in PAM
   command: authconfig --enablesssdauth --update # noqa 301

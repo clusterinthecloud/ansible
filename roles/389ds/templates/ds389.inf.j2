@@ -165,7 +165,7 @@ root_password = {{ ldap_dm_password }}
 # self_sign_cert (bool)
 # Description: Sets whether the setup creates a self-signed certificate and enables TLS encryption during the installation. This is not suitable for production, but it enables administrators to use TLS right after the installation. You can replace the self-signed certificate with a certificate issued by a Certificate Authority.
 # Default value: True
-self_sign_cert = False
+;self_sign_cert = True
 
 # self_sign_cert_valid_months (int)
 # Description: Set the number of months the issued self-signed certificate will be valid.
