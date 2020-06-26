@@ -5,6 +5,7 @@ slurm_accounting_db_password: "{{ lookup('password', '/tmp/slurmpasswordfile cha
 slurm_packages:
   - slurmctld
   - slurmdbd
+  - libpmi
 
 slurm_role: mgmt
 
@@ -13,7 +14,6 @@ slurm_elastic:
     config_directory: /home/slurm/.oci/
 
 install_packages:
-  - pmix-devel
   - xorg-x11-xauth
   - openmpi-devel
   - python3-devel
