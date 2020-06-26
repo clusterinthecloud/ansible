@@ -16,7 +16,7 @@
   command: update-ca-trust # noqa 301
 
 - name: enable SSSD auth in PAM
-  command: authconfig --enablesssdauth --update # noqa 301
+  command: authselect select sssd --force # noqa 301
 
 - name: copy sssd config template
   template:
