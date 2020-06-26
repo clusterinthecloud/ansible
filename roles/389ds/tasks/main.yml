@@ -4,10 +4,6 @@
   dnf:
     name: '@389-directory-server:stable/minimal'
 
-- name: install 389-ds installer scripts
-  dnf:
-    name: 389-ds-base-legacy-tools
-
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service  # noqa 301 303
   register: dirsrv_unit_list
@@ -18,8 +14,8 @@
     dest: /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
-- name: run setup-ds.pl
-  command: setup-ds.pl --silent --file=/root/389ds.inf
+- name: run dscreate
+  command: dscreate from-file /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - include_tasks: tls.yml
