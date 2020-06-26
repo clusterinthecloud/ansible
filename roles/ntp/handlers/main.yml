@@ -2,5 +2,5 @@
 - name: restart ntp (Ubuntu)
   service: name=ntp state=restarted
 
-- name: restart ntpd (RedHat)
-  service: name=ntpd state=restarted
+- name: restart chronyd (RedHat)
+  service: name=chronyd state=restarted

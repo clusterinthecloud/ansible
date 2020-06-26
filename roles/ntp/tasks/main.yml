@@ -1,11 +1,11 @@
 ---
-- name: yum install ntp
-  yum:
-    name: ntp
+- name: yum install chrony
+  package:
+    name: chrony
   notify: restart ntpd (RedHat)
 
-- name: service start ntpd
+- name: service start chronyd
   service:
-    name: ntpd
+    name: chronyd
     state: started
     enabled: yes
