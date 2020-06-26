@@ -14,7 +14,7 @@
 
 - name: install ldap3 in central Python 3
   package:
-    name: python36-ldap3
+    name: python3-ldap3
     state: present
 
 - name: create home dir creation script
