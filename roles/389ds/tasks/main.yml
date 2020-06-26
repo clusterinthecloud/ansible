@@ -4,6 +4,10 @@
   dnf:
     name: '@389-directory-server:stable/minimal'
 
+- name: install 389-ds installer scripts
+  dnf:
+    name: 389-ds-base-legacy-tools
+
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service  # noqa 301 303
   register: dirsrv_unit_list
