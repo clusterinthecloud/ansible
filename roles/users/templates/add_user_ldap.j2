@@ -28,14 +28,14 @@ EOF
 
 BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
 
-if ldapsearch -x -ZZ -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
+if ldapsearch -x -ZZ -H ldap://{{ mgmt_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
 then
-    UIDNUMBER=$(ldapsearch -x -ZZ -H ldap://localhost -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
+    UIDNUMBER=$(ldapsearch -x -ZZ -H ldap://{{ mgmt_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
 else
     UIDNUMBER=10001
 fi
 
-ldapmodify -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -ZZ -H ldap://localhost <<EOF
+ldapmodify -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -ZZ -H ldap://{{ mgmt_hostname }} <<EOF
 dn: cn=${USER},${BASEDN}
 changetype: add
 objectclass: top
