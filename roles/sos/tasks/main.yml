@@ -11,3 +11,11 @@
     owner: root
     group: root
     mode: 0644
+
+- name: update SOS config compression to gzip
+  copy:
+    src: sos.conf
+    dest: /etc/sos/conf
+    owner: root
+    group: root
+    mode: 0644
