@@ -1,11 +1,11 @@
 ---
 slurm_packages:
   - slurmd
-  - libpmi
 
 slurm_role: compute
 
-install_packages: []
+install_packages:
+  - pmix-devel
 
 mpi_packages:
   oracle:
