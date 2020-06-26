@@ -1,6 +1,7 @@
 ---
-- name: install MySQL-python
-  yum: name=MySQL-python state=present
+- name: install PyMySQL
+  package:
+    name: python3-PyMySQL
 
 - name: install mariadb
   yum:
