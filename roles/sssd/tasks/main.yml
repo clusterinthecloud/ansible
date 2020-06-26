@@ -8,7 +8,7 @@
 
 - name: copy CA cert to trust anchors
   copy:
-    src: "{{ ca_cert}}"
+    src: "{{ ca_cert }}"
     dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
     remote_src: yes
 
