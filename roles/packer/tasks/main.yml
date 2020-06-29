@@ -34,6 +34,8 @@
   template:
     src: run_ansible.sh.j2
     dest: /etc/citc/packer/run_ansible.sh
+    owner: root
+    mode: u=rwx,g=,o=
 
 - name: copy in packer extra run script template (no force overwrite)
   copy:
@@ -77,10 +79,6 @@
   template:
     src: run-packer.sh.j2
     dest: /usr/local/bin/run-packer
-
-- name: set permissions on run-packer
-  file:
-    path: /usr/local/bin/run-packer
     mode: u=rwx,g=rx,o=rx
 
 - name: run packer to build first image
