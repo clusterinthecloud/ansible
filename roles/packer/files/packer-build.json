@@ -69,10 +69,10 @@
             "instance_type": "{{user `instance_type`}}",
             "source_ami_filter": {
               "filters": {
-                "product-code": "aw0evgkw8e5c1q413zgy5pjce",
+                "name": "CentOS 8.*",
                 "architecture": "x86_64"
               },
-              "owners": ["679593333241"],
+              "owners": ["125523088429"],
               "most_recent": true
             },
             "ssh_username": "centos",
