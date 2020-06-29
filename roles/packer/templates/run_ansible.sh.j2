@@ -8,7 +8,7 @@ $(hostname)
 cluster_id={{ startnode_config.cluster_id }}
 packer_run=yes
 EOF'
-{% if ansible_local.citc.csp == "aws" %}
+{% if ansible_local.citc.csp in ["aws", "google"] %}
 sudo yum install -y epel-release
 {% endif %}
 sudo yum install -y ansible git
