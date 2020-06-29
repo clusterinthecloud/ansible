@@ -24,7 +24,7 @@
 - name: update SOS config compression to gzip
   copy:
     src: sos.conf
-    dest: /etc/sos/conf
+    dest: /etc/sos.conf
     owner: root
     group: root
-    mode: 0644
+    mode: u=rw,g=r,o=r
