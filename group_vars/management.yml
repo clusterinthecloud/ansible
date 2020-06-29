@@ -25,8 +25,8 @@ mpi_packages:
     - openmpi3-devel
     - mpich-3.2-devel
   google:
-    - openmpi3-devel
-    - mpich-3.2-devel
+    - openmpi-devel
+    - mpich-devel
   aws: []
 
 monitoring_role: master
