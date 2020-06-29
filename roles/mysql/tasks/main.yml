@@ -3,6 +3,10 @@
   package:
     name: python3-PyMySQL
 
+- name: install mariadb module
+  package:
+    name: "@mariadb"
+
 - name: install mariadb
   yum:
     name:
