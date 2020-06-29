@@ -12,8 +12,8 @@ mpi_packages:
     - mpich-3.2
     - openmpi3
   google:
-    - mpich-3.2
-    - openmpi3
+    - mpich
+    - openmpi
   aws: []
 
 monitoring_role: client
