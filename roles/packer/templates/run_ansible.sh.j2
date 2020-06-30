@@ -11,6 +11,10 @@ EOF'
 {% if ansible_local.citc.csp in ["aws", "google"] %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled PowerTools
+{% elif ansible_local.citc.csp == "oracle" %}
+dnf install -y oracle-epel-release-el8
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+dnf config-manager --set-enabled ol8_codeready_builder
 {% endif %}
 sudo dnf install -y ansible git
 sudo cat /tmp/hosts
