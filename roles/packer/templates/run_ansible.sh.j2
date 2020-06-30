@@ -12,7 +12,7 @@ EOF'
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled PowerTools
 {% endif %}
-sudo yum install -y ansible git
+sudo dnf install -y ansible git
 sudo cat /tmp/hosts
 sudo mkdir -p /etc/ansible/facts.d/
 echo 'packer' | sudo -S sh -c '
