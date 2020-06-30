@@ -46,9 +46,9 @@
     group: citc
 
 - name: install oci-cli
-  package:
-    name: python36-oci-cli
-    state: present
+  pip:
+    name: oci-cli
+    extra_args: --user
   when: ansible_local.citc.csp == "oracle"
 
 - name: "[oracle] get image OCIDs"
