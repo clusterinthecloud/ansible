@@ -45,31 +45,6 @@
     owner: citc
     group: citc
 
-- name: "[oracle] install oci-cli"
-  pip:
-    name: oci-cli
-    extra_args: --user
-  when: ansible_local.citc.csp == "oracle"
-
-- name: "[oracle] get image OCIDs"
-  command: "/root/.local/bin/oci --config-file=/home/slurm/.oci/config compute image list --compartment-id={{ startnode_config.compartment_id }}"
-  register: oci_images
-  when: ansible_local.citc.csp == "oracle"
-
-- name: "[oracle] get ID of OCI non-GPU image"
-  set_fact:
-    oci_non_gpu_image_id: "{{ oci_images.stdout | from_json | json_query(jmesquery) }}"
-  vars:
-    jmesquery: 'data[?"operating-system"==`"Oracle Linux"` && "operating-system-version"==`"7.7"` && !contains("display-name", `GPU`)] | [0].id'
-  when: ansible_local.citc.csp == "oracle"
-
-- name: "[oracle] get ID of OCI GPU image"
-  set_fact:
-    oci_gpu_image_id: "{{ oci_images.stdout | from_json | json_query(jmesquery) }}"
-  vars:
-    jmesquery: 'data[?"operating-system"==`"Oracle Linux"` && "operating-system-version"==`"7.7"` && contains("display-name", `GPU`)] | [0].id'
-  when: ansible_local.citc.csp == "oracle"
-
 - name: copy in config
   template:
     src: config.json.j2
