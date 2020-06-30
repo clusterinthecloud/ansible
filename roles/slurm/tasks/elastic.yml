@@ -127,7 +127,8 @@
       python3 -m pip install awscli
       region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
       instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
-      name=$(/usr/local/bin/aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}" --output text --query 'Tags[?Key==`Name`].Value')
+      name=$(/usr/local/bin/aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}"\
+                                                  --output text --query 'Tags[?Key==`Name`].Value')
       hostnamectl set-hostname ${name}
       {% endif %}
 
