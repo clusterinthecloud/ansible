@@ -1,8 +1,8 @@
 # Install 389-ds
 
-- name: install 389-ds-base
+- name: install 389-ds
   dnf:
-    name: '@389-directory-server:stable/minimal'
+    name: '@389-ds:1.4'
 
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service  # noqa 301 303
