@@ -1,7 +1,3 @@
 ---
 - name: Install security updates
-  dnf:
-    name: '*'
-    security: yes
-    state: latest  # noqa 403
-    exclude: kernel*
+  command: dnf update -y --security --exclude 'kernel*' # noqa 301 303
