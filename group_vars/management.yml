@@ -22,8 +22,8 @@ install_packages:
 
 mpi_packages:
   oracle:
-    - openmpi3-devel
-    - mpich-3.2-devel
+    - openmpi-devel
+    - mpich-devel
   google:
     - openmpi-devel
     - mpich-devel

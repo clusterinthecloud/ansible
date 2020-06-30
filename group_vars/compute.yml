@@ -9,8 +9,8 @@ install_packages: []
 
 mpi_packages:
   oracle:
-    - mpich-3.2
-    - openmpi3
+    - mpich
+    - openmpi
   google:
     - mpich
     - openmpi
