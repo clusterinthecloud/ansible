@@ -1,10 +1,14 @@
 # Install 389-ds
 
-- name: install 389-ds
+- name: enable 389-ds module
   command:
     cmd: dnf module enable -y 389-ds:1.4
   register: dnf_result
   changed_when: '"Nothing to do" not in dnf_result.stdout'
+
+- name: install 389-ds
+  package:
+    name: 389-ds-base
 
 - name: check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service  # noqa 301 303
