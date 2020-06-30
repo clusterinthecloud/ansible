@@ -2,7 +2,7 @@
 
 - name: install 389-ds
   command:
-    cmd: dnf module enable 389-ds:1.4
+    cmd: dnf module enable -y 389-ds:1.4
   register: dnf_result
   changed_when: '"Nothing to do" not in dnf_result.stdout'
 
