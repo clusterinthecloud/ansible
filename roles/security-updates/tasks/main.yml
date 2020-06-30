@@ -1,6 +1,6 @@
 ---
 - name: Install security updates
-  yum:
+  dnf:
     name: '*'
     security: yes
     state: latest  # noqa 403
