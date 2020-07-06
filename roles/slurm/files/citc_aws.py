@@ -59,7 +59,7 @@ def get_node_features(hostname):
     features = subprocess.run(
         ["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"],
         stdout=subprocess.PIPE
-    ).stdout.decode().split(',')
+    ).stdout.decode().strip().split(',')
     features = {f.split("=")[0]: f.split("=")[1] for f in features}
     return features
 
