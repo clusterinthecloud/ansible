@@ -61,3 +61,4 @@
   register: packer_result
   changed_when: "packer_result.rc == 0"
   failed_when: "packer_result.rc != 0"
+  tags: packer
