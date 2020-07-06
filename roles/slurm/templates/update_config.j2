@@ -43,9 +43,8 @@ def encode_nodename(shape_name: str, node_number: int, cluster_id: str, ad: Opti
 
 def create_slurmconf_line(number: int, shape_info: Dict, shape: str, cluster_id, ad: Optional[int] = None):
     nodename = encode_nodename(shape, number, cluster_id, ad)
-    features = "shape={shape},ad={ad}".format(shape=shape, ad=ad)
-    if "arch" in shape_info:
-        features = features + ",arch={arch}".format(arch=shape_info["arch"])
+    arch = shape_info.get("arch", default="x86_64")
+    features = "shape={shape},ad={ad},arch={arch}".format(shape=shape, ad=ad, arch=arch)
     config_template = 'NodeName={nodename:40} State={state:7} SocketsPerBoard={sockets:<1} CoresPerSocket={cores_per_socket:<3} ThreadsPerCore={threads_per_core:<1} RealMemory={memory:<10} Gres="{gres}" Features="{features}"'
     config = config_template.format(
         nodename=nodename,
