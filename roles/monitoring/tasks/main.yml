@@ -48,7 +48,7 @@
 
 - name: install telegraf package
   command:
-    cmd: "rpm -ivh {{ telegraf_dnf.stdout_lines[-1] }} --ignorearch"
+    cmd: "rpm -Uvh {{ telegraf_dnf.stdout_lines[-1] }} --ignorearch"
   register: rpm_result
   changed_when: '"Nothing to do" not in rpm_result.stdout'
   notify: restart telegraf
