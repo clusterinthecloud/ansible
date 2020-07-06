@@ -55,13 +55,13 @@ def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
     return None
 
 
-def get_shape_info(hostname):
+def get_node_features(hostname):
     features = subprocess.run(
         ["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"],
         stdout=subprocess.PIPE
     ).stdout.decode().split(',')
-    shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    return shape, features
+    features = {f.split("=")[0]: f.split("=")[1] for f in features}
+    return features
 
 
 def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
@@ -71,7 +71,8 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = f.read().decode()
 
-    shape, features = get_shape_info(hostname)
+    features = get_node_features(hostname)
+    shape = features["shape"]
     if features["arch"] == "x86_64":
         arch = "x86_64"
     elif features["arch"] == "aarch64":
