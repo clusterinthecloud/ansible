@@ -72,12 +72,12 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
         user_data = f.read().decode()
 
     shape, features = get_shape_info(hostname)
-    if shape["arch"] == "x86_64":
+    if features["arch"] == "x86_64":
         arch = "x86_64"
-    elif shape["arch"] == "aarch64":
+    elif features["arch"] == "aarch64":
         arch = "arm64"  # This is what AWS calls aarch64
     else:
-        raise ValueError(f"'{shape}' architecture ({shape['arch']}) not recognised")
+        raise ValueError(f"'{shape}' architecture ({features['arch']}) not recognised")
     images = client.describe_images(
         Filters=[
             {'Name': 'name', 'Values': ['citc-slurm-compute-*']},
