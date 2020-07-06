@@ -53,7 +53,7 @@
   changed_when: '"Nothing to do" not in rpm_result.stdout'
   failed_when:
     - rpm_result.rc != 0
-    - '"is already installed" not in rpm_result.stdout'
+    - '"is already installed" not in rpm_result.stderr'
   notify: restart telegraf
 
 - name: enable the telegraf service
