@@ -19,3 +19,13 @@ if [[ "$1" == "gpu" ]] ; then
         /etc/citc/packer/packer-build.json
 fi
 {% endif %}
+
+if [[ "$1" == "aarch64" ]] ; then
+    /usr/local/bin/packer build \
+        -var-file /etc/citc/packer/config.json \
+        -var account_file=/home/slurm/mgmt-sa-credentials.json \
+        -var arch=arm64 \
+        -var instance_type=a1.medium \
+        -only={{ ansible_local.citc.csp }} \
+        /etc/citc/packer/packer-build.json
+fi

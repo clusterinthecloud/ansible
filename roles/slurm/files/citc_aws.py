@@ -55,13 +55,13 @@ def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
     return None
 
 
-def get_shape(hostname):
+def get_shape_info(hostname):
     features = subprocess.run(
         ["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"],
         stdout=subprocess.PIPE
     ).stdout.decode().split(',')
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    return shape
+    return shape, features
 
 
 def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_keys: str):
@@ -71,15 +71,25 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = f.read().decode()
 
-    shape = get_shape(hostname)
+    shape, features = get_shape_info(hostname)
+    if shape["arch"] == "x86_64":
+        arch = "x86_64"
+    elif shape["arch"] == "aarch64":
+        arch = "arm64"  # This is what AWS calls aarch64
+    else:
+        raise ValueError(f"'{shape}' architecture ({shape['arch']}) not recognised")
     images = client.describe_images(
         Filters=[
             {'Name': 'name', 'Values': ['citc-slurm-compute-*']},
             {'Name': 'tag:cluster', 'Values': [nodespace['cluster_id']]},
+            {'Name': 'architecture', 'Values': [arch]},
         ],
         Owners=['self'],
     )
-    image = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)[0]['ImageId']
+    images = sorted(images['Images'], key=lambda x: x['CreationDate'], reverse=True)
+    if not images:
+        raise RuntimeError(f"No matching image found")
+    image = images[0]['ImageId']
 
     config = {
         "ImageId": image,

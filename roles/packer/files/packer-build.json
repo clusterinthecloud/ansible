@@ -23,7 +23,8 @@
 
         "destination_image_name": "{{env `PACKER_destination_image_name`}}",
         "cluster": "{{env `PACKER_cluster`}}",
-        "ca_cert": "{{env `PACKER_ca_cert`}}"
+        "ca_cert": "{{env `PACKER_ca_cert`}}",
+        "arch": "{{env `PACKER_arch`}}"
     },
     "builders": [
         {
@@ -70,7 +71,7 @@
             "source_ami_filter": {
               "filters": {
                 "name": "CentOS 8.*",
-                "architecture": "x86_64"
+                "architecture": "{{user `arch`}}"
               },
               "owners": ["125523088429"],
               "most_recent": true
