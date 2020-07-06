@@ -46,7 +46,7 @@
   changed_when: False
   register: telegraf_dnf
 
-- name: install telegraf package
+- name: install telegraf package  # noqa 303
   command:
     cmd: "rpm -Uvh {{ telegraf_dnf.stdout_lines[-1] }} --ignorearch"
   register: rpm_result
