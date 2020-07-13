@@ -19,3 +19,5 @@ mpi_packages:
 monitoring_role: client
 
 admin_key_path: /root/citc_authorized_keys
+
+ldap_hostname: "{{ ansible_local.citc.ldap_hostname }}"
