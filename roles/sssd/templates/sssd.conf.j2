@@ -17,6 +17,7 @@ ldap_access_filter = (objectClass=posixAccount)
 ldap_user_gecos = displayName
 ldap_default_bind_dn = cn=Directory Manager
 ldap_default_authtok = {{ ldap_dm_password if ldap_dm_password is defined else ansible_local.citc.ldap_dm_password }}
+ldap_tls_cacert = /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
 
 ldap_id_use_start_tls = True
 
