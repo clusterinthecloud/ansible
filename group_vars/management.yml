@@ -39,3 +39,5 @@ admin_key_path:
   oracle: /home/opc/.ssh/authorized_keys
   google: /home/provisioner/.ssh/authorized_keys
   aws: /home/centos/.ssh/authorized_keys
+
+ldap_hostname: "{{ ansible_nodename }}"
