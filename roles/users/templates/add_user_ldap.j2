@@ -10,7 +10,7 @@ fi
 
 ADMINNAME="cn=Directory Manager"
 ADMINPASSWORD={{ ldap_dm_password }}
-LDAPTLS_CACERT=/etc/pki/ca-trust/source/anchors/389-ds-cert.crt
+export LDAPTLS_CACERT=/etc/pki/ca-trust/source/anchors/389-ds-cert.crt
 
 USER=${1}
 SSHKEYS=${4}
@@ -29,9 +29,9 @@ EOF
 
 BASEDN="ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk"
 
-if ldapsearch -x -ZZ -H ldap://{{ ldap_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
+if ldapsearch -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -x -ZZ -H ldap://{{ ldap_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber
 then
-    UIDNUMBER=$(ldapsearch -x -ZZ -H ldap://{{ ldap_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
+    UIDNUMBER=$(ldapsearch -D "${ADMINNAME}" -w "${ADMINPASSWORD}" -x -ZZ -H ldap://{{ ldap_hostname }} -b "${BASEDN}" -LLL '(objectclass=posixAccount)' uidNumber | grep uidNumber | awk '{print $2}' | sort -n | tail -n1 | awk '{print $1+1}')
 else
     UIDNUMBER=10001
 fi
