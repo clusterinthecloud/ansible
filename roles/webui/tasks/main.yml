@@ -98,7 +98,7 @@
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^SECRET_KEY'
-    line: SECRET_KEY = "{{ lookup('password', '/etc/citc/webuisecretkeyfile chars=ascii_letters,digits,punctuation length=50') }}"
+    line: SECRET_KEY = r"{{ lookup('password', '/etc/citc/webuisecretkeyfile chars=ascii_letters,digits,punctuation length=50') }}"
 
 - name: install webui dependencies
   pip:
