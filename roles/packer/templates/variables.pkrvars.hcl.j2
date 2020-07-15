@@ -12,6 +12,7 @@ google_source_image_family = "centos-8"
 google_subnetwork = "{%- if startnode_config.subnet_name is defined -%}{{ startnode_config.subnet_name }}{%- endif -%}"
 google_project_id = "{%- if startnode_config.compartment_id is defined -%}{{ startnode_config.compartment_id }}{%- endif -%}"
 google_zone = "{%- if startnode_config.zone is defined -%}{{ startnode_config.zone }}{%- endif -%}"
+google_account_file = "/home/slurm/mgmt-sa-credentials.json"
 
 oracle_availability_domain = "{%- if startnode_config.ad_root is defined -%}{{ startnode_config.ad_root }}1{%- endif -%}"
 oracle_base_image_ocid = "{%- if startnode_config.mgmt_image_id is defined -%}{{ startnode_config.mgmt_image_id }}{%- endif -%}"
