@@ -20,10 +20,10 @@
     state: directory
     mode: 0755
 
-- name: copy in packer-build
+- name: copy in packer build files
   copy:
-    src: packer-build.json
-    dest: /etc/citc/packer/packer-build.json
+    src: all.pkr.hcl
+    dest: /etc/citc/packer/all.pkr.hcl
 
 - name: load the startnode config
   include_vars:
@@ -47,8 +47,8 @@
 
 - name: copy in config
   template:
-    src: config.json.j2
-    dest: /etc/citc/packer/config.json
+    src: variables.pkrvars.hcl.j2
+    dest: /etc/citc/packer/variables.pkrvars.hcl
 
 - name: copy in packer run script
   template:
