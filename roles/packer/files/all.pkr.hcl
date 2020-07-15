@@ -33,13 +33,13 @@ source "googlecompute" "google" {
     network = var.google_network
     subnetwork = var.google_subnetwork
     use_internal_ip = true
-    tags = "compute-${var.cluster}"
+    tags = ["compute-${var.cluster}"]
     image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
     image_family = "${var.google_destination_image_family}-${var.cluster}"
-    labels {
+    labels = {
         cluster = var.cluster
     }
-    image_labels {
+    image_labels = {
         cluster = var.cluster
     }
 }
@@ -95,7 +95,7 @@ source "oracle-oci" "oracle" {
     oracle_subnet_ocid = var.oracle_subnet_ocid
     oracle_access_cfg_file = var.oracle_access_cfg_file
     oracle_key_file = var.oracle_key_file
-    tags {
+    tags = {
         cluster = var.cluster
     }
     ssh_username = "opc"
@@ -110,7 +110,7 @@ source "oracle-oci" "oracle-gpu" {
     oracle_subnet_ocid = var.oracle_subnet_ocid
     oracle_access_cfg_file = var.oracle_access_cfg_file
     oracle_key_file = var.oracle_key_file
-    tags {
+    tags = {
         cluster = var.cluster
     }
     ssh_username = "opc"
