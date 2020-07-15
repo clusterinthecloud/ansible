@@ -15,9 +15,9 @@ if [[ "$1" == "gpu" ]] ; then
 if [[ "$1" == "aarch64" ]] ; then
     /usr/local/bin/packer build \
         -var-file /etc/citc/packer/variables.pkrvars.hcl \
-        -var arch=arm64 \
-        -var instance_type=a1.medium \
         -only="*.{{ ansible_local.citc.csp }}" \
+        -var aws_arch=arm64 \
+        -var aws_instance_type=a1.medium \
         /etc/citc/packer/
 {% endif %}
 else
