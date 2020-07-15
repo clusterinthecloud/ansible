@@ -46,16 +46,16 @@ source "googlecompute" "google" {
 
 source "amazon-ebs" "aws" {
     ami_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
-    run_volume_tags {
+    run_volume_tags = {
         cluster = var.cluster
     }
-    tags {
+    tags = {
         cluster = var.cluster
     }
-    snapshot_tags {
+    snapshot_tags = {
         cluster = var.cluster
     }
-    run_tags {
+    run_tags = {
         cluster = var.cluster
     }
     force_deregister = true
@@ -63,7 +63,7 @@ source "amazon-ebs" "aws" {
     region = var.aws_region
     instance_type = var.aws_instance_type
     source_ami_filter {
-        filters = {
+        filters {
             name = "CentOS 8.*"
             architecture = var.aws_arch
         }
@@ -72,18 +72,18 @@ source "amazon-ebs" "aws" {
     }
     ssh_username = "centos"
     vpc_filter {
-        filters = {
+        filter {
             name = "tag:cluster"
             value = var.cluster
         }
     }
     subnet_filter {
-        filters {
+        filter {
             name = "tag:cluster"
             value = var.cluster
         }
-        associate_public_ip_address = true
     }
+    associate_public_ip_address = true
 }
 
 source "oracle-oci" "oracle" {
