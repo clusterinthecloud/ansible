@@ -63,7 +63,7 @@ source "amazon-ebs" "aws" {
     region = var.aws_region
     instance_type = var.aws_instance_type
     source_ami_filter {
-        filters {
+        filters = {
             name = "CentOS 8.*"
             architecture = var.aws_arch
         }
