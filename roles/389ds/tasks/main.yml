@@ -24,6 +24,11 @@
   command: dscreate from-file /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
+- name: start dirsrv
+  service:
+    name: "dirsrv@{{ mgmt_hostname }}"
+    state: started
+
 - include_tasks: tls.yml
 
 - name: ensure people OU exists
