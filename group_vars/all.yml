@@ -21,3 +21,5 @@ filesystem_mount_point: /shared
 ansible_pull_repo: https://github.com/clusterinthecloud/ansible.git
 
 software_install_dir: /mnt/{{ filesystem_mount_point }}
+
+admin_key_path: /root/citc_authorized_keys

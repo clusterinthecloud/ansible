@@ -35,6 +35,4 @@ ldap_dm_password: "{{ lookup('password', '/etc/citc/ldapdmpasswordfile chars=asc
 
 bootstrap_ansible_pull_playbook: compute.yml
 
-admin_key_path: /root/citc_authorized_keys
-
 ldap_hostname: "{{ ansible_nodename }}"
