@@ -71,6 +71,8 @@ async def test_start_node_fresh(gcp_config, mocker, requests_mocker, nodespace):
             return httplib2.Response({'status': 200, 'reason': 'OK'}), json.dumps({"selfLink": "foo"})
         if url.path == "/compute/v1/projects/myproj-123456/zones/europe-west4-a/instances" and method == "POST":
             return httplib2.Response({'status': 200, 'reason': 'OK'}), json.dumps({"id": "id-foo"})
+        else:
+            return http.request(uri, method, *args, **kwargs)
 
     mocker.patch("googleapiclient.http._retry_request", side_effect=request_mock)
 
