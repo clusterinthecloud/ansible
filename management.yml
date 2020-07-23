@@ -48,7 +48,7 @@
   tasks:
     - name: copy SSH public keys to slurm account
       copy:
-        src: "{{ admin_key_path[ansible_local.citc.csp] }}"
+        src: "{{ admin_key_path }}"
         dest: /home/slurm/opc_authorized_keys
         owner: slurm
         group: slurm
