@@ -4,6 +4,7 @@ import re
 from typing import Dict, Optional
 
 import yaml
+import citc
 
 
 def load_yaml(filename) -> dict:
@@ -20,7 +21,10 @@ def get_limits() -> Dict[str, Dict[str, str]]:
 
 
 def get_shapes() -> Dict[str, Dict[str, str]]:
-    return load_yaml("/etc/citc/shapes.yaml")
+    try:
+        return citc.utils.get_types_info()
+    except NotImplementedError:
+        return load_yaml("/etc/citc/shapes.yaml")
 
 
 def get_mgmt_info() -> Dict[str, str]:
