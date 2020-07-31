@@ -4,7 +4,7 @@ import re
 from typing import Dict, Optional
 
 import yaml
-import citc
+import citc.utils
 
 
 def load_yaml(filename) -> dict:
