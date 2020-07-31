@@ -38,6 +38,7 @@
     owner: slurm
     group: slurm
     mode: 0744
+  when: '"/tmp/shapes.yaml" is exists'
 
 - name: copy startnode.yaml
   copy:
