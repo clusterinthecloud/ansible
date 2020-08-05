@@ -56,9 +56,11 @@
             #    address: unix:/run/gunicorn.sock
             #    health_check: fail_timeout=0
 
-- name: install GCC
+- name: install build dependencies
   package:
-    name: gcc
+    name:
+      - gcc
+      - python38-devel
     state: present
 
 - name: install gunicorn
