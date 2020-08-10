@@ -75,7 +75,7 @@ def create_node_config(client, hostname: str, nodespace: Dict[str, str], ssh_key
     shape = features["shape"]
     if features["arch"] == "x86_64":
         arch = "x86_64"
-    elif features["arch"] == "aarch64":
+    elif features["arch"] in {"aarch64", "arm64"}:
         arch = "arm64"  # This is what AWS calls aarch64
     else:
         raise ValueError(f"'{shape}' architecture ({features['arch']}) not recognised")
