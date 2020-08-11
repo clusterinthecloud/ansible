@@ -5,20 +5,8 @@ import yaml
 import asyncio
 
 import boto3
+import citc.utils
 #from mypy_boto3 import ec2, route53
-
-
-def load_yaml(filename: str) -> dict:
-    with open(filename, "r") as f:
-        return yaml.safe_load(f)
-
-
-def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
-    """
-    Get the information about the space into which we were creating nodes
-    This will be static for all nodes in this cluster
-    """
-    return load_yaml(file)
 
 
 def get_node(client, hostname: str, cluster_id: str):  # -> ec2.Instance?
@@ -258,7 +246,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
 def terminate_instance(log, hosts, nodespace=None):
     if not nodespace:
-        nodespace = get_nodespace()
+        nodespace = citc.utils.get_nodespace()
 
     region = nodespace["region"]
 
