@@ -236,13 +236,11 @@ def terminate_instance(log, hosts, nodespace=None):
         log.info(f"Stopping {host}")
 
         try:
-            instance = citc.aws.AwsNode.from_name(client, host, nodespace)
-            instance_id = instance["InstanceId"]
-            vm_ip = instance["PrivateIpAddress"]
+            instance = citc.aws.AwsNode.from_name(host, client, nodespace)
             fqdn = f"{host}.{nodespace['dns_zone']}"
-            client.terminate_instances(InstanceIds=[instance_id])
+            client.terminate_instances(InstanceIds=[instance.id])
             r53_client = route53_client()
-            delete_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", vm_ip, 300)
+            delete_dns_record(r53_client, nodespace["dns_zone_id"], fqdn, "A", instance.ip, 300)
         except Exception as e:
             log.error(f" problem while stopping: {e}")
             continue
