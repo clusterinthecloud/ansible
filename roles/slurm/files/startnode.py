@@ -4,6 +4,7 @@ import asyncio
 import logging
 import subprocess
 import sys
+import citc.utils
 import citc_cloud
 
 
@@ -17,7 +18,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 
 async def main() -> None:
-    nodespace = citc_cloud.get_nodespace()
+    nodespace = citc.utils.get_nodespace()
 
     keys_file = "/home/slurm/opc_authorized_keys"
 
