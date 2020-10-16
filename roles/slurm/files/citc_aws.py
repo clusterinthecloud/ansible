@@ -5,42 +5,22 @@ import yaml
 import asyncio
 
 import boto3
+import citc.aws
+import citc.cloud
 import citc.utils
 #from mypy_boto3 import ec2, route53
 
 
-def get_node(client, hostname: str, cluster_id: str):  # -> ec2.Instance?
-    instance = client.describe_instances(Filters=[
-        {
-            "Name": "tag:Name",
-            "Values": [hostname],
-        },
-        {
-            "Name": "tag:cluster",
-            "Values": [cluster_id],
-        },
-        {
-            "Name": "instance-state-name",
-            "Values": ["pending", "running", "shutting-down", "stopping"],
-        },
-    ])
-    # TODO check for multiple returned matches
-    if instance["Reservations"]:
-        return instance["Reservations"][0]["Instances"][0]
-    return None
-
-
-def get_node_state(client, hostname: str, cluster_id: str) -> Optional[str]:
+def get_node_state(client, hostname: str, nodespace: Dict[str, str]) -> citc.cloud.NodeState:
     """
     Get the current node state of the VM for the given hostname
-    If there is no such VM, return "TERMINATED"
+    If there is no such VM, return TERMINATED
     """
 
-    item = get_node(client,  hostname, cluster_id)
-
-    if item is not None:
-        return item['State']["Name"]
-    return None
+    try:
+        return citc.aws.AwsNode.from_name(hostname, client, nodespace).state
+    except citc.aws.NodeNotFound:
+        return citc.cloud.NodeState.TERMINATED
 
 
 def get_node_features(hostname):
@@ -209,12 +189,12 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     client = ec2_client(region)
 
-    while get_node_state(client, host, nodespace["cluster_id"]) in ["shutting-down", "stopping"]:
+    while get_node_state(client, host, nodespace) in [citc.cloud.NodeState.TERMINATING, citc.cloud.NodeState.STOPPING]:
         log.info(" host is currently being deleted. Waiting...")
         await asyncio.sleep(5)
 
-    node_state = get_node_state(client, host, nodespace["cluster_id"])
-    if node_state in ["pending", "running"]:
+    node_state = get_node_state(client, host, nodespace)
+    if node_state in [citc.cloud.NodeState.PENDING, citc.cloud.NodeState.RUNNING]:
         log.warning(f" host already exists with state {node_state}")
         return
 
@@ -256,7 +236,7 @@ def terminate_instance(log, hosts, nodespace=None):
         log.info(f"Stopping {host}")
 
         try:
-            instance = get_node(client, host, nodespace["cluster_id"])
+            instance = citc.aws.AwsNode.from_name(client, host, nodespace)
             instance_id = instance["InstanceId"]
             vm_ip = instance["PrivateIpAddress"]
             fqdn = f"{host}.{nodespace['dns_zone']}"
