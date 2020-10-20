@@ -31,6 +31,4 @@ jobs:
         ansible-lint management.yml compute.yml nfsserver.yml
     - name: Type check
       run: |
-        mypy roles/slurm/files/citc_oci.py
-        mypy roles/slurm/files/citc_gcp.py
-        mypy roles/slurm/files/citc_aws.py
+        mypy roles/slurm/files/citc_aws.py roles/slurm/files/citc_gcp.py roles/slurm/files/citc_oci.py
