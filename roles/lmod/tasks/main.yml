@@ -9,3 +9,4 @@
   copy:
     dest: /etc/profile.d/10-modules.sh
     content: MODULEPATH={{ software_install_dir }}/manual_modules/
+    mode: u=rw,g=r,o=r

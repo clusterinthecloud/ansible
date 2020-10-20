@@ -18,6 +18,7 @@
   template:
     src: ds389.inf.j2
     dest: /root/389ds.inf
+    mode: u=rw,g=r,o=
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: run dscreate

@@ -28,6 +28,7 @@
 
           ######################
         dest: /etc/motd
+        mode: u=rw,g=r,o=r
 
 - name: common
   hosts: all
@@ -36,9 +37,9 @@
     - citc_user
     - filesystem
     - ssh
-    - security-updates
+    - security_updates
     - ntp
-    - 389ds
+    - ldap
     - sssd
     - python
     - users
@@ -67,5 +68,5 @@
     - devtoolset
     - mpi
     - sos
-    - debug-tools
+    - debug_tools
     - lmod

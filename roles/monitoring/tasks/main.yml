@@ -69,6 +69,7 @@
     option: interfaces
     value: '["*"]'
     state: present
+    mode: u=rw,g=r,o=r
   notify: restart telegraf
 
 - name: install influxdb package
@@ -92,6 +93,7 @@
     option: urls
     value: '["http://{{ mgmt_hostname }}:8086"]'
     backup: yes
+    mode: u=rw,g=r,o=r
   notify: restart telegraf
 
 - name: Add Grafana repository
@@ -199,6 +201,7 @@
     option: "{{ item.key }}"
     value: "{{ item.value }}"
     state: present
+    mode: u=rw,g=r,o=r
   loop: "{{ keys|dict2items }}"
   vars:
     keys:
@@ -213,18 +216,21 @@
   file:
     path: /etc/citc/grafana
     state: directory
+    mode: u=rwx,g=rx,o=rx
   when: monitoring_role == "master"
 
 - name: Copy in Slurm Grafana dashboard
   template:
     src: slurm_dashboard.json.j2
     dest: /etc/citc/grafana/slurm_dashboard.json
+    mode: u=rw,g=r,o=r
   when: monitoring_role == "master"
 
 - name: Download Telegraf dashboard
   get_url:
     url: https://grafana.com/api/dashboards/928/revisions/3/download
     dest: /etc/citc/grafana/928.json
+    mode: u=rw,g=r,o=r
   when: monitoring_role == "master"
 
 - name: Set Influx datasource on dashboard
@@ -249,5 +255,6 @@
         updateIntervalSeconds: 10 #how often Grafana will scan for changed dashboards
         options:
           path: /etc/citc/grafana
+    mode: u=rw,g=r,o=r
   notify: restart grafana
   when: monitoring_role == "master"

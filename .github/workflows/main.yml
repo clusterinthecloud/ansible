@@ -25,9 +25,7 @@ jobs:
       run: pytest
     - name: Ansible lint
       run: |
-        ansible-lint compute.yml
-        ansible-lint management.yml
-        ansible-lint nfsserver.yml
+        ansible-lint management.yml compute.yml nfsserver.yml
     - name: Type check
       run: |
         mypy roles/slurm/files/citc_oci.py

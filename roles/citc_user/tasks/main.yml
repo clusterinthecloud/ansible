@@ -46,3 +46,6 @@
       citc ALL=(ALL) NOPASSWD:ALL
     dest: /etc/sudoers.d/91-citc
     validate: /usr/sbin/visudo -cf %s
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=

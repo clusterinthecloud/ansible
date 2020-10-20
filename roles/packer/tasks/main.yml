@@ -8,6 +8,7 @@
     dest: /usr/local/bin
     remote_src: true
     creates: /usr/local/bin/packer
+    mode: u=rwx,g=rx,o=rx
 
 - name: set permissions on packer
   file:
@@ -24,6 +25,7 @@
   copy:
     src: all.pkr.hcl
     dest: /etc/citc/packer/all.pkr.hcl
+    mode: u=rw,g=r,o=r
 
 - name: load the startnode config
   include_vars:
@@ -44,11 +46,13 @@
     force: no
     owner: citc
     group: citc
+    mode: u=rw,g=rw,o=
 
 - name: copy in config
   template:
     src: variables.pkrvars.hcl.j2
     dest: /etc/citc/packer/variables.pkrvars.hcl
+    mode: u=rw,g=r,o=r
 
 - name: copy in packer run script
   template:

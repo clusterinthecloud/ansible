@@ -11,7 +11,7 @@
     - citc_user
     - filesystem
     - ssh
-    #- security-updates
+    #- security_updates
     - ntp
     - sssd
     - lmod

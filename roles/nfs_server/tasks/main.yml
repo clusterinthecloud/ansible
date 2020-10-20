@@ -34,6 +34,7 @@
     dest: "/etc/exports"
     content: |
       /shared  *(rw,sync,no_root_squash)
+    mode: u=rw,g=r,o=r
 
 - name: Start nfs-server
   service:

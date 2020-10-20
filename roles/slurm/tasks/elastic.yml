@@ -139,6 +139,7 @@
       date
     dest: /home/slurm/bootstrap.sh
     owner: slurm
+    mode: u=rw,g=r,o=
 
 - name: copy list_nodes script
   copy:

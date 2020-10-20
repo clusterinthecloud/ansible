@@ -171,11 +171,13 @@
   copy:
     src: gunicorn.service
     dest: /etc/systemd/system/gunicorn.service
+    mode: u=rw,g=r,o=
 
 - name: install gunicorn socket file
   copy:
     src: gunicorn.socket
     dest: /etc/systemd/system/gunicorn.socket
+    mode: u=rw,g=r,o=
 
 - name: start and enable gunicorn
   systemd:

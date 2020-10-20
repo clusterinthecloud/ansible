@@ -7,6 +7,7 @@
   file:
     path: /mnt{{ filesystem_mount_point }}/home
     state: directory
+    mode: u=rwx,g=rx,o=rx
 
 - name: Create webui group
   group:
@@ -30,6 +31,9 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ create_home_dir.dest }}
     dest: /etc/sudoers.d/92-webui-create_home_dir
+    user: root
+    group: root
+    mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
 - name: create ssh key setting script
@@ -45,6 +49,9 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ set_ssh_key.dest }}
     dest: /etc/sudoers.d/92-webui-set_ssh_key
+    user: root
+    group: root
+    mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
 - name: create user password file creation script
@@ -60,6 +67,9 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ set_password_file.dest }}
     dest: /etc/sudoers.d/92-webui-set_password_file
+    user: root
+    group: root
+    mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
 - name: copy in LDAP add user script

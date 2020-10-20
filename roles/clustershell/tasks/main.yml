@@ -6,15 +6,19 @@
   copy:
     src: clush.conf
     dest: /etc/clustershell/clush.conf
+    mode: u=rw,g=r,o=r
 - name: copy clustershell group config file
   copy:
     src: groups.conf
     dest: /etc/clustershell/groups.conf
+    mode: u=rw,g=r,o=r
 - name: copy clustershell slurm config file
   copy:
     src: slurm.conf
     dest: /etc/clustershell/groups.conf.d/slurm.conf
+    mode: u=rw,g=r,o=r
 - name: copy clustershell cluster config file
   copy:
     src: cluster.yaml
     dest: /etc/clustershell/groups.d/cluster.yaml
+    mode: u=rw,g=r,o=r

@@ -3,9 +3,9 @@
 - name: create and configure NFS server
   hosts: nfsserver
   roles:
-    - nfs-server
+    - nfs_server
     - ssh
-    #- security-updates
+    #- security_updates
     - ntp
     - sssd
     - monitoring

@@ -11,6 +11,7 @@
     src: "{{ ca_cert if ca_cert is defined else '/tmp/CA.crt' }}"
     dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
     remote_src: yes
+    mode: preserve
 
 - name: update CA trust anchors
   command: update-ca-trust # noqa 301
