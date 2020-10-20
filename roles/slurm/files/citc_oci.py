@@ -86,7 +86,7 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
         hostname_label=hostname,
         create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
         metadata={
-            "ssh_authorized_keys": ssh_keys,
+            "ssh_authorized_keys": ssh_keys.strip(),
             "user_data": user_data,
         },
         freeform_tags={
