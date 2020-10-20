@@ -88,13 +88,13 @@ source "amazon-ebs" "aws" {
 
 source "oracle-oci" "oracle" {
     image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
-    oracle_availability_domain = var.oracle_availability_domain
-    oracle_base_image_ocid = var.oracle_base_image_ocid
-    oracle_compartment_ocid = var.oracle_compartment_ocid
-    oracle_shape = var.oracle_shape
-    oracle_subnet_ocid = var.oracle_subnet_ocid
-    oracle_access_cfg_file = var.oracle_access_cfg_file
-    oracle_key_file = var.oracle_key_file
+    availability_domain = var.oracle_availability_domain
+    base_image_ocid = var.oracle_base_image_ocid
+    compartment_ocid = var.oracle_compartment_ocid
+    shape = var.oracle_shape
+    subnet_ocid = var.oracle_subnet_ocid
+    access_cfg_file = var.oracle_access_cfg_file
+    key_file = var.oracle_key_file
     tags = {
         cluster = var.cluster
     }
