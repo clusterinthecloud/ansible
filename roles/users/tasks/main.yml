@@ -31,7 +31,7 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ create_home_dir.dest }}
     dest: /etc/sudoers.d/92-webui-create_home_dir
-    user: root
+    owner: root
     group: root
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
@@ -49,7 +49,7 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ set_ssh_key.dest }}
     dest: /etc/sudoers.d/92-webui-set_ssh_key
-    user: root
+    owner: root
     group: root
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
@@ -67,7 +67,7 @@
     content: |
       %usermgmt ALL=(root) NOPASSWD: {{ set_password_file.dest }}
     dest: /etc/sudoers.d/92-webui-set_password_file
-    user: root
+    owner: root
     group: root
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
