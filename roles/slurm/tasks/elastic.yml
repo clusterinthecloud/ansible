@@ -66,6 +66,12 @@
     dest: /usr/local/bin/update_config
     mode: 0755
 
+- name: install kill_all_nodes script
+  copy:
+    src: kill_all_nodes.py
+    dest: /usr/local/bin/kill_all_nodes
+    mode: u=rwx,g=rwx,o=r
+
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
 - name: generate SSH host keys for compute nodespace
   shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
