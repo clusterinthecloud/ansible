@@ -68,7 +68,7 @@
 
 - name: install kill_all_nodes script
   copy:
-    src: kill_all_nodes.py
+    src: kill_all_nodes.sh
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=r
 
