@@ -70,7 +70,7 @@
   copy:
     src: kill_all_nodes.sh
     dest: /usr/local/bin/kill_all_nodes
-    mode: u=rwx,g=rwx,o=r
+    mode: u=rwx,g=rwx,o=rx
 
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
 - name: generate SSH host keys for compute nodespace
