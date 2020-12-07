@@ -4,10 +4,14 @@
     name: munge
     state: installed
 
-- name: copy in munge key
-  copy:
-    src: munge.key
-    dest: /etc/munge/munge.key
+- name: generate munge key
+  shell: dd if=/dev/urandom bs=1 count=1024 > munge.key
+  args:
+    chdir: /etc/munge/
+
+- name: set permissions on munge key
+  file:
+    path: /etc/munge/munge.key
     owner: munge
     group: munge
     mode: 0400
