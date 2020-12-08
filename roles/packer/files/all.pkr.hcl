@@ -134,6 +134,11 @@ build {
         destination = "/tmp/CA.crt"
     }
 
+    provisioner "file" {
+        source = "/etc/munge/munge.key"
+        destination = "/etc/munge/munge.key"
+    }
+
     provisioner "shell" {
         script = "/etc/citc/packer/run_ansible.sh"
     }
