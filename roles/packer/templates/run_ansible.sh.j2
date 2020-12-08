@@ -11,7 +11,7 @@ packer_run=yes
 EOF'
 {% if ansible_local.citc.csp in ["aws", "google"] %}
 sudo yum install -y epel-release
-sudo dnf config-manager --set-enabled PowerTools
+sudo dnf config-manager --set-enabled powertools
 {% elif ansible_local.citc.csp == "oracle" %}
 sudo dnf install -y oracle-epel-release-el8
 sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
