@@ -4,10 +4,31 @@
     name: munge
     state: installed
 
-- name: copy in munge key
+# If we're the mgmt node, create a munge key
+- name: generate munge key
+  shell: dd if=/dev/urandom bs=1 count=1024 > munge.key
+  args:
+    chdir: /etc/munge/
+  when: slurm_role == "mgmt"
+
+# If we're a compute node, grab the file placed by Packer
+- name: copy munge.key
   copy:
-    src: munge.key
+    src: /tmp/munge.key
     dest: /etc/munge/munge.key
+    mode: 0400
+  when:
+    - '"/tmp/munge.key" is exists'
+
+# Make sure that the Packer-placed file is deleted
+- name: delete /tmp/munge.key
+  file:
+    path: /tmp/munge.key
+    state: absent
+
+- name: set permissions on munge key
+  file:
+    path: /etc/munge/munge.key
     owner: munge
     group: munge
     mode: 0400
