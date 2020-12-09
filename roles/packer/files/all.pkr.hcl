@@ -136,7 +136,7 @@ build {
 
     provisioner "file" {
         source = "/etc/munge/munge.key"
-        destination = "/etc/munge/munge.key"
+        destination = "/tmp/munge.key"
     }
 
     provisioner "shell" {
