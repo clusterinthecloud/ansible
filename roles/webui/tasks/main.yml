@@ -4,6 +4,7 @@
   include_role:
     name: nginxinc.nginx
   vars:
+    nginx_configure: true  # TODO Use nginxinc.nginx_config role instead (https://github.com/nginxinc/ansible-role-nginx-config)
     nginx_http_template_enable: true
     nginx_http_template:
       default:
@@ -47,7 +48,7 @@
             name: app_server
             sticky_cookie: false
             custom_options:
-              - server unix:/run/gunicorn.sock fail_timeout=0
+              - server unix:/run/gunicorn.sock fail_timeout=0;
             servers: []
             # Should be able to replace custom_options with servers below
             # See https://github.com/nginxinc/ansible-role-nginx/issues/232
