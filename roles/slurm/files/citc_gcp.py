@@ -103,7 +103,6 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
                 ]
             }
         ],
-        'minCpuPlatform': 'Intel Skylake',
         'metadata': {
             'items': [{
                 'key': 'startup-script',
@@ -119,6 +118,11 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
             "cluster": nodespace['cluster_id']
         }
     }
+    # Only 'n1' instances really should specify minimum CPU type
+    # Other instances only have a single CPU type, and require you pick
+    # the correct one (if set)
+    if machine_type.startswith('n1-') or machine_type.startswith('e2-'):
+        config['minCpuPlatform'] = 'Intel Skylake'
 
     return config
 
