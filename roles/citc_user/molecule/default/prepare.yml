@@ -6,3 +6,4 @@
       copy:
         content: 'key contents...'
         dest: "{{ admin_key_path }}"
+        mode: u=rw,g=r,a=r
