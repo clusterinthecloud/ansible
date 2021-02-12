@@ -47,7 +47,7 @@ jobs:
           python-version: 3
       - name: Install Molecule
         run: |
-          python3 -m pip install 'molecule[podman,docker]'
+          python -m pip install docker 'molecule[podman,docker]'
       - name: Test role
         run: |
           cd roles/${{ matrix.role }}
