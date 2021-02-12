@@ -6,7 +6,7 @@ driver:
 platforms:
   - name: instance
     image: geerlingguy/docker-centos8-ansible:latest
-    command: ${MOLECULE_DOCKER_COMMAND:-"/usr/sbin/init"}
+    command: ${MOLECULE_DOCKER_COMMAND:-"/usr/lib/systemd/systemd"}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
