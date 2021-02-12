@@ -2,7 +2,7 @@
 - name: yum install chrony
   package:
     name: chrony
-  notify: restart ntpd (RedHat)
+  notify: restart chronyd (RedHat)
 
 - name: service start chronyd
   service:
