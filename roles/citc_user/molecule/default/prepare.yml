@@ -3,6 +3,6 @@
   hosts: all
   tasks:
     - name: put key file in correct location
-      ansible.builtin.copy:
+      copy:
         content: 'key contents...'
         dest: "{{ admin_key_path }}"
