@@ -1,8 +1,10 @@
 ---
 
 - name: check if powertools repo is already enabled
-  shell: dnf -q repolist --enabled powertools | grep -i powertools  # noqa 301
-  changed_when: no
+  shell: |
+    set -o pipefail
+    dnf -q repolist --enabled powertools | grep -i powertools  # noqa 301
+  changed_when: false
   register: powertools
   failed_when: powertools.rc == 2
 
