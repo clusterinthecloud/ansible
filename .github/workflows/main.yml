@@ -32,3 +32,19 @@ jobs:
     - name: Type check
       run: |
         mypy roles/slurm/files/citc_aws.py roles/slurm/files/citc_gcp.py roles/slurm/files/citc_oci.py
+
+  molecule:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Molecule
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install 'molecule[podman]'
+      - name: Test `citc_test` role
+        run: |
+          cd roles/citc_test
+          molecule test
