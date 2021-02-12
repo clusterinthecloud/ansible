@@ -4,7 +4,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  test python:
+  test_python:
 
     runs-on: ubuntu-latest
     strategy:
@@ -33,7 +33,7 @@ jobs:
         run: |
           mypy roles/slurm/files/citc_aws.py roles/slurm/files/citc_gcp.py roles/slurm/files/citc_oci.py
 
-  test roles:
+  test_roles:
     runs-on: ubuntu-latest
     strategy:
       matrix:
