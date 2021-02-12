@@ -46,8 +46,8 @@ jobs:
           python-version: 3
       - name: Install Molecule
         run: |
-          python -m pip install ansible~=2.9 'molecule[podman]'
-      - name: Test `citc_test` role
+          python -m pip install 'molecule[podman]'
+      - name: Test `citc_user` role
         run: |
-          cd roles/citc_test
+          cd roles/citc_user
           molecule test
