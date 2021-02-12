@@ -1,7 +1,14 @@
 ---
 
+- name: check if powertools repo is already enabled
+  shell: dnf -q repolist --enabled powertools | grep -i powertools  # noqa 301
+  changed_when: no
+  register: powertools
+  failed_when: powertools.rc == 2
+
 - name: enable powertools module
-  command: dnf config-manager --set-enabled powertools  # noqa 301
+  command: dnf config-manager --set-enabled powertools
+  when: not powertools
 
 - name: install Lmod
   package:
