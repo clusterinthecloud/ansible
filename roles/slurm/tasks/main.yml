@@ -11,14 +11,21 @@
     chdir: /etc/munge/
   when: slurm_role == "mgmt"
 
+- name: check presence of munge config file
+  stat:
+    path: /etc/munge/munge.key
+  register: munge_config_file
+
 # If we're a compute node, grab the file placed by Packer
 - name: copy munge.key
   copy:
     src: /tmp/munge.key
     dest: /etc/munge/munge.key
+    remote_src: yes
     mode: 0400
   when:
-    - '"/tmp/munge.key" is exists'
+    - slurm_role == "compute"
+    - not munge_config_file.stat.exists
 
 # Make sure that the Packer-placed file is deleted
 - name: delete /tmp/munge.key
