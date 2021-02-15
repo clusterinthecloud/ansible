@@ -20,18 +20,32 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install oci pytest-mock pytest-asyncio pyyaml 'ansible<2.10,>=2.9' ansible-lint mypy \
+          pip install oci pytest-mock pytest-asyncio pyyaml mypy \
                       requests_mock google-api-python-client google-auth boto3 \
                       "boto3-stubs[ec2,route53]" \
                       https://github.com/clusterinthecloud/python-citc/releases/download/0.3.10/citc-0.3.10-py3-none-any.whl
       - name: Test with pytest
         run: pytest
-      - name: Ansible lint
-        run: |
-          ansible-lint --offline management.yml compute.yml nfsserver.yml
       - name: Type check
         run: |
           mypy roles/slurm/files/citc_aws.py roles/slurm/files/citc_gcp.py roles/slurm/files/citc_oci.py
+
+  ansible_lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'ansible<2.10,>=2.9' ansible-lint
+      - name: Ansible lint
+        run: |
+          ansible-lint --offline management.yml compute.yml nfsserver.yml
 
   test_roles:
     runs-on: ubuntu-latest
@@ -49,7 +63,7 @@ jobs:
         run: sudo apt-get install python-docker
       - name: Install Molecule
         run: |
-          python -m pip install 'molecule[podman,docker]'
+          python -m pip install 'ansible<2.10,>=2.9' 'molecule[podman,docker]'
       - name: Test role
         run: |
           cd roles/${{ matrix.role }}
