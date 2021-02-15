@@ -67,4 +67,4 @@ jobs:
       - name: Test role
         run: |
           cd roles/${{ matrix.role }}
-          molecule test --driver-name docker
+          molecule test --all --driver-name docker
