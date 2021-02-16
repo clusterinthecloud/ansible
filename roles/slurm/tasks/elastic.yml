@@ -26,6 +26,7 @@
   copy:
     src: /home/opc/mgmt_shape.yaml
     dest: /etc/citc/mgmt_shape.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
@@ -35,6 +36,7 @@
   copy:
     src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
@@ -44,6 +46,7 @@
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
