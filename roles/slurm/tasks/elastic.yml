@@ -137,3 +137,5 @@
     name: citc-watchdog
     state: started
     enabled: yes
+  tags:
+    - molecule-idempotence-notest
