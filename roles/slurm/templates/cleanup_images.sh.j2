@@ -1,0 +1,24 @@
+#! /bin/bash
+set -euo pipefail
+
+if [[ $# -ne 1 || "${1}" != "--force" ]]; then
+    read -p "Are you sure you want to delete all compute images [y/N]? " -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+        echo Exiting without killing nodes
+        exit 1
+    fi
+    echo
+fi
+
+echo Terminating any remaining compute nodes
+{% if ansible_local.citc.csp == "aws" %}
+{% elif ansible_local.citc.csp == "google" %}
+for image in $(gcloud compute images list --filter="labels.cluster={{ startnode_config.cluster_id }}" | tail -n +2 | awk '{print $1}')
+do
+    gcloud compute images delete "${image}"
+done
+{% elif ansible_local.citc.csp == "oracle" %}
+{% endif %}
+
+echo Node termination request completed
