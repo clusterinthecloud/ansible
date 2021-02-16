@@ -75,28 +75,21 @@
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-# TODO Replace this with openssh_keypair when we use Ansible 2.8
-- name: generate SSH host keys for compute nodespace
-  shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
-  args:
-    creates: "{{ item.path }}"
-  with_items:
-    - {"type": "ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
-    - {"type": "rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
-    - {"type": "ecdsa", "size": 521, "path": "/home/slurm/ssh_host_ecdsa_key"}
+- name: install ssh-keygen
+  package:
+    name: openssh
 
-- name: set ownership of host files
-  file:
-    path: "{{ item }}"
+- name: generate SSH host keys for compute nodespace
+  openssh_keypair:
+    type: "{{ item.type }}"
+    size: "{{ item.size }}"
+    path: "/home/slurm/ssh_host_{{ item.type }}_key"
     owner: slurm
     group: slurm
-  loop:
-    - /home/slurm/ssh_host_ed25519_key
-    - /home/slurm/ssh_host_ed25519_key.pub
-    - /home/slurm/ssh_host_rsa_key
-    - /home/slurm/ssh_host_rsa_key.pub
-    - /home/slurm/ssh_host_ecdsa_key
-    - /home/slurm/ssh_host_ecdsa_key.pub
+  with_items:
+    - {"type": "ed25519", "size": 4096}
+    - {"type": "rsa", "size": 4096}
+    - {"type": "ecdsa", "size": 521}
 
 - name: load the startnode config
   include_vars:
