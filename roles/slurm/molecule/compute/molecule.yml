@@ -23,6 +23,6 @@ provisioner:
         slurm_version: 20.02
         slurm_cluster_name: cluster
         slurm_control_machine: mgmt
-        filesystem_mount_point: shared
+        filesystem_mount_point: /shared
 verifier:
   name: ansible
