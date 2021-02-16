@@ -92,9 +92,13 @@
     - {"type": "ecdsa", "size": 521}
 
 - name: load the startnode config
-  include_vars:
-    file: /etc/citc/startnode.yaml
-    name: startnode_config
+  slurp:
+    src: /etc/citc/startnode.yaml
+  register: startnode_config_data
+
+- name: set the startnode_config fact
+  set_fact:
+     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
 - name: create cloud-init bootstrap script
   copy:
