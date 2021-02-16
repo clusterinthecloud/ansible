@@ -145,6 +145,26 @@ build {
         destination = "/tmp/munge.key"
     }
 
+    provisioner "file" {
+        sources = [
+          "/home/slurm/ssh_host_ecdsa_key",
+          "/home/slurm/ssh_host_ecdsa_key.pub",
+          "/home/slurm/ssh_host_rsa_key",
+          "/home/slurm/ssh_host_rsa_key.pub",
+          "/home/slurm/ssh_host_ed25519_key",
+          "/home/slurm/ssh_host_ed25519_key.pub",
+        ]
+        destination = "/tmp/"
+    }
+
+    provisioner "shell" {
+        inline = [
+            "sudo mv /tmp/ssh_host_* /etc/ssh/",
+            "sudo chmod 600 /etc/ssh/ssh_host_*",
+            "sudo chmod 644 /etc/ssh/ssh_host_*.pub",
+        ]
+    }
+
     provisioner "shell" {
         script = "/etc/citc/packer/run_ansible.sh"
     }

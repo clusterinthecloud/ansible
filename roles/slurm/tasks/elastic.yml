@@ -107,27 +107,6 @@
 
       date
 
-      cat > /etc/ssh/ssh_host_ecdsa_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ecdsa_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key.pub') }}
-      EOF
-      cat > /etc/ssh/ssh_host_rsa_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_rsa_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_rsa_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_rsa_key.pub') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ed25519_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
-      EOF
-      chmod 600 /etc/ssh/ssh_host_*
-      chmod 644 /etc/ssh/ssh_host_*.pub
-
       {% if ansible_local.citc.csp == "aws" %}
       yum install -y epel-release
       dnf install -y jq
