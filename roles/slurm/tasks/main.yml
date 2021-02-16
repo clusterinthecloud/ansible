@@ -6,7 +6,9 @@
 
 # If we're the mgmt node, create a munge key
 - name: generate munge key
-  shell: dd if=/dev/urandom bs=1 count=1024 > munge.key
+  shell:
+    cmd: dd if=/dev/urandom bs=1 count=1024 > munge.key
+    creates: munge.key
   args:
     chdir: /etc/munge/
   when: slurm_role == "mgmt"
