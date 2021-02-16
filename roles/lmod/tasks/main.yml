@@ -10,7 +10,7 @@
 
 - name: enable powertools module
   command: dnf config-manager --set-enabled powertools
-  when: not powertools
+  when: powertools.rc != 0
 
 - name: install Lmod
   package:
