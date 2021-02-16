@@ -111,7 +111,7 @@
 
 - name: make slurm config directory
   file:
-    path: /mnt{{ filesystem_mount_point }}/etc/slurm
+    path: /mnt/{{ filesystem_mount_point }}/etc/slurm
     state: directory
     mode: u=rwx,g=rx,o=rx
   when: slurm_role == "mgmt"
