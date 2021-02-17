@@ -100,6 +100,12 @@
   set_fact:
      startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
+- name: install cleanup_images script
+  template:
+    src: cleanup_images.sh.j2
+    dest: /usr/local/bin/cleanup_images
+    mode: u=rwx,g=rwx,o=rx
+
 - name: create cloud-init bootstrap script
   copy:
     content: |
