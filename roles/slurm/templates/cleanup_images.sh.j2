@@ -14,9 +14,12 @@ fi
 echo Terminating any remaining compute nodes
 {% if ansible_local.citc.csp == "aws" %}
 {% elif ansible_local.citc.csp == "google" %}
-for image in $(gcloud compute images list --filter="labels.cluster={{ startnode_config.cluster_id }}" | tail -n +2 | awk '{print $1}')
+sudo -u slurm gcloud auth activate-service-account --key-file=/home/slurm/mgmt-sa-credentials.json
+sudo -u slurm gcloud config set disable_prompts true
+for image in $(sudo -u slurm gcloud compute images list --filter="labels.cluster={{ startnode_config.cluster_id }}" --format="table[no-heading](name)")
 do
-    gcloud compute images delete "${image}"
+    echo "Deleting image '${image}'"
+    sudo -u slurm gcloud compute images delete "${image}"
 done
 {% elif ansible_local.citc.csp == "oracle" %}
 {% endif %}
