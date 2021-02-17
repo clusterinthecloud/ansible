@@ -59,8 +59,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3
-      - name: install python-docker
-        run: sudo apt-get install python-docker
+      - name: install python3-docker
+        run: sudo apt-get install python3-docker
       - name: Install Molecule
         run: |
           python -m pip install 'ansible<2.10,>=2.9' 'molecule[podman,docker]'
