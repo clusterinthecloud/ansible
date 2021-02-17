@@ -5,23 +5,22 @@ if [[ $# -ne 1 || "${1}" != "--force" ]]; then
     read -p "Are you sure you want to delete all compute images [y/N]? " -r
     if [[ ! $REPLY =~ ^[Yy]$ ]]
     then
-        echo Exiting without killing nodes
+        echo Exiting without deleting images
         exit 1
     fi
     echo
 fi
 
-echo Terminating any remaining compute nodes
+echo Deleting any remaining compute node images
 {% if ansible_local.citc.csp == "aws" %}
 {% elif ansible_local.citc.csp == "google" %}
 sudo -u slurm gcloud auth activate-service-account --key-file=/home/slurm/mgmt-sa-credentials.json
-sudo -u slurm gcloud config set disable_prompts true
+sudo -u slurm gcloud config set disable_prompts true --quiet
 for image in $(sudo -u slurm gcloud compute images list --filter="labels.cluster={{ startnode_config.cluster_id }}" --format="table[no-heading](name)")
 do
-    echo "Deleting image '${image}'"
     sudo -u slurm gcloud compute images delete "${image}"
 done
 {% elif ansible_local.citc.csp == "oracle" %}
 {% endif %}
 
-echo Node termination request completed
+echo Image deletion completed
