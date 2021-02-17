@@ -72,12 +72,6 @@
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-- name: install cleanup_images script
-  template:
-    src: cleanup_images.sh.j2
-    dest: /usr/local/bin/cleanup_images
-    mode: u=rwx,g=rwx,o=rx
-
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
 - name: generate SSH host keys for compute nodespace
   shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
@@ -105,6 +99,12 @@
   include_vars:
     file: /etc/citc/startnode.yaml
     name: startnode_config
+
+- name: install cleanup_images script
+  template:
+    src: cleanup_images.sh.j2
+    dest: /usr/local/bin/cleanup_images
+    mode: u=rwx,g=rwx,o=rx
 
 - name: create cloud-init bootstrap script
   copy:
