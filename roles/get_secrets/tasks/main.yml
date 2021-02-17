@@ -1,0 +1,8 @@
+---
+
+- name: create get_secrets script
+  copy:
+    dest: /usr/sbin/get_secrets
+    content: |
+      #! /bin/bash
+    mode: 0700
