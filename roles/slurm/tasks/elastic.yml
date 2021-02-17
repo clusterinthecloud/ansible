@@ -72,10 +72,10 @@
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-- name: install cleanup_nodes script
+- name: install cleanup_images script
   template:
-    src: cleanup_nodes.sh.j2
-    dest: /usr/local/bin/cleanup_nodes
+    src: cleanup_images.sh.j2
+    dest: /usr/local/bin/cleanup_images
     mode: u=rwx,g=rwx,o=rx
 
 # TODO Replace this with openssh_keypair when we use Ansible 2.8
