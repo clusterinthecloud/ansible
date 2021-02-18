@@ -98,7 +98,7 @@
 
 - name: set the startnode_config fact
   set_fact:
-     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
+    startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
 - name: install cleanup_images script
   template:
