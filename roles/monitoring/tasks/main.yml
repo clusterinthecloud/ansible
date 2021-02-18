@@ -118,6 +118,23 @@
     enabled: yes
   when: monitoring_role == "master"
 
+# TODO move firewalld installation into a separate role
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+
+- name: install python-firewall
+  package:
+    name: python3-firewall
+    state: present
+
+- name: start service firewalld
+  service:
+    name: firewalld
+    enabled: yes
+    state: started
+
 - name: open Grafana port in firewall
   firewalld:
     port: 3000/tcp
