@@ -27,6 +27,19 @@
     dest: /etc/citc/packer/all.pkr.hcl
     mode: u=rw,g=r,o=r
 
+- name: create citc config dir
+  file:
+    path: /etc/citc
+    state: directory
+    mode: 0755
+
+- name: copy startnode.yaml
+  copy:
+    src: /tmp/startnode.yaml
+    dest: /etc/citc/startnode.yaml
+    remote_src: yes
+    mode: 0744
+
 - name: load the startnode config
   include_vars:
     file: /etc/citc/startnode.yaml
