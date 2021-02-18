@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: instance
+    image: geerlingguy/docker-centos8-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        slurm_role: mgmt
+        slurm_packages:
+          - slurmctld
+          - slurmdbd
+          - libpmi
+        slurm_version: 20.02
+        slurm_cluster_name: cluster
+        slurm_control_machine: mgmt
+        filesystem_mount_point: /shared
+        slurm_partitions:
+          - name: compute
+            nodelist: ALL
+            default: YES
+        slurm_accounting_db_password: "this_is_the_slurm_accounting_db_password"
+verifier:
+  name: ansible

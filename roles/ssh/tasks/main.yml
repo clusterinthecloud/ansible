@@ -1,5 +1,14 @@
 ---
 
+- name: install ssh server
+  package:
+    name: openssh-server
+
+- name: enable sshd
+  service:
+    name: sshd
+    enabled: yes
+
 - name: set SSHD AddressFamily to inet
   lineinfile:
     path: /etc/ssh/sshd_config

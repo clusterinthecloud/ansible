@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include citc_user"
+      include_role:
+        name: "citc_user"

@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: put key file in correct location
+      copy:
+        content: 'key contents...'
+        dest: "{{ admin_key_path }}"
+        mode: u=rw,g=r,a=r

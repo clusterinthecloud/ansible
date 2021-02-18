@@ -50,7 +50,7 @@
   command:
     cmd: "rpm -Uvh {{ telegraf_dnf.stdout_lines[-1] }} --ignorearch"
   register: rpm_result
-  changed_when: '"Nothing to do" not in rpm_result.stdout'
+  changed_when: '"Nothing to do" not in rpm_result.stdout and "is already installed" not in rpm_result.stderr'
   failed_when:
     - rpm_result.rc != 0
     - '"is already installed" not in rpm_result.stderr'
@@ -118,6 +118,26 @@
     enabled: yes
   when: monitoring_role == "master"
 
+# TODO move firewalld installation into a separate role
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+  when: monitoring_role == "master"
+
+- name: install python-firewall
+  package:
+    name: python3-firewall
+    state: present
+  when: monitoring_role == "master"
+
+- name: start service firewalld
+  service:
+    name: firewalld
+    enabled: yes
+    state: started
+  when: monitoring_role == "master"
+
 - name: open Grafana port in firewall
   firewalld:
     port: 3000/tcp
@@ -167,6 +187,8 @@
     url: http://localhost:8086
     database: telegraf
   when: monitoring_role == "master"
+  tags:
+    - molecule-idempotence-notest  # https://github.com/ansible-collections/community.grafana/issues/127
 
 - name: install monitor_slurm script
   copy:
@@ -232,6 +254,8 @@
     dest: /etc/citc/grafana/928.json
     mode: u=rw,g=r,o=r
   when: monitoring_role == "master"
+  tags:
+    - molecule-idempotence-notest  # We download and then change this file in-place
 
 - name: Set Influx datasource on dashboard
   replace:

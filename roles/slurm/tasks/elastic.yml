@@ -26,6 +26,7 @@
   copy:
     src: /home/opc/mgmt_shape.yaml
     dest: /etc/citc/mgmt_shape.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
@@ -35,6 +36,7 @@
   copy:
     src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
@@ -44,6 +46,7 @@
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
+    remote_src: yes
     owner: slurm
     group: slurm
     mode: 0744
@@ -72,33 +75,30 @@
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-# TODO Replace this with openssh_keypair when we use Ansible 2.8
-- name: generate SSH host keys for compute nodespace
-  shell: ssh-keygen -t {{ item.type }} -b {{ item.size }} -f {{ item.path }} -N "" < /dev/null
-  args:
-    creates: "{{ item.path }}"
-  with_items:
-    - {"type": "ed25519", "size": 4096, "path": "/home/slurm/ssh_host_ed25519_key"}
-    - {"type": "rsa", "size": 4096, "path": "/home/slurm/ssh_host_rsa_key"}
-    - {"type": "ecdsa", "size": 521, "path": "/home/slurm/ssh_host_ecdsa_key"}
+- name: install ssh-keygen
+  package:
+    name: openssh
 
-- name: set ownership of host files
-  file:
-    path: "{{ item }}"
+- name: generate SSH host keys for compute nodespace
+  openssh_keypair:
+    type: "{{ item.type }}"
+    size: "{{ item.size }}"
+    path: "/home/slurm/ssh_host_{{ item.type }}_key"
     owner: slurm
     group: slurm
-  loop:
-    - /home/slurm/ssh_host_ed25519_key
-    - /home/slurm/ssh_host_ed25519_key.pub
-    - /home/slurm/ssh_host_rsa_key
-    - /home/slurm/ssh_host_rsa_key.pub
-    - /home/slurm/ssh_host_ecdsa_key
-    - /home/slurm/ssh_host_ecdsa_key.pub
+  with_items:
+    - {"type": "ed25519", "size": 4096}
+    - {"type": "rsa", "size": 4096}
+    - {"type": "ecdsa", "size": 521}
 
 - name: load the startnode config
-  include_vars:
-    file: /etc/citc/startnode.yaml
-    name: startnode_config
+  slurp:
+    src: /etc/citc/startnode.yaml
+  register: startnode_config_data
+
+- name: set the startnode_config fact
+  set_fact:
+    startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
 - name: install cleanup_images script
   template:
@@ -112,27 +112,6 @@
       #! /bin/bash
 
       date
-
-      cat > /etc/ssh/ssh_host_ecdsa_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ecdsa_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ecdsa_key.pub') }}
-      EOF
-      cat > /etc/ssh/ssh_host_rsa_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_rsa_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_rsa_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_rsa_key.pub') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ed25519_key << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key') }}
-      EOF
-      cat > /etc/ssh/ssh_host_ed25519_key.pub << EOF
-      {{ lookup('file', '/home/slurm/ssh_host_ed25519_key.pub') }}
-      EOF
-      chmod 600 /etc/ssh/ssh_host_*
-      chmod 644 /etc/ssh/ssh_host_*.pub
 
       {% if ansible_local.citc.csp == "aws" %}
       yum install -y epel-release
@@ -151,7 +130,7 @@
       date
     dest: /home/slurm/bootstrap.sh
     owner: slurm
-    mode: u=rw,g=r,o=
+    mode: "u=rw,g=r,o="
 
 - name: copy list_nodes script
   copy:
@@ -164,3 +143,5 @@
     name: citc-watchdog
     state: started
     enabled: yes
+  tags:
+    - molecule-idempotence-notest

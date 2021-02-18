@@ -150,13 +150,10 @@
   register: createsuperuser_result
   changed_when: '"Creating user" in createsuperuser_result.stdout'
 
-- name: create get_secrets script
-  copy:
-    dest: /usr/sbin/get_secrets
-    content: |
-      #! /bin/bash
-      echo webui "{{ webui_superuser_password }}"
-    mode: 0700
+- name: add webui password to secrets
+  lineinfile:
+    path: /usr/sbin/get_secrets
+    line: echo webui "{{ webui_superuser_password }}"
 
 - name: create webui config file
   template:

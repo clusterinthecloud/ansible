@@ -1,0 +1,29 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: put munge key file in correct location
+      copy:
+        content: 'mungekeyfilecontentsmustbeatleast32bytes'
+        dest: /tmp/munge.key
+        mode: u=rw,g=r,o=r
+    - name: make shared mount point
+      file:
+        path: /mnt/{{ filesystem_mount_point }}
+        state: directory
+        mode: a=rw,o+x
+    - name: make shared mount point
+      file:
+        path: /mnt/{{ filesystem_mount_point }}/etc
+        state: directory
+        mode: a=rw,o+x
+    - name: make shared mount point
+      file:
+        path: /mnt/{{ filesystem_mount_point }}/etc/slurm
+        state: directory
+        mode: a=rw,o+x
+    - name: slurm shared config file
+      copy:
+        content: 'NodeName=instance'
+        dest: /mnt/{{ filesystem_mount_point }}/etc/slurm/slurm.conf
+        mode: u=rw,g=r,o=r
