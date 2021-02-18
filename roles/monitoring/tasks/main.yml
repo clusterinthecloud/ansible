@@ -184,6 +184,8 @@
     url: http://localhost:8086
     database: telegraf
   when: monitoring_role == "master"
+  tags:
+    - molecule-idempotence-notest  # https://github.com/ansible-collections/community.grafana/issues/127
 
 - name: install monitor_slurm script
   copy:
@@ -249,6 +251,8 @@
     dest: /etc/citc/grafana/928.json
     mode: u=rw,g=r,o=r
   when: monitoring_role == "master"
+  tags:
+    - molecule-idempotence-notest  # We download and then change this file in-place
 
 - name: Set Influx datasource on dashboard
   replace:
