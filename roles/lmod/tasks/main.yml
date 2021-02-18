@@ -12,8 +12,8 @@
 - name: enable powertools module
   command: dnf config-manager --set-enabled powertools
   when:
-    - powertools.rc != 0
     - ansible_local.citc.csp != "oracle"
+    - powertools.rc != 0
 
 - name: install Lmod
   package:
