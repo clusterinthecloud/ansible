@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: mgmt
+    image: geerlingguy/docker-centos8-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      mgmt:
+        monitoring_role: master
+        mgmt_hostname: mgmt
+        grafana_admin_password: this_is_the_grafana_admin_password
+verifier:
+  name: ansible

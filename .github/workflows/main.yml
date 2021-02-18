@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [citc_user, ssh, lmod, slurm]
+        role: [citc_user, ssh, lmod, slurm, monitoring]
 
     steps:
       - uses: actions/checkout@v2
