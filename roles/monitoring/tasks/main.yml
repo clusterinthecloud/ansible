@@ -123,17 +123,20 @@
   package:
     name: firewalld
     state: present
+  when: monitoring_role == "master"
 
 - name: install python-firewall
   package:
     name: python3-firewall
     state: present
+  when: monitoring_role == "master"
 
 - name: start service firewalld
   service:
     name: firewalld
     enabled: yes
     state: started
+  when: monitoring_role == "master"
 
 - name: open Grafana port in firewall
   firewalld:
