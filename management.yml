@@ -35,12 +35,12 @@
   tags: common
   roles:
     - citc_user
+    - ldap
     - packer
     - filesystem
     - ssh
     - security_updates
     - ntp
-    - ldap
     - sssd
     - python
     - users
