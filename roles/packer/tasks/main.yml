@@ -60,9 +60,10 @@
     dest: /usr/local/bin/run-packer
     mode: u=rwx,g=rx,o=rx
 
+# Ansible will not wait for this task until it gets to the `finalise` role
 - name: run packer to build first image
   command: /usr/local/bin/run-packer
   register: packer_result
-  changed_when: "packer_result.rc == 0"
-  failed_when: "packer_result.rc != 0"
+  async: 1000
+  poll: 0
   tags: packer
