@@ -6,5 +6,5 @@
 
 - name: set Python path fact
   set_fact: python_bin=/usr/bin/python3.8
-- name: set Pvenv path fact
+- name: set venv path fact
   set_fact: python_venv="{{ python_bin }} -m venv"
