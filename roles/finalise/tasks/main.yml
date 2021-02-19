@@ -1,5 +1,14 @@
 ---
 
+- name: Wait for packer to finish
+  async_status:
+    jid: "{{ packer_result.ansible_job_id }}"
+  register: packer_job_result
+  until: packer_job_result.finished
+  retries: 100
+  delay: 10
+  tags: packer
+
 - name: create directory for the finalised files
   file:
     path: /mnt/shared/finalised

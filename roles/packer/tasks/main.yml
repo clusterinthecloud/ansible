@@ -27,6 +27,19 @@
     dest: /etc/citc/packer/all.pkr.hcl
     mode: u=rw,g=r,o=r
 
+- name: create citc config dir
+  file:
+    path: /etc/citc
+    state: directory
+    mode: 0755
+
+- name: copy startnode.yaml
+  copy:
+    src: /tmp/startnode.yaml
+    dest: /etc/citc/startnode.yaml
+    remote_src: yes
+    mode: 0744
+
 - name: load the startnode config
   include_vars:
     file: /etc/citc/startnode.yaml
@@ -60,9 +73,10 @@
     dest: /usr/local/bin/run-packer
     mode: u=rwx,g=rx,o=rx
 
+# Ansible will not wait for this task until it gets to the `finalise` role
 - name: run packer to build first image
-  command: /usr/local/bin/run-packer
+  command: /usr/local/bin/run-packer  # noqa no-changed-when
   register: packer_result
-  changed_when: "packer_result.rc == 0"
-  failed_when: "packer_result.rc != 0"
+  async: 1000
+  poll: 0
   tags: packer

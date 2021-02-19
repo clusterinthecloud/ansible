@@ -35,17 +35,17 @@
   tags: common
   roles:
     - citc_user
+    - ldap
+    - mysql
+    - python
     - filesystem
+    - slurm
+    - packer
     - ssh
     - security_updates
     - ntp
-    - ldap
     - sssd
-    - python
     - users
-    - mysql
-    - slurm
-    - packer
   tasks:
     - name: copy SSH public keys to slurm account
       copy:
