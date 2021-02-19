@@ -1,0 +1,9 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: validate packer file
+      command: packer validate -syntax-only -var-file /etc/citc/packer/variables.pkrvars.hcl /etc/citc/packer/all.pkr.hcl
+      changed_when: no
