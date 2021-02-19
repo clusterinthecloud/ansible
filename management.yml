@@ -36,16 +36,16 @@
   roles:
     - citc_user
     - ldap
-    - packer
+    - mysql
+    - python
     - filesystem
+    - slurm
+    - packer
     - ssh
     - security_updates
     - ntp
     - sssd
-    - python
     - users
-    - mysql
-    - slurm
   tasks:
     - name: copy SSH public keys to slurm account
       copy:
