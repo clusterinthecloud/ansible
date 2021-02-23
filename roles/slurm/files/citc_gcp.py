@@ -115,7 +115,8 @@ def create_node_config(gce_compute, hostname: str, ip: Optional[str], nodespace:
             ],
         },
         'labels': {
-            "cluster": nodespace['cluster_id']
+            "cluster": nodespace['cluster_id'],
+            "type": "compute",
         }
     }
     # Only 'n1' instances really should specify minimum CPU type
