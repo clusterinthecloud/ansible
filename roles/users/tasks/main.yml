@@ -1,7 +1,4 @@
 ---
-- name: disable SELinux
-  selinux:
-    state: disabled
 
 - name: make base home directory
   file:

@@ -174,6 +174,12 @@
     mode: 0755
   when: slurm_role == "compute"
 
+- name: disable SELinux
+  selinux:
+    state: disabled
+
+# Requires selinux:
+#   allow firewalld_t cloud_init_t:dbus send_msg;
 - name: open all ports
   firewalld:
     zone: trusted
