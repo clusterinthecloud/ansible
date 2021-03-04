@@ -93,6 +93,18 @@
     state: present
   loop: "{{ slurm_packages }}"
 
+- name: create slurm accounting database
+  mysql_db:
+    name: slurmacct
+    state: present
+
+- name: create slurm MySQL user
+  mysql_user:
+    name: slurm
+    password: "{{ slurm_accounting_db_password }}"
+    priv: 'slurmacct.*:ALL'
+    state: present
+
 - name: create slurm config directory
   file:
     path: /etc/slurm
