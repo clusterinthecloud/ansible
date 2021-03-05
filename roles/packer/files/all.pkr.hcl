@@ -172,4 +172,8 @@ build {
     provisioner "shell" {
         script = "/home/citc/compute_image_extra.sh"
     }
+
+    provisioner "shell" {
+        script = "/home/citc/install_cvmfs_eessi.sh"
+    }
 }
