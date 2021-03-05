@@ -5,6 +5,7 @@
     - name: disable SELinux
       selinux:
         state: permissive
+        policy: targeted
 
 - hosts: compute
   roles:

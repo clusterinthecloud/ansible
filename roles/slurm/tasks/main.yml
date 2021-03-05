@@ -195,6 +195,7 @@
 - name: disable SELinux
   selinux:
     state: permissive
+    policy: targeted
 
 # Requires selinux:
 #   allow firewalld_t cloud_init_t:dbus send_msg;
