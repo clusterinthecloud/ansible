@@ -1,0 +1,18 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Check web UI is running
+    uri:
+      url: http://localhost
+      return_content: yes
+    register: webui_index
+  - assert:
+      that:
+        - "'nginx' not in webui_index.content"
+        - "'Cluster in the Cloud' in webui_index.content"
+      fail_msg: nginx returning default page, misconfigured
+      success_msg: webui login page shown correctly

@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - python
+  tasks:
+    - name: "Include webui"
+      include_role:
+        name: "webui"

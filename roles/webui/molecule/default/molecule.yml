@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: instance
+    image: geerlingguy/docker-centos8-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        filesystem_mount_point: /shared
+        ldap_dm_password: this_is_the_ldap_dm_password
+        ldap_hostname: mgmt
+        webui_password_store_directory: .
+verifier:
+  name: ansible

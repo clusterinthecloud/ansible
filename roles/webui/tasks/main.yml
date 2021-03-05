@@ -95,18 +95,24 @@
     dest: "{{ webui_dir }}"
     version: master
   notify: reload gunicorn
+  tags:
+    - molecule-idempotence-notest  # The checkout get changed by the next tasks
 
 - name: set django to production mode
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^IN_PRODUCTION = '
     line: IN_PRODUCTION = True
+  tags:
+    - molecule-idempotence-notest  # The file has been reset by the checkout
 
 - name: set secret key
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^SECRET_KEY'
     line: SECRET_KEY = r"{{ lookup('password', webui_password_store_directory+'/webuisecretkeyfile chars=ascii_letters,digits,punctuation length=50') }}"
+  tags:
+    - molecule-idempotence-notest  # The file has been reset by the checkout
 
 - name: install webui dependencies
   pip:
