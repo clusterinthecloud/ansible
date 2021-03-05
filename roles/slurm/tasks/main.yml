@@ -97,6 +97,7 @@
   mysql_db:
     name: slurmacct
     state: present
+  when: slurm_role == "mgmt"
 
 - name: create slurm MySQL user
   mysql_user:
@@ -104,6 +105,7 @@
     password: "{{ slurm_accounting_db_password }}"
     priv: 'slurmacct.*:ALL'
     state: present
+  when: slurm_role == "mgmt"
 
 - name: create slurm config directory
   file:
