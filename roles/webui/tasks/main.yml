@@ -84,6 +84,10 @@
     groups:
       - usermgmt
 
+- name: ensure git is installed
+  package:
+    name: git
+
 - name: checkout webui
   git:
     repo: git://github.com/clusterinthecloud/webui.git
@@ -115,6 +119,13 @@
     chdir: "{{ webui_dir }}"
   register: collectstatic_result
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
+
+# TODO move this (and other copies of it) to a central role
+- name: create citc config dir
+  file:
+    path: /etc/citc
+    state: directory
+    mode: 0755
 
 - name: create webui mysql config
   template:
@@ -184,6 +195,16 @@
     state: started
     enabled: yes
     daemon_reexec: yes
+
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+
+- name: install python-firewall
+  package:
+    name: python3-firewall
+    state: present
 
 - name: open HTTP port in firewall
   firewalld:
