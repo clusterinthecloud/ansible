@@ -53,10 +53,16 @@
           app_server:
             name: app_server
             sticky_cookie: false
-            servers:
-              gunicorn:
-                address: unix:/run/gunicorn.sock
-                health_check: fail_timeout=0
+            custom_options:
+              - server unix:/run/gunicorn.sock fail_timeout=0;
+            servers: []
+            # Should be able to replace custom_options with servers below
+            # See https://github.com/nginxinc/ansible-role-nginx/issues/232
+            # This still breaks. Wait until 0.4 of https://github.com/nginxinc/ansible-role-nginx-config
+            #servers:
+            #  gunicorn:
+            #    address: unix:/run/gunicorn.sock
+            #    health_check: fail_timeout=0
 
 - name: install build dependencies
   package:
