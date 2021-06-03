@@ -21,6 +21,7 @@ provisioner:
           - slurmctld
           - slurmdbd
           - libpmi
+          - hwloc-libs
         slurm_version: 20.02
         slurm_cluster_name: cluster
         slurm_control_machine: mgmt
