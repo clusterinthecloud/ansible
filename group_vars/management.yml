@@ -5,7 +5,7 @@ slurm_accounting_db_password: "{{ lookup('password', '/tmp/slurmpasswordfile cha
 slurm_packages:
   - slurmctld
   - slurmdbd
-  - libpmi
+  - pmi
 
 slurm_role: mgmt
 
