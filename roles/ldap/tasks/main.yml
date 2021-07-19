@@ -48,4 +48,5 @@
     server_uri: "ldap://{{ mgmt_hostname }}"
   notify: restart dirsrv
 
-- meta: flush_handlers
+- name: flush handlers
+  meta: flush_handlers
