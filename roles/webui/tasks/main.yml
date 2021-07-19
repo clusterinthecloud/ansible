@@ -168,8 +168,10 @@
 
 - name: create django admin
   command:
-    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py ensure_adminuser --username citc --email citc@localhost --password {{ webui_superuser_password }}"
+    cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username citc --email citc@localhost"
     chdir: "{{ webui_dir }}"
+  environment:
+    DJANGO_SUPERUSER_PASSWORD: "{{ webui_superuser_password }}"
   no_log: True
   register: createsuperuser_result
   changed_when: '"Creating user" in createsuperuser_result.stdout'
