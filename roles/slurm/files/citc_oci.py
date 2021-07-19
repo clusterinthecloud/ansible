@@ -6,7 +6,7 @@ import time
 from typing import Dict, Optional, Tuple, List
 
 import oci  # type: ignore
-import yaml
+import yaml  # type: ignore
 
 __all__ = ["get_nodespace", "start_node"]
 

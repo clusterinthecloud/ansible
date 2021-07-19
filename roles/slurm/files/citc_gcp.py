@@ -5,7 +5,7 @@ from typing import Dict, Optional, Tuple
 from google.oauth2 import service_account  # type: ignore
 import googleapiclient.discovery  # type: ignore
 import logging
-import yaml
+import yaml  # type: ignore
 import os
 from pathlib import Path
 import asyncio

@@ -1,7 +1,7 @@
 import functools
 import subprocess
 from typing import Dict, Optional
-import yaml
+import yaml  # type: ignore
 import asyncio
 
 import boto3
