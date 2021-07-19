@@ -16,7 +16,7 @@
 - name: copy in CitC sosreport plugin
   copy:
     src: citc.py
-    dest: "{{ platform_python_site_packages }}/sos/plugins/citc.py"
+    dest: "{{ platform_python_site_packages }}/sos/report/plugins/citc.py"
     owner: root
     group: root
     mode: 0644
