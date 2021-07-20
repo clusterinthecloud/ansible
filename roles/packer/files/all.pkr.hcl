@@ -23,11 +23,12 @@ variable "oracle_key_file" {}
 variable "destination_image_name" {}
 variable "cluster" {}
 variable "ca_cert" {}
+variable "ssh_username" {}
 
 source "googlecompute" "google" {
     account_file = var.google_account_file
     source_image_family = var.google_source_image_family
-    ssh_username = "centos"
+    ssh_username = var.ssh_username
     project_id = var.google_project_id
     zone = var.google_zone
     network = var.google_network
@@ -70,7 +71,7 @@ source "amazon-ebs" "aws" {
         owners = ["125523088429"]
         most_recent = true
     }
-    ssh_username = "centos"
+    ssh_username = var.ssh_username
     vpc_filter {
         filter {
             name = "tag:cluster"
@@ -104,7 +105,7 @@ source "oracle-oci" "oracle" {
     tags = {
         cluster = var.cluster
     }
-    ssh_username = "opc"
+    ssh_username = var.ssh_username
 }
 
 source "oracle-oci" "oracle-gpu" {
@@ -119,7 +120,7 @@ source "oracle-oci" "oracle-gpu" {
     tags = {
         cluster = var.cluster
     }
-    ssh_username = "opc"
+    ssh_username = var.ssh_username
 }
 
 build {
@@ -172,7 +173,7 @@ build {
     provisioner "ansible" {
         playbook_file = "/root/citc-ansible/compute.yml"
         groups = ["compute"]
-        user = "centos"
+        user = var.ssh_username
     }
 
     provisioner "shell" {
