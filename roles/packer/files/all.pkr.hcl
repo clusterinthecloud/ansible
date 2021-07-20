@@ -165,6 +165,10 @@ build {
         ]
     }
 
+    provisioner "shell" {
+        script = "/etc/citc/packer/prepare_ansible.sh"
+    }
+
     provisioner "ansible" {
         playbook_file = "/root/citc-ansible/compute.yml"
         groups = ["compute"]

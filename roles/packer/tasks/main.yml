@@ -49,10 +49,10 @@
   set_fact:
     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
-- name: copy in packer ansible run script
+- name: copy in packer ansible preparation script
   template:
-    src: run_ansible.sh.j2
-    dest: /etc/citc/packer/run_ansible.sh
+    src: prepare_ansible.sh.j2
+    dest: /etc/citc/packer/prepare_ansible.sh
     owner: root
     mode: u=rwx,g=,o=
 
