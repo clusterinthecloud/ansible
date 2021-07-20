@@ -1,6 +1,7 @@
 ---
 
 - hosts: compute
+  become: yes
   tasks:
     - name: disable SELinux
       selinux:
@@ -8,6 +9,7 @@
         policy: targeted
 
 - hosts: compute
+  become: yes
   roles:
     - citc_user
     - filesystem
