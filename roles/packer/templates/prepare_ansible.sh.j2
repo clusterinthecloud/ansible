@@ -27,4 +27,3 @@ EOF'
 sudo chmod u=rw,g=,o= /etc/ansible/facts.d/citc.fact
 sudo cat /etc/ansible/facts.d/citc.fact
 sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys
-sudo /usr/bin/ansible-pull --url={{ startnode_config.ansible_repo }} --checkout={{ startnode_config.ansible_branch }} --inventory=/tmp/hosts compute.yml

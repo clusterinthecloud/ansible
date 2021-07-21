@@ -120,8 +120,6 @@
     owner: slurm
     group: slurm
     mode: 0644
-  notify:
-    - restart slurmd
 
 - name: make slurm config directory
   file:
@@ -138,8 +136,6 @@
     group: slurm
     mode: 0644
   when: slurm_role == "mgmt"
-  notify:
-    - restart slurmd
 
 - name: slurmdbd config file
   template:
@@ -159,8 +155,6 @@
     owner: slurm
     group: slurm
     mode: 0400
-  notify:
-    - restart slurmd
 
 - name: set slurm log directory permissions
   file:
@@ -208,7 +202,6 @@
     state: enabled
   notify:
     - restart firewalld
-    - restart slurmd
 
 - include_tasks: elastic.yml
   when: slurm_role == "mgmt"
@@ -240,12 +233,6 @@
     name: slurmd
     enabled: yes
   when: slurm_role == "compute"
-
-- name: enable service slurmd
-  service:
-    name: slurmd
-    state: started
-  when: slurm_role == "compute" and packer_run is not defined
 
 # As of Slurm 18.08 the slurmdbd service doesn't become available immediately
 # This ensures that the service is available before continuing

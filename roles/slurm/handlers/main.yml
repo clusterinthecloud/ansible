@@ -8,9 +8,3 @@
   service:
     name: slurmdbd
     state: restarted
-
-- name: restart slurmd
-  service:
-    name: slurmd
-    state: restarted
-  when: slurm_role == "compute" and packer_run is not defined
