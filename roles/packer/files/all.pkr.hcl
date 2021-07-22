@@ -12,11 +12,9 @@ variable "aws_arch" {}
 
 variable "oracle_availability_domain" {}
 variable "oracle_base_image_ocid" {}
-variable "oracle_base_image_ocid_gpu" {}
 variable "oracle_compartment_ocid" {}
 variable "oracle_subnet_ocid" {}
 variable "oracle_shape" {}
-variable "oracle_shape_gpu" {}
 variable "oracle_access_cfg_file" {}
 variable "oracle_key_file" {}
 
@@ -108,27 +106,11 @@ source "oracle-oci" "oracle" {
     ssh_username = var.ssh_username
 }
 
-source "oracle-oci" "oracle-gpu" {
-    image_name = "${var.destination_image_name}-${var.cluster}-GPU-v{{timestamp}}"
-    oracle_availability_domain = var.oracle_availability_domain
-    oracle_base_image_ocid = var.oracle_base_image_ocid_gpu
-    oracle_compartment_ocid = var.oracle_compartment_ocid
-    oracle_shape = var.oracle_shape_gpu
-    oracle_subnet_ocid = var.oracle_subnet_ocid
-    oracle_access_cfg_file = var.oracle_access_cfg_file
-    oracle_key_file = var.oracle_key_file
-    tags = {
-        cluster = var.cluster
-    }
-    ssh_username = var.ssh_username
-}
-
 build {
     sources = [
         "source.googlecompute.google",
         "source.amazon-ebs.aws",
         "source.oracle-oci.oracle",
-        "source.oracle-oci.oracle-gpu",
     ]
 
     provisioner "file" {

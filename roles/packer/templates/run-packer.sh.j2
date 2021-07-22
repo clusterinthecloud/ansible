@@ -9,13 +9,6 @@ if [[ -z "${1+x}" ]]; then
         -var-file /etc/citc/packer/variables.pkrvars.hcl \
         -only="*.{{ ansible_local.citc.csp }}" \
         /etc/citc/packer/
-{% if ansible_local.citc.csp == "oracle" %}
-elif [[ "$1" == "gpu" ]]; then
-    /usr/local/bin/packer build \
-        -var-file /etc/citc/packer/variables.pkrvars.hcl \
-        -only="*.{{ ansible_local.citc.csp }}-gpu" \
-        /etc/citc/packer/
-{% endif %}
 {% if ansible_local.citc.csp == "aws" %}
 elif [[ "$1" == "aarch64" ]]; then
     /usr/local/bin/packer build \

@@ -46,19 +46,13 @@ def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_
     return still_exist[0].lifecycle_state
 
 
-def get_images(oci_config, compartment_id: str, cluster_id: str) -> Tuple[oci.core.models.Image, oci.core.models.Image]:
+def get_image(oci_config, compartment_id: str, cluster_id: str) -> oci.core.models.Image:
     all_images = oci.pagination.list_call_get_all_results_generator(oci.core.ComputeClient(oci_config).list_images, 'record', compartment_id, operating_system="Oracle Linux")
     our_images: List[oci.core.models.Image] = [i for i in all_images if i.freeform_tags.get("cluster") == cluster_id]
     try:
-        non_gpu_image = [i for i in our_images if "GPU" not in i.display_name][0]
+        return [i for i in our_images if "GPU" not in i.display_name][0]
     except IndexError:
-        non_gpu_image = None
-    try:
-        gpu_image = [i for i in our_images if "GPU" in i.display_name][0]
-    except IndexError:
-        gpu_image = None
-
-    return non_gpu_image, gpu_image
+        raise RuntimeError("Could not locate the image for the compute node")
 
 
 def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> oci.core.models.LaunchInstanceDetails:
@@ -70,8 +64,7 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
     ad = f"{nodespace['ad_root']}{ad_number}"
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], nodespace["cluster_id"])
-    non_gpu_image, gpu_image = get_images(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
-    image = (gpu_image if "GPU" in shape else non_gpu_image).id  # This will raise an exception if the image is not found
+    image = get_image(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = base64.b64encode(f.read()).decode()
@@ -81,7 +74,7 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
         availability_domain=ad,
         shape=shape,
         subnet_id=subnet,
-        image_id=image,
+        image_id=image.id,
         display_name=hostname,
         hostname_label=hostname,
         create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
