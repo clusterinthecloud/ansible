@@ -5,7 +5,7 @@
     jid: "{{ packer_result.ansible_job_id }}"
   register: packer_job_result
   until: packer_job_result.finished
-  retries: 100
+  retries: 200
   delay: 10
   tags: packer
 
