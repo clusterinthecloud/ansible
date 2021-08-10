@@ -1,0 +1,8 @@
+---
+
+- name: configure compute nodes to send syslog
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regexp: '@@remote-host:514'
+    line: '*.* @@{{ mgmt_hostname }}:514'
+  notify: restart rsyslog
