@@ -27,6 +27,9 @@ mpi_packages:
   google:
     - openmpi-devel
     - mpich-devel
+  azure:
+    - openmpi-devel
+    - mpich-devel
   aws: []
 
 monitoring_role: master
