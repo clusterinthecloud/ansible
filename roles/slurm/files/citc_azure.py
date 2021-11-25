@@ -123,8 +123,24 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     credential = DefaultAzureCredential()
     nodespace = get_nodespace()
     subscription_id = nodespace["subscription"]
+    resource_group = nodespace["resource_group"]
+    region = nodespace["region"]
+    subnet = nodespace["subnet"]
     resource_client = ResourceManagementClient(credential, subscription_id)
+    network_client = NetworkManagementClient(credential, subscription_id)
     compute_client = ComputeManagementClient(credential, subscription_id)
+    
+    poller = network_client.network_interfaces.begin_create_or_update(RESOURCE_GROUP_NAME,NIC_NAME, 
+      {
+        "location": region,
+        "ip_configurations": [ {
+          "name": "mynic",
+          "subnet": { "id": subnet },
+           }]
+        }
+    )
+
+    nic_result = poller.result()
 
     VM_NAME = "ExampleVM"
     USERNAME = "azureuser"
@@ -132,9 +148,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     print(f"Provisioning virtual machine {VM_NAME}; this operation might take a few minutes.")
 
-    poller = compute_client.virtual_machines.begin_create_or_update(RESOURCE_GROUP_NAME, VM_NAME,
+    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, VM_NAME,
       {
-        "location": LOCATION,
+        "location": region,
         "storage_profile": {
           "image_reference": {
             "publisher": 'Canonical',
