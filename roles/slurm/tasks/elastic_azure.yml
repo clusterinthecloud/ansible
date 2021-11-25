@@ -6,6 +6,7 @@
       - azure-mgmt-compute
       - azure-mgmt-network
       - azure-identity
+      - azure-cli
     virtualenv: /opt/cloud_sdk
 
 - name: create azure config directory
