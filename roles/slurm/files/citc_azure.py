@@ -130,7 +130,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     network_client = NetworkManagementClient(credential, subscription_id)
     compute_client = ComputeManagementClient(credential, subscription_id)
     
-    poller = network_client.network_interfaces.begin_create_or_update(resource_group,"mynic" 
+    poller = network_client.network_interfaces.begin_create_or_update(resource_group,"mynic", 
       {
         "location": region,
         "ip_configurations": [ {
