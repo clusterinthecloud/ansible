@@ -25,83 +25,93 @@ def get_nodespace() -> Dict[str, str]:
     return load_yaml("/etc/citc/startnode.yaml")
 
 
-def get_subnet(oci_config, compartment_id: str, vcn_id: str, cluster_id: str) -> str:
+#def get_subnet(oci_config, compartment_id: str, vcn_id: str, cluster_id: str) -> str:
+def get_subnet() -> str:
     """
     Get the relevant cluster subnet for a given compartment, VCN and AD
     """
-    return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.freeform_tags.get("cluster") == cluster_id][0]
+    #return [s.id for s in oci.core.VirtualNetworkClient(oci_config).list_subnets(compartment_id, vcn_id=vcn_id).data if s.freeform_tags.get("cluster") == cluster_id][0]
+    return "subnet"
 
 
-def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_id: str) -> str:
+#def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_id: str) -> str:
+def get_node_state() -> str:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
-    matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
-    matches = [i for i in matches if i.freeform_tags.get("cluster") == cluster_id]
-    still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
-    if not still_exist:
-        return "TERMINATED"
-    if len(still_exist) > 1:
-        log.error(f"{hostname}: Multiple matches found for {hostname}")
-    return still_exist[0].lifecycle_state
+    #matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
+    #matches = [i for i in matches if i.freeform_tags.get("cluster") == cluster_id]
+    #still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
+    #if not still_exist:
+    #    return "TERMINATED"
+    #if len(still_exist) > 1:
+    #    log.error(f"{hostname}: Multiple matches found for {hostname}")
+    #return still_exist[0].lifecycle_state
+    return "node_state"
 
 
-def get_image(oci_config, compartment_id: str, cluster_id: str) -> oci.core.models.Image:
-    all_images = oci.pagination.list_call_get_all_results_generator(oci.core.ComputeClient(oci_config).list_images, 'record', compartment_id, operating_system="Oracle Linux")
-    our_images: List[oci.core.models.Image] = [i for i in all_images if i.freeform_tags.get("cluster") == cluster_id]
+#def get_image(oci_config, compartment_id: str, cluster_id: str) -> oci.core.models.Image:
+def get_image() -> str:
+    #all_images = oci.pagination.list_call_get_all_results_generator(oci.core.ComputeClient(oci_config).list_images, 'record', compartment_id, operating_system="Oracle Linux")
+    #our_images: List[oci.core.models.Image] = [i for i in all_images if i.freeform_tags.get("cluster") == cluster_id]
     try:
-        return [i for i in our_images if "GPU" not in i.display_name][0]
+        #return [i for i in our_images if "GPU" not in i.display_name][0]
+        return "image"
     except IndexError:
         raise RuntimeError("Could not locate the image for the compute node")
 
 
-def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> oci.core.models.LaunchInstanceDetails:
+#def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> oci.core.models.LaunchInstanceDetails:
+def create_node_config() -> str:
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
-    features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
-    ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
-    ad = f"{nodespace['ad_root']}{ad_number}"
-    shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
-    subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], nodespace["cluster_id"])
-    image = get_image(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
+    #features = subprocess.run(["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"], stdout=subprocess.PIPE).stdout.decode().split(',')
+    #ad_number = [f for f in features if f.startswith("ad=")][0].split("=")[1].strip()
+    #ad = f"{nodespace['ad_root']}{ad_number}"
+    #shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
+    #subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], nodespace["cluster_id"])
+    #image = get_image(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
 
-    with open("/home/slurm/bootstrap.sh", "rb") as f:
-        user_data = base64.b64encode(f.read()).decode()
+    #with open("/home/slurm/bootstrap.sh", "rb") as f:
+    #    user_data = base64.b64encode(f.read()).decode()
 
-    instance_details = oci.core.models.LaunchInstanceDetails(
-        compartment_id=nodespace["compartment_id"],
-        availability_domain=ad,
-        shape=shape,
-        subnet_id=subnet,
-        image_id=image.id,
-        display_name=hostname,
-        hostname_label=hostname,
-        create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
-        metadata={
-            "ssh_authorized_keys": ssh_keys.strip(),
-            "user_data": user_data,
-        },
-        freeform_tags={
-            "type": "compute",
-            "cluster": nodespace["cluster_id"],
-        },
-    )
+    #instance_details = oci.core.models.LaunchInstanceDetails(
+    #    compartment_id=nodespace["compartment_id"],
+    #    availability_domain=ad,
+    #    shape=shape,
+    #    subnet_id=subnet,
+    #    image_id=image.id,
+    #    display_name=hostname,
+    #    hostname_label=hostname,
+    #    create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
+    #    metadata={
+    #        "ssh_authorized_keys": ssh_keys.strip(),
+    #        "user_data": user_data,
+    #    },
+    #    freeform_tags={
+    #        "type": "compute",
+    #        "cluster": nodespace["cluster_id"],
+    #    },
+    #)
 
-    return instance_details
+    #return instance_details
+    return "instance_details"
 
 
-def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-    host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", hostname], stdout=subprocess.PIPE).stdout.decode().split()[-1])
-    dns_ip = host_dns_match.group(0) if host_dns_match else None
+#def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+def get_ip() -> str:
+    #host_dns_match = re.match(r"(\d+\.){3}\d+", subprocess.run(["host", hostname], stdout=subprocess.PIPE).stdout.decode().split()[-1])
+    #dns_ip = host_dns_match.group(0) if host_dns_match else None
 
-    slurm_dns_match = re.search(r"NodeAddr=((\d+\.){3}\d+)", subprocess.run(["scontrol", "show", "node", hostname], stdout=subprocess.PIPE).stdout.decode())
-    slurm_ip = slurm_dns_match.group(1) if slurm_dns_match else None
+    #slurm_dns_match = re.search(r"NodeAddr=((\d+\.){3}\d+)", subprocess.run(["scontrol", "show", "node", hostname], stdout=subprocess.PIPE).stdout.decode())
+    #slurm_ip = slurm_dns_match.group(1) if slurm_dns_match else None
 
-    ip = dns_ip or slurm_ip
+    #ip = dns_ip or slurm_ip
 
-    return ip, dns_ip, slurm_ip
+    #return ip, dns_ip, slurm_ip
+    return "ip"
 
 
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
@@ -202,16 +212,16 @@ def terminate_instance(log, hosts):
     resource_client = ResourceManagementClient(credential, subscription_id)
     compute_client = ComputeManagementClient(credential, subscription_id)
 
-    for host in hosts:
-        log.info(f"Stopping {host}")
-
-        try:
-            matching_nodes = oci.core.ComputeClient(config).list_instances(nodespace["compartment_id"], display_name=host).data
-            node_id = [n.id for n in matching_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
-
-            oci.core.ComputeClient(config).terminate_instance(node_id)
-        except Exception as e:
-            log.error(f" problem while stopping: {e}")
-            continue
+    #for host in hosts:
+    #    log.info(f"Stopping {host}")
+#
+#        try:
+#            matching_nodes = oci.core.ComputeClient(config).list_instances(nodespace["compartment_id"], display_name=host).data
+#            node_id = [n.id for n in matching_nodes if n.lifecycle_state not in {"TERMINATED", "TERMINATING"}][0]
+#
+#            oci.core.ComputeClient(config).terminate_instance(node_id)
+#        except Exception as e:
+#            log.error(f" problem while stopping: {e}")
+#            continue
 
     log.info(f" Stopped {host}")
