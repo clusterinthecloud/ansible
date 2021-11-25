@@ -5,8 +5,9 @@ import subprocess
 import time
 from typing import Dict, Optional, Tuple, List
 
-import oci  # type: ignore
 import yaml  # type: ignore
+import os
+from azure.identity import DefaultAzureCredential
 
 __all__ = ["get_nodespace", "start_node"]
 
@@ -105,54 +106,102 @@ def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
 
 async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -> None:
     log.info(f"{host}: Starting")
-    oci_config = oci.config.from_file()
+    #oci_config = oci.config.from_file()
+    credential = DefaultAzureCredential()
+    nodespace = get_nodespace()
+    subscription_id = nodespace["subscription"]
+    resource_client = ResourceManagementClient(credential, subscription_id)
+    compute_client = ComputeManagementClient(credential, subscription_id)
 
-    while get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"]) == "TERMINATING":
-        log.info(f"{host}:  host is currently terminating. Waiting...")
-        await asyncio.sleep(5)
+    VM_NAME = "ExampleVM"
+    USERNAME = "azureuser"
+    PASSWORD = "ChangePa$$w0rd24"
 
-    node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"])
-    if node_state != "TERMINATED":
-        log.warning(f"{host}:  host is already running with state {node_state}")
-        return
+    print(f"Provisioning virtual machine {VM_NAME}; this operation might take a few minutes.")
 
-    ip, _dns_ip, slurm_ip = get_ip(host)
+    poller = compute_client.virtual_machines.begin_create_or_update(RESOURCE_GROUP_NAME, VM_NAME,
+      {
+        "location": LOCATION,
+        "storage_profile": {
+          "image_reference": {
+            "publisher": 'Canonical',
+            "offer": "UbuntuServer",
+            "sku": "16.04.0-LTS",
+            "version": "latest"
+            }
+          },
+        "hardware_profile": {
+          "vm_size": "Standard_DS1_v2"
+          },
+        "os_profile": {
+          "computer_name": VM_NAME,
+          "admin_username": USERNAME,
+          "admin_password": PASSWORD
+          },
+        "network_profile": {
+          "network_interfaces": [{
+            "id": nic_result.id,
+            }]
+          }        
+        }
+    )
+    vm_result = poller.result()
 
-    instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
-
-    loop = asyncio.get_event_loop()
-    retry_strategy_builder = oci.retry.RetryStrategyBuilder()
-    retry_strategy_builder.add_max_attempts(max_attempts=10).add_total_elapsed_time(total_elapsed_time_seconds=600)
-    retry_strategy = retry_strategy_builder.get_retry_strategy()
-    client = oci.core.ComputeClient(oci_config, retry_strategy=retry_strategy)
-
-    try:
-        instance_result = await loop.run_in_executor(None, client.launch_instance, instance_details)
-        instance = instance_result.data
-    except oci.exceptions.ServiceError as e:
-        log.error(f"{host}:  problem launching instance: {e}")
-        return
-
-    if not slurm_ip:
-        node_id = instance.id
-        while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
-            log.info(f"{host}:  No VNIC attachment yet. Waiting...")
-            await asyncio.sleep(5)
-
-        vnic_id = oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data[0].vnic_id
-        private_ip = oci.core.VirtualNetworkClient(oci_config).get_vnic(vnic_id).data.private_ip
-
-        log.info(f"{host}:   Private IP {private_ip}")
-        subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
+    print(f"Provisioned virtual machine {vm_result.name}")
 
     log.info(f"{host}:  Started")
-    return instance
+    return vm_result
+
+    #while get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"]) == "TERMINATING":
+    #    log.info(f"{host}:  host is currently terminating. Waiting...")
+    #    await asyncio.sleep(5)
+
+    #node_state = get_node_state(oci_config, log, nodespace["compartment_id"], host, nodespace["cluster_id"])
+    #if node_state != "TERMINATED":
+    #    log.warning(f"{host}:  host is already running with state {node_state}")
+    #    return
+
+    #ip, _dns_ip, slurm_ip = get_ip(host)
+
+    #instance_details = create_node_config(oci_config, host, ip, nodespace, ssh_keys)
+
+    #loop = asyncio.get_event_loop()
+    #retry_strategy_builder = oci.retry.RetryStrategyBuilder()
+    #retry_strategy_builder.add_max_attempts(max_attempts=10).add_total_elapsed_time(total_elapsed_time_seconds=600)
+    #retry_strategy = retry_strategy_builder.get_retry_strategy()
+    #client = oci.core.ComputeClient(oci_config, retry_strategy=retry_strategy)
+
+    #try:
+    #    instance_result = await loop.run_in_executor(None, client.launch_instance, instance_details)
+    #    instance = instance_result.data
+    #except oci.exceptions.ServiceError as e:
+    #    log.error(f"{host}:  problem launching instance: {e}")
+    #    return
+
+    #if not slurm_ip:
+    #    node_id = instance.id
+    #    while not oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data:
+    #        log.info(f"{host}:  No VNIC attachment yet. Waiting...")
+    #        await asyncio.sleep(5)
+
+    #    vnic_id = oci.core.ComputeClient(oci_config).list_vnic_attachments(instance_details.compartment_id, instance_id=node_id).data[0].vnic_id
+    #    private_ip = oci.core.VirtualNetworkClient(oci_config).get_vnic(vnic_id).data.private_ip
+
+    #    log.info(f"{host}:   Private IP {private_ip}")
+    #    subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
+
+    #log.info(f"{host}:  Started")
+    #return instance
 
 def terminate_instance(log, hosts):
 
-    config = oci.config.from_file()
-
+    #config = oci.config.from_file()
+    credential = DefaultAzureCredential()
     nodespace = get_nodespace()
+    subscription_id = nodespace["subscription"]
+    resource_client = ResourceManagementClient(credential, subscription_id)
+    compute_client = ComputeManagementClient(credential, subscription_id)
+
     for host in hosts:
         log.info(f"Stopping {host}")
 
