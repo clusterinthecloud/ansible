@@ -8,6 +8,9 @@ from typing import Dict, Optional, Tuple, List
 import yaml  # type: ignore
 import os
 from azure.identity import DefaultAzureCredential
+from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.network import NetworkManagementClient
+from azure.mgmt.compute import ComputeManagementClient
 
 __all__ = ["get_nodespace", "start_node"]
 
