@@ -136,11 +136,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
       log.info(f"{host}:  host is currently terminating. Waiting...")
       await asyncio.sleep(5)
 
-    poller = network_client.network_interfaces.begin_create_or_update(resource_group,host-"nic", 
+    poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
         "location": region,
         "ip_configurations": [ {
-          "name": host-"nic",
+          "name": host+"-nic",
           "subnet": { "id": subnet },
            }]
         }
@@ -172,7 +172,6 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
                   "public_keys" : [ ssh_keys ]
                   }
               }
-          "admin_password": PASSWORD
           },
         "network_profile": {
           "network_interfaces": [{
