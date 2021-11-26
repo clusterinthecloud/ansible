@@ -38,11 +38,13 @@ def get_subnet() -> str:
 
 
 #def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_id: str) -> str:
-def get_node_state() -> str:
+def get_node_state(compute_client, log, hostname: str, resource_group: str) -> str:
     """
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
+    matches = compute_client.virtual_machines.list(resource_group)
+    print(matches)
     #matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
     #matches = [i for i in matches if i.freeform_tags.get("cluster") == cluster_id]
     #still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
@@ -130,11 +132,15 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     network_client = NetworkManagementClient(credential, subscription_id)
     compute_client = ComputeManagementClient(credential, subscription_id)
     
-    poller = network_client.network_interfaces.begin_create_or_update(resource_group,"mynic", 
+    while get_node_state(compute_client, log, host, resource_group) == "TERMINATING":
+      log.info(f"{host}:  host is currently terminating. Waiting...")
+      await asyncio.sleep(5)
+
+    poller = network_client.network_interfaces.begin_create_or_update(resource_group,host-"nic", 
       {
         "location": region,
         "ip_configurations": [ {
-          "name": "mynic",
+          "name": host-"nic",
           "subnet": { "id": subnet },
            }]
         }
@@ -142,29 +148,30 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     nic_result = poller.result()
 
-    VM_NAME = "ExampleVM"
-    USERNAME = "azureuser"
-    PASSWORD = "ChangePa$$w0rd24"
-
     print(f"Provisioning virtual machine {VM_NAME}; this operation might take a few minutes.")
 
-    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, VM_NAME,
+    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host,
       {
         "location": region,
         "storage_profile": {
           "image_reference": {
-            "publisher": 'Canonical',
-            "offer": "UbuntuServer",
-            "sku": "16.04.0-LTS",
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "8_4-gen2",
             "version": "latest"
             }
           },
         "hardware_profile": {
-          "vm_size": "Standard_DS1_v2"
+          "vm_size": "Standard_D4s_v3"
           },
         "os_profile": {
-          "computer_name": VM_NAME,
-          "admin_username": USERNAME,
+          "computer_name": host,
+          "admin_username": "centos",
+          "linux_configuration": {
+              "ssh": { 
+                  "public_keys" : [ ssh_keys ]
+                  }
+              }
           "admin_password": PASSWORD
           },
         "network_profile": {
