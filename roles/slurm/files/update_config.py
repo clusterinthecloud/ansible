@@ -40,9 +40,9 @@ def get_nodespace() -> Dict[str, Dict[str, str]]:
 
 def encode_nodename(shape_name: str, node_number: int, cluster_id: str, ad: Optional[int] = None) -> str:
     if ad is not None:
-        return "{}-ad{}-{:0>4}".format(shape_name.lower().replace(".", "-"), ad, node_number)
+        return "{}-ad{}-{:0>4}".format(shape_name.lower().replace(".", "-").replace("_", "-"), ad, node_number)
     else:
-        return "{}-{}-{:0>4}".format(cluster_id, shape_name.lower().replace(".", "-"), node_number)
+        return "{}-{}-{:0>4}".format(cluster_id, shape_name.lower().replace(".", "-").replace("_", "-"), node_number)
 
 
 def create_slurmconf_line(number: int, shape_info: Dict, shape: str, cluster_id, ad: Optional[int] = None):

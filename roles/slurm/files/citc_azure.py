@@ -148,7 +148,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     nic_result = poller.result()
 
-    print(f"Provisioning virtual machine {VM_NAME}; this operation might take a few minutes.")
+    print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
 
     poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host,
       {
@@ -169,7 +169,10 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
           "admin_username": "centos",
           "linux_configuration": {
               "ssh": { 
-                  "public_keys" : [ ssh_keys ]
+                  "public_keys" : [ { 
+                      "path": "/home/centos/.ssh/authorized_keys",
+                      "key_data": ssh_keys 
+                      } ]
                   }
               }
           },
