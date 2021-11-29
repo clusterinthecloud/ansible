@@ -67,8 +67,8 @@ def get_image() -> str:
         raise RuntimeError("Could not locate the image for the compute node")
 
 
-#def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> oci.core.models.LaunchInstanceDetails:
-def create_node_config() -> str:
+def create_node_config(hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str) -> instance_details:
+#def create_node_config() -> str:
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
     """
@@ -79,30 +79,48 @@ def create_node_config() -> str:
     #subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], nodespace["cluster_id"])
     #image = get_image(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
 
-    #with open("/home/slurm/bootstrap.sh", "rb") as f:
-    #    user_data = base64.b64encode(f.read()).decode()
+    with open("/home/slurm/bootstrap.sh", "rb") as f:
+        user_data = base64.b64encode(f.read()).decode()
 
-    #instance_details = oci.core.models.LaunchInstanceDetails(
-    #    compartment_id=nodespace["compartment_id"],
-    #    availability_domain=ad,
-    #    shape=shape,
-    #    subnet_id=subnet,
-    #    image_id=image.id,
-    #    display_name=hostname,
-    #    hostname_label=hostname,
-    #    create_vnic_details=oci.core.models.CreateVnicDetails(private_ip=ip, subnet_id=subnet) if ip else None,
-    #    metadata={
-    #        "ssh_authorized_keys": ssh_keys.strip(),
-    #        "user_data": user_data,
-    #    },
-    #    freeform_tags={
-    #        "type": "compute",
-    #        "cluster": nodespace["cluster_id"],
-    #    },
-    #)
+    subscription_id = nodespace["subscription"]
+    resource_group = nodespace["resource_group"]
+    region = nodespace["region"]
+    subnet = nodespace["subnet"]
 
-    #return instance_details
-    return "instance_details"
+    instance_details =  '{
+        "location": region,
+        "storage_profile": {
+          "image_reference": {
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "8_4-gen2",
+            "version": "latest"
+            }
+          },
+        "hardware_profile": {
+          "vm_size": "Standard_D4s_v3"
+          },
+        "os_profile": {
+          "computer_name": host,
+          "admin_username": "centos",
+          "linux_configuration": {
+              "ssh": { 
+                  "public_keys" : [ { 
+                      "path": "/home/centos/.ssh/authorized_keys",
+                      "key_data": ssh_keys 
+                      } ]
+                  }
+              }
+          },
+        "network_profile": {
+          "network_interfaces": [{
+            "id": nic_result.id,
+            }]
+          },
+        "user_data": user_data,
+        }'
+
+    return instance_details
 
 
 #def get_ip(hostname: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
@@ -138,6 +156,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     while get_node_state(compute_client, log, host, resource_group) == "TERMINATING":
       log.info(f"{host}:  host is currently terminating. Waiting...")
       await asyncio.sleep(5)
+
+    instance_details = create_node_config(host, ip, nodespace, ssh_keys)
+    print(instance_details)
 
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
