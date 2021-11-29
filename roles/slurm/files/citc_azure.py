@@ -67,7 +67,7 @@ def get_image() -> str:
         raise RuntimeError("Could not locate the image for the compute node")
 
 
-def create_node_config(hostname: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str):
+def create_node_config(host: str, ip: Optional[str], nodespace: Dict[str, str], ssh_keys: str):
 #def create_node_config() -> str:
     """
     Create the configuration needed to create ``hostname`` in ``nodespace`` with ``ssh_keys``
