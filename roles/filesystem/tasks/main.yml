@@ -6,11 +6,12 @@
 - name: ensure fileserver name exists
   lineinfile:
     dest: /etc/hosts
-    line: "{{ ansible_local.citc.fileserver_ip }} fileserver"
+    line: "{{ ansible_local.citc.fileserver_ip }} fileserver fileserver.test.zone"
     state: present
   when:
     - ansible_local.citc is defined
     - ansible_local.citc.csp == "google"
+    - ansible_local.citc.csp == "azure"
 
 - name: Wait for fileserver to be ready checking nfs tcp port open (critical path - avoids race condition)
   wait_for:
