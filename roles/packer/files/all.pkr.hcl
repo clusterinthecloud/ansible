@@ -96,9 +96,14 @@ source "amazon-ebs" "aws" {
 }
 
 source "azure-arm" "azure" {
-    image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    managed_image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    managed_image_resource_group_name = var.azure_resource_group
     ssh_username = var.ssh_username
     location = var.azure_region
+    os_type = "Linux"
+    image_publisher = "OpenLogic"
+    image_offer = "CentOS"
+    image_sku = "8_4-gen2"
 }
 
 
@@ -122,6 +127,7 @@ build {
         "source.googlecompute.google",
         "source.amazon-ebs.aws",
         "source.oracle-oci.oracle",
+        "source.azure-arm.azure",
     ]
 
     provisioner "file" {
