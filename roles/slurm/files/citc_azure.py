@@ -87,38 +87,38 @@ def create_node_config(hostname: str, ip: Optional[str], nodespace: Dict[str, st
     region = nodespace["region"]
     subnet = nodespace["subnet"]
 
-    instance_details =  '{
-        "location": region,
-        "storage_profile": {
-          "image_reference": {
-            "publisher": "OpenLogic",
-            "offer": "CentOS",
-            "sku": "8_4-gen2",
-            "version": "latest"
+    instance_details =  "{
+        \"location\": region,
+        \"storage_profile\": {
+          \"image_reference\": {
+            \"publisher\": \"OpenLogic\",
+            \"offer\": \"CentOS\",
+            \"sku\": \"8_4-gen2\",
+            \"version\": \"latest\"
             }
           },
-        "hardware_profile": {
-          "vm_size": "Standard_D4s_v3"
+        \"hardware_profile\": {
+          \"vm_size\": \"Standard_D4s_v3\"
           },
-        "os_profile": {
-          "computer_name": host,
-          "admin_username": "centos",
-          "linux_configuration": {
-              "ssh": { 
-                  "public_keys" : [ { 
-                      "path": "/home/centos/.ssh/authorized_keys",
-                      "key_data": ssh_keys 
+        \"os_profile\": {
+          \"computer_name\": host,
+          \"admin_username\": \"centos\",
+          \"linux_configuration\": {
+              \"ssh\": { 
+                  \"public_keys\" : [ { 
+                      \"path\": \"/home/centos/.ssh/authorized_keys\",
+                      \"key_data\": ssh_keys 
                       } ]
                   }
               }
           },
-        "network_profile": {
-          "network_interfaces": [{
-            "id": nic_result.id,
+        \"network_profile\": {
+          \"network_interfaces\": [{
+            \"id\": nic_result.id,
             }]
           },
-        "user_data": user_data,
-        }'
+        \"user_data\": user_data,
+        }"
 
     return instance_details
 
