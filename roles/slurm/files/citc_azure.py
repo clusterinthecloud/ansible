@@ -189,8 +189,8 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     print(instance_details)
     print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
 
-    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host,
-      {
+    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, instance_details)
+    bla = """  {
         "location": region,
         "storage_profile": {
           "image_reference": {
@@ -221,8 +221,8 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
             }]
           },
         "user_data": user_data,
-        }
-    )
+        }"""
+    
     vm_result = poller.result()
 
     print(f"Provisioned virtual machine {vm_result.name}")
