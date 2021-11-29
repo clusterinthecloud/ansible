@@ -87,7 +87,7 @@ def create_node_config(hostname: str, ip: Optional[str], nodespace: Dict[str, st
     region = nodespace["region"]
     subnet = nodespace["subnet"]
 
-    instance_details =  "{
+    instance_details =  """{
         \"location\": region,
         \"storage_profile\": {
           \"image_reference\": {
@@ -118,7 +118,7 @@ def create_node_config(hostname: str, ip: Optional[str], nodespace: Dict[str, st
             }]
           },
         \"user_data\": user_data,
-        }"
+        }"""
 
     return instance_details
 
