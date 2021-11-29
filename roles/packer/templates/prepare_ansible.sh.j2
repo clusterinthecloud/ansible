@@ -9,7 +9,7 @@ $(hostname)
 cluster_id={{ startnode_config.cluster_id }}
 packer_run=yes
 EOF'
-{% if ansible_local.citc.csp in ["aws", "google"] %}
+{% if ansible_local.citc.csp in ["aws", "google", "azure"] %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
 {% elif ansible_local.citc.csp == "oracle" %}

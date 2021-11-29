@@ -98,8 +98,10 @@ source "amazon-ebs" "aws" {
 source "azure-arm" "azure" {
     managed_image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
     managed_image_resource_group_name = var.azure_resource_group
+    build_resource_group_name = var.azure_resource_group
+    virtual_network_name = var.azure_virtual_network
+    virtual_network_subnet_name = var.azure_virtual_network_subnet
     ssh_username = var.ssh_username
-    location = var.azure_region
     os_type = "Linux"
     image_publisher = "OpenLogic"
     image_offer = "CentOS"
