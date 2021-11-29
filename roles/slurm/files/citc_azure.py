@@ -149,8 +149,6 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
       log.info(f"{host}:  host is currently terminating. Waiting...")
       await asyncio.sleep(5)
 
-    instance_details = create_node_config(host, ip, nodespace, ssh_keys)
-    print(instance_details)
 
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
@@ -164,6 +162,31 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     nic_result = poller.result()
 
+    instance_details =  "{ \"location\": "+region+"," \
+        "\"storage_profile\": {"+ \
+          "\"image_reference\": {"+ \
+            "\"publisher\": \"OpenLogic\","+ \
+            "\"offer\": \"CentOS\","+ \
+            "\"sku\": \"8_4-gen2\","+ \
+            "\"version\": \"latest\" } },"+ \
+        "\"hardware_profile\": {"+ \
+          "\"vm_size\": \"Standard_D4s_v3\"},"+ \
+        "\"os_profile\": {"+ \
+          "\"computer_name\":"+ host +","+ \
+          "\"admin_username\": \"centos\","+ \
+          "\"linux_configuration\": {" + \
+              "\"ssh\": { "+ \
+                  "\"public_keys\" : [ { "+ \
+                      "\"path\": \"/home/centos/.ssh/authorized_keys\","+ \
+                      "\"key_data\":"+ ssh_keys +\
+                      "} ]}}},"+ \
+        "\"network_profile\": {"+ \
+          "\"network_interfaces\": [{"+ \
+            "\"id\":"+ nic_result.id +","+ \
+            "}]},"+ \
+        "\"user_data\":"+ user_data + ",}"
+
+    print(instance_details)
     print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
 
     poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host,
