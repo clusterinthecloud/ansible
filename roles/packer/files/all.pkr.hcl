@@ -10,6 +10,10 @@ variable "aws_region" {}
 variable "aws_instance_type" {}
 variable "aws_arch" {}
 
+variable "azure_region" {}
+variable "azure_instance_type" {}
+variable "azure_resource_group" {}
+
 variable "oracle_availability_domain" {}
 variable "oracle_base_image_ocid" {}
 variable "oracle_compartment_ocid" {}
@@ -90,6 +94,13 @@ source "amazon-ebs" "aws" {
         delete_on_termination = true
     }
 }
+
+source "azure-arm" "azure" {
+    image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    ssh_username = var.ssh_username
+    location = var.azure_region
+}
+
 
 source "oracle-oci" "oracle" {
     image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
