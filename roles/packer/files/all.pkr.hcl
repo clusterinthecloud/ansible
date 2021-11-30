@@ -13,6 +13,8 @@ variable "aws_arch" {}
 variable "azure_region" {}
 variable "azure_instance_type" {}
 variable "azure_resource_group" {}
+variable "azure_virtual_network" {}
+variable "azure_virtual_network_subnet" {}
 
 variable "oracle_availability_domain" {}
 variable "oracle_base_image_ocid" {}
