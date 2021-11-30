@@ -149,6 +149,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
       log.info(f"{host}:  host is currently terminating. Waiting...")
       await asyncio.sleep(5)
 
+    images = compute_client.images.list_by_resource_group(resource_group)
+    for image in images:
+        vm_image = str(image.id)
 
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
@@ -162,42 +165,13 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     nic_result = poller.result()
 
-    instance_details =  "{ \"location\": "+region+"," \
-        "\"storage_profile\": {"+ \
-          "\"image_reference\": {"+ \
-            "\"publisher\": \"OpenLogic\","+ \
-            "\"offer\": \"CentOS\","+ \
-            "\"sku\": \"8_4-gen2\","+ \
-            "\"version\": \"latest\" } },"+ \
-        "\"hardware_profile\": {"+ \
-          "\"vm_size\": \"Standard_D4s_v3\"},"+ \
-        "\"os_profile\": {"+ \
-          "\"computer_name\":"+ host +","+ \
-          "\"admin_username\": \"centos\","+ \
-          "\"linux_configuration\": {" + \
-              "\"ssh\": { "+ \
-                  "\"public_keys\" : [ { "+ \
-                      "\"path\": \"/home/centos/.ssh/authorized_keys\","+ \
-                      "\"key_data\":"+ ssh_keys +\
-                      "} ]}}},"+ \
-        "\"network_profile\": {"+ \
-          "\"network_interfaces\": [{"+ \
-            "\"id\":"+ nic_result.id +","+ \
-            "}]},"+ \
-        "\"user_data\":"+ user_data + ",}"
-
-    print(instance_details)
     print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
 
-    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, instance_details)
-    bla = """  {
+    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, {
         "location": region,
         "storage_profile": {
           "image_reference": {
-            "publisher": "OpenLogic",
-            "offer": "CentOS",
-            "sku": "8_4-gen2",
-            "version": "latest"
+            "id": vm_image,
             }
           },
         "hardware_profile": {
@@ -221,7 +195,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
             }]
           },
         "user_data": user_data,
-        }"""
+        })
     
     vm_result = poller.result()
 
