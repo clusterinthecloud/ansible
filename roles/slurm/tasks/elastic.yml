@@ -125,7 +125,7 @@
       {% endif %}
 
       # Ensure that slurmd is running at this point
-      systemctl start slurmd
+      #systemctl start slurmd
 
       date
     dest: /home/slurm/bootstrap.sh
