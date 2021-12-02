@@ -11,6 +11,7 @@ azure_region = "{%- if startnode_config.region is defined -%}{{ startnode_config
 azure_resource_group = "{%- if startnode_config.resource_group is defined -%}{{ startnode_config.resource_group }}{%- endif -%}"
 azure_virtual_network = "{%- if startnode_config.virtual_network is defined -%}{{ startnode_config.virtual_network }}{%- endif -%}"
 azure_virtual_network_subnet = "{%- if startnode_config.virtual_network_subnet is defined -%}{{ startnode_config.virtual_network_subnet }}{%- endif -%}"
+azure_dns_zone = "{%- if startnode_config.dns_zone is defined -%}{{ startnode_config.dns_zone }}{%- endif -%}"
 azure_instance_type = "Standard_D4s_v3"
 
 google_destination_image_family = "citc-slurm-compute"

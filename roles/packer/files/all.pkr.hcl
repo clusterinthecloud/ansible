@@ -15,6 +15,7 @@ variable "azure_instance_type" {}
 variable "azure_resource_group" {}
 variable "azure_virtual_network" {}
 variable "azure_virtual_network_subnet" {}
+variable "azure_dns_zone" {}
 
 variable "oracle_availability_domain" {}
 variable "oracle_base_image_ocid" {}
@@ -104,6 +105,7 @@ source "azure-arm" "azure" {
     virtual_network_name = var.azure_virtual_network
     virtual_network_subnet_name = var.azure_virtual_network_subnet
     virtual_network_resource_group_name = var.azure_resource_group
+    temp_compute_name = "packer.${var.azure_dns_zone}"
     vm_size = var.azure_instance_type
     ssh_username = var.ssh_username
     os_type = "Linux"
