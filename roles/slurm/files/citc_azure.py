@@ -137,6 +137,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     resource_group = nodespace["resource_group"]
     region = nodespace["region"]
     subnet = nodespace["subnet"]
+    dns_zone = "."+nodespace["dns_zone"]
     ip = "ip"
     resource_client = ResourceManagementClient(credential, subscription_id)
     network_client = NetworkManagementClient(credential, subscription_id)
@@ -178,7 +179,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
           "vm_size": "Standard_D4s_v3"
           },
         "os_profile": {
-          "computer_name": host,
+          "computer_name": host+dns_zone,
           "admin_username": "centos",
           "linux_configuration": {
               "ssh": { 
