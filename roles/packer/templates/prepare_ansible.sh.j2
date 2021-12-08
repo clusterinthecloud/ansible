@@ -17,6 +17,11 @@ sudo dnf install -y oracle-epel-release-el8
 sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 sudo dnf config-manager --set-enabled ol8_codeready_builder
 {% endif %}
+{% if ansible_local.citc.csp in ["azure"] %}
+echo "[Main]" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
+echo "dhcp=dhclient" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
+echo "append domain-name \"{{ dns_zone }}\";" | sudo tee -s /etc/dhcp/dhclient.conf
+{% endif %}
 sudo dnf install -y ansible git
 sudo cat /tmp/hosts
 sudo mkdir -p /etc/ansible/facts.d/
