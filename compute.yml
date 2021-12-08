@@ -12,13 +12,13 @@
   become: yes
   roles:
     - citc_user
-          #- filesystem
-          #- ssh
-          ##- security_updates
-          #- ntp
-          #- sssd
-          #- lmod
-          #- packages
-          #- mpi
-          #- slurm
-          #- monitoring
+    - filesystem
+    #- ssh
+    ##- security_updates
+    #- ntp
+    #- sssd
+    #- lmod
+    #- packages
+    #- mpi
+    #- slurm
+    #- monitoring
