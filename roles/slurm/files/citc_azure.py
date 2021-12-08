@@ -179,7 +179,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
           "vm_size": "Standard_D4s_v3"
           },
         "os_profile": {
-          "computer_name": host+dns_zone,
+          "computer_name": host,
           "admin_username": "centos",
           "linux_configuration": {
               "ssh": { 
