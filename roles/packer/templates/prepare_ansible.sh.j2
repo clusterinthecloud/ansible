@@ -20,7 +20,8 @@ sudo dnf config-manager --set-enabled ol8_codeready_builder
 {% if ansible_local.citc.csp in ["azure"] %}
 echo "[Main]" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
 echo "dhcp=dhclient" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
-echo "append domain-name \"{{ startnode_config.dns_zone }}\";" | sudo tee -a /etc/dhcp/dhclient.conf
+echo "append domain-name \" {{ startnode_config.dns_zone }}\";" | sudo tee -a /etc/dhcp/dhclient.conf
+cat /etc/resolv.conf
 {% endif %}
 sudo dnf install -y ansible git
 sudo cat /tmp/hosts
