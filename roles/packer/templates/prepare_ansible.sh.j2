@@ -20,7 +20,10 @@ sudo dnf config-manager --set-enabled ol8_codeready_builder
 {% if ansible_local.citc.csp in ["azure"] %}
 echo "[main]" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
 echo "dhcp=dhclient" | sudo tee -a /etc/NetworkManager/conf.d/dhclient.conf
+cat /etc/NetworkManager/conf.d/dhclient.conf
+echo "append domain-name \" {{ startnode_config.dns_zone }}\";" | sudo tee -a /etc/dhcp/dhclient.conf
 echo "append domain-search \" {{ startnode_config.dns_zone }}\";" | sudo tee -a /etc/dhcp/dhclient.conf
+sudo cat /etc/dhcp/dhclient.conf
 sudo systemctl restart NetworkManager
 cat /etc/resolv.conf
 {% endif %}
