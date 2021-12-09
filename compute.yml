@@ -13,12 +13,12 @@
   roles:
     - citc_user
     - filesystem
-    #- ssh
+    - ssh
     ##- security_updates
-    #- ntp
-    #- sssd
-    #- lmod
-    #- packages
-    #- mpi
-    #- slurm
-    #- monitoring
+    - ntp
+    - sssd
+    - lmod
+    - packages
+    - mpi
+    - slurm
+    - monitoring
