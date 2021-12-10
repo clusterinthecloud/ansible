@@ -34,8 +34,8 @@ def get_node_state(compute_client, log, hostname: str, resource_group: str) -> s
     Get the current node state of the VM for the given hostname
     If there is no such VM, return "TERMINATED"
     """
-    matches = compute_client.virtual_machines.list(resource_group)
-    print(matches)
+    #matches = compute_client.virtual_machines.list(resource_group)
+    #print(matches)
     #matches = oci.core.ComputeClient(oci_config).list_instances(compartment_id=compartment_id, display_name=hostname).data
     #matches = [i for i in matches if i.freeform_tags.get("cluster") == cluster_id]
     #still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
@@ -156,5 +156,6 @@ def terminate_instance(log, hosts):
             poller = compute_client.virtual_machines.begin_delete(resource_group, host)
             vm_result = poller.result()
             print(f"Deleted virtual machine {vm_result.name}")
-
-    log.info(f" Stopped {host}")
+      except:
+        print("An exception occurred") 
+      log.info(f" Stopped {host}")
