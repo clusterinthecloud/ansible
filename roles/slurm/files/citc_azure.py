@@ -143,6 +143,7 @@ def terminate_instance(log, hosts):
     credential = DefaultAzureCredential()
     nodespace = get_nodespace()
     subscription_id = nodespace["subscription"]
+    resource_group = nodespace["resource_group"]
     resource_client = ResourceManagementClient(credential, subscription_id)
     compute_client = ComputeManagementClient(credential, subscription_id)
 
