@@ -123,6 +123,10 @@
                                                   --output text --query 'Tags[?Key==`Name`].Value')
       hostnamectl set-hostname ${name}
       {% endif %}
+      {% if ansible_local.citc.csp == "azure" %}
+      sudo mount /mnt/shared
+      sudo systemctl start slurmd
+      {% endif %}
 
       # Ensure that slurmd is running at this point
       #systemctl start slurmd

@@ -144,7 +144,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     compute_client = ComputeManagementClient(credential, subscription_id)
     
     with open("/home/slurm/bootstrap.sh", "rb") as f:
-        user_data = base64.b64encode(f.read()).decode()
+        custom_data = base64.b64encode(f.read()).decode()
 
     while get_node_state(compute_client, log, host, resource_group) == "TERMINATING":
       log.info(f"{host}:  host is currently terminating. Waiting...")
@@ -188,14 +188,14 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
                       "key_data": ssh_keys 
                       } ]
                   }
-              }
+              },
+          "custom_data": custom_data,
           },
         "network_profile": {
           "network_interfaces": [{
             "id": nic_result.id,
             }]
-          },
-        "user_data": user_data,
+          }
         })
     
     vm_result = poller.result()
