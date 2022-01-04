@@ -94,7 +94,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     for image in images:
         vm_image = str(image.id)
 
-    features = get_node_features(hostname)
+    features = get_node_features(host)
     shape = features["shape"]
 
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
