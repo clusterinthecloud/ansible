@@ -28,6 +28,14 @@ def get_nodespace() -> Dict[str, str]:
     return load_yaml("/etc/citc/startnode.yaml")
 
 
+def get_node_features(hostname):
+     features = subprocess.run(
+       ["sinfo", "--Format=features:200", "--noheader", f"--nodes={hostname}"],
+       stdout=subprocess.PIPE
+     ).stdout.decode().strip().split(',')
+     features = {f.split("=")[0]: f.split("=")[1] for f in features}
+     return features
+
 #def get_node_state(oci_config, log, compartment_id: str, hostname: str, cluster_id: str) -> str:
 def get_node_state(compute_client, log, hostname: str, resource_group: str) -> str:
     """
@@ -86,6 +94,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     for image in images:
         vm_image = str(image.id)
 
+    features = get_node_features(hostname)
+    shape = features["shape"]
+
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
         "location": region,
@@ -108,7 +119,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
             }
           },
         "hardware_profile": {
-          "vm_size": "Standard_D4s_v3"
+          "vm_size": shape 
           },
         "os_profile": {
           "computer_name": host,
