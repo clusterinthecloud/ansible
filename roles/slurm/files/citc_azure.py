@@ -97,6 +97,19 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     features = get_node_features(host)
     shape = features["shape"]
 
+
+    poller = compute_client.availability_sets.create_or_update(resource_group,shape,
+      {
+        "location": region,
+        "platform_update_domain_count": 1,
+        "platform_fault_domain_count": 1,
+        "sku": { "name": "Aligned" },
+      }
+    )
+    avset_id = poller.id
+    print(f"Provisioning avset {avset_id}.")
+
+
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
         "location": region,
@@ -138,6 +151,9 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
           "network_interfaces": [{
             "id": nic_result.id,
             }]
+          },
+        "availability_set": {
+          "id": avset_id,
           }
         })
     
