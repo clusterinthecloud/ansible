@@ -94,22 +94,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     for image in images:
         vm_image = str(image.id)
 
-    features = get_node_features(host)
-    shape = features["shape"]
-
-
-    poller = compute_client.availability_sets.create_or_update(resource_group,shape,
-      {
-        "location": region,
-        "platform_update_domain_count": 1,
-        "platform_fault_domain_count": 1,
-        "sku": { "name": "Aligned" },
-      }
-    )
-    avset_id = poller.id
-    print(f"Provisioning avset {avset_id}.")
-
-
+    print(f"Provisioning nic for {host}....")
     poller = network_client.network_interfaces.begin_create_or_update(resource_group,host+"-nic", 
       {
         "location": region,
@@ -122,9 +107,22 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
 
     nic_result = poller.result()
 
-    print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
+    features = get_node_features(host)
+    shape = features["shape"]
 
-    poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, {
+    if shape == "Standard_HC44rs" :
+      print(f"Provisioning availability set for {host}....")
+      poller = compute_client.availability_sets.create_or_update(resource_group,shape,
+        {
+          "location": region,
+          "platform_update_domain_count": 1,
+          "platform_fault_domain_count": 1,
+          "sku": { "name": "Aligned" },
+        }
+      )
+      avset_id = poller.id
+      print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
+      poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, {
         "location": region,
         "storage_profile": {
           "image_reference": {
@@ -156,8 +154,39 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
           "id": avset_id,
           }
         })
-    
-    vm_result = poller.result()
+      vm_result = poller.result()
+    else :
+      print(f"Provisioning virtual machine {host}; this operation might take a few minutes.")
+      poller = compute_client.virtual_machines.begin_create_or_update(resource_group, host, {
+        "location": region,
+        "storage_profile": {
+          "image_reference": {
+            "id": vm_image,
+            }
+          },
+        "hardware_profile": {
+          "vm_size": shape 
+          },
+        "os_profile": {
+          "computer_name": host,
+          "admin_username": "centos",
+          "linux_configuration": {
+              "ssh": { 
+                  "public_keys" : [ { 
+                      "path": "/home/centos/.ssh/authorized_keys",
+                      "key_data": ssh_keys 
+                      } ]
+                  }
+              },
+          "custom_data": custom_data,
+          },
+        "network_profile": {
+          "network_interfaces": [{
+            "id": nic_result.id,
+            }]
+          },
+        })
+      vm_result = poller.result()
 
     print(f"Provisioned virtual machine {vm_result.name}")
 
