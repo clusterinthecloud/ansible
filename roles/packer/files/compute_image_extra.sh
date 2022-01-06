@@ -8,4 +8,4 @@
 # sudo yum -y install cmake gcc-gfortran
 
 # to install CernVM-FS and configure access to EESSI, uncomment the line below:
-# /home/citc/install_cvmfs_eessi.sh
+#/home/citc/install_cvmfs_eessi.sh
