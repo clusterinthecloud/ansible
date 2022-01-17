@@ -124,6 +124,8 @@
       hostnamectl set-hostname ${name}
       {% endif %}
       {% if ansible_local.citc.csp == "azure" %}
+      sudo sed -i -e 's/# OS.EnableRDMA=./OS.EnableRDMA=y/g' /etc/waagent.conf
+      sudo systemctl restart waagent
       sudo mount /mnt/shared
       sudo systemctl start slurmd
       {% endif %}
