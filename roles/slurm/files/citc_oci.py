@@ -65,6 +65,26 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
     shape = [f for f in features if f.startswith("shape=")][0].split("=")[1].strip()
     subnet = get_subnet(oci_config, nodespace["compartment_id"], nodespace["vcn_id"], nodespace["cluster_id"])
     image = get_image(oci_config, nodespace["compartment_id"], nodespace["cluster_id"])
+    shape_config = None
+
+    if shape.find(".Flex.") != -1:
+        # This is an OCI flexible shape. The naming format will
+        # tell us how many CPUs we should request. The OCI format
+        # is 'VM.Type.Process.Flex', e.g. 'VM.Standard.E3.Flex'. We
+        # have extended this to 'VM.Type.Process.Flex.NCPUs.RAM_GB', e.g.
+        # 'VM.Standard.E3.Flex.16.128'.
+        try:
+            parts = shape.split(".")
+            ncpus = int(parts[-2])
+            mem_gb = int(parts[-1])
+            shape = ".".join(parts[0:-2])
+        except Exception:
+            raise RuntimeError(f"Error: Cannot get number of cpus or RAM from {shape}") 
+
+        shape_config = oci.core.models.LaunchInstanceShapeConfigDetails(
+                           ocpus=ncpus,
+                           baseline_ocpu_utilization="BASELINE_1_1",  # non-burstable
+                           memory_in_gbs=mem_gb)
 
     with open("/home/slurm/bootstrap.sh", "rb") as f:
         user_data = base64.b64encode(f.read()).decode()
@@ -73,6 +93,7 @@ def create_node_config(oci_config, hostname: str, ip: Optional[str], nodespace: 
         compartment_id=nodespace["compartment_id"],
         availability_domain=ad,
         shape=shape,
+        shape_config=shape_config,
         subnet_id=subnet,
         image_id=image.id,
         display_name=hostname,
