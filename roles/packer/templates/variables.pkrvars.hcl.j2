@@ -1,7 +1,7 @@
 ca_cert = "{{ ca_cert }}"
 cluster = "{{ startnode_config.cluster_id }}"
 destination_image_name = "citc-slurm-compute"
-ssh_username = "{%- if ansible_local.citc.csp in ["aws", "google"] -%}centos{%- else -%}opc{%- endif -%}"
+ssh_username = "{%- if ansible_local.citc.csp in ["google"] -%}centos{%- elif ansible_local.citc.csp in ["aws"] -%}rocky{%- else -%}opc{%- endif -%}"
 
 aws_arch = "x86_64"
 aws_region = "{%- if startnode_config.region is defined -%}{{ startnode_config.region }}{%- endif -%}"
