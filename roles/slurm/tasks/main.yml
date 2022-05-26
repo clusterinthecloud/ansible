@@ -64,14 +64,6 @@
     enabled: yes
     state: started
 
-- name: Add Slurm repository
-  yum_repository:
-    name: slurm
-    description: Slurm
-    baseurl: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/
-    gpgcheck: yes
-    gpgkey: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/repodata/repomd.xml.key
-
 - name: create slurm group
   group:
     name: slurm
@@ -143,7 +135,7 @@
     dest: /etc/slurm/slurmdbd.conf
     owner: slurm
     group: slurm
-    mode: 0400
+    mode: 0600
   when: slurm_role == "mgmt"
   notify:
     - restart slurmdbd
