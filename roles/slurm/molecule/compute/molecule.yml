@@ -19,7 +19,7 @@ provisioner:
         slurm_role: compute
         slurm_packages:
           - slurmd
-          - libpmi
+          - pmi
         slurm_version: 20.02
         slurm_cluster_name: cluster
         slurm_control_machine: mgmt
