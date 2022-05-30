@@ -96,7 +96,7 @@
 
 - name: checkout webui
   git:
-    repo: git://github.com/clusterinthecloud/webui.git
+    repo: https://github.com/clusterinthecloud/webui.git
     force: yes
     dest: "{{ webui_dir }}"
     version: master
