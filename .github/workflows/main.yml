@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install 'ansible<2.10,>=2.9' ansible-lint
+          pip install 'ansible<2.10,>=2.9' 'ansible-lint<6.0.0'
       - name: Ansible lint
         run: |
           ansible-lint --offline management.yml compute.yml nfsserver.yml
@@ -63,7 +63,7 @@ jobs:
         run: sudo apt-get install python3-docker
       - name: Install Molecule
         run: |
-          python -m pip install 'ansible<2.10,>=2.9' 'molecule[podman,docker]==3.4.1'
+          python -m pip install 'ansible<2.10,>=2.9' 'ansible-lint<6.0.0' 'molecule[podman,docker]==3.4.1'
       - name: Test role
         run: |
           cd roles/${{ matrix.role }}
