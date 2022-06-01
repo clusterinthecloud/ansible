@@ -21,3 +21,5 @@ filesystem_mount_point: /shared
 software_install_dir: /mnt/{{ filesystem_mount_point }}
 
 admin_key_path: /root/citc_authorized_keys
+
+ansible_python_interpreter: /usr/libexec/platform-python
