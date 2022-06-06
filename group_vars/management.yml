@@ -12,6 +12,8 @@ slurm_role: mgmt
 slurm_elastic:
   oracle:
     config_directory: /home/slurm/.oci/
+  azure:
+    config_directory: /home/slurm/.oci/
 
 install_packages:
   - xorg-x11-xauth
@@ -25,6 +27,9 @@ mpi_packages:
     - openmpi-devel
     - mpich-devel
   google:
+    - openmpi-devel
+    - mpich-devel
+  azure:
     - openmpi-devel
     - mpich-devel
   aws: []

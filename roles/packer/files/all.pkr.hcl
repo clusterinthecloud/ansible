@@ -10,6 +10,13 @@ variable "aws_region" {}
 variable "aws_instance_type" {}
 variable "aws_arch" {}
 
+variable "azure_region" {}
+variable "azure_instance_type" {}
+variable "azure_resource_group" {}
+variable "azure_virtual_network" {}
+variable "azure_virtual_network_subnet" {}
+variable "azure_dns_zone" {}
+
 variable "oracle_availability_domain" {}
 variable "oracle_base_image_ocid" {}
 variable "oracle_compartment_ocid" {}
@@ -91,6 +98,22 @@ source "amazon-ebs" "aws" {
     }
 }
 
+source "azure-arm" "azure" {
+    managed_image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    managed_image_resource_group_name = var.azure_resource_group
+    build_resource_group_name = var.azure_resource_group
+    virtual_network_name = var.azure_virtual_network
+    virtual_network_subnet_name = var.azure_virtual_network_subnet
+    virtual_network_resource_group_name = var.azure_resource_group
+    vm_size = var.azure_instance_type
+    ssh_username = var.ssh_username
+    os_type = "Linux"
+    image_publisher = "OpenLogic"
+    image_offer = "CentOS"
+    image_sku = "8_4-gen2"
+}
+
+
 source "oracle-oci" "oracle" {
     image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
     availability_domain = var.oracle_availability_domain
@@ -111,6 +134,7 @@ build {
         "source.googlecompute.google",
         "source.amazon-ebs.aws",
         "source.oracle-oci.oracle",
+        "source.azure-arm.azure",
     ]
 
     provisioner "file" {
@@ -160,5 +184,13 @@ build {
 
     provisioner "shell" {
         script = "/home/citc/compute_image_extra.sh"
+    }
+
+    provisioner "shell" {
+        script = "/home/citc/install_cvmfs_eessi.sh"
+    }
+
+    provisioner "shell" {
+        script = "/home/citc/compute_image_finalize.sh"
     }
 }

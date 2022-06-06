@@ -26,7 +26,18 @@
     opts: defaults,nofail,nosuid
     state: mounted
   when:
-    ansible_local.citc.csp != "aws"
+    - ansible_local.citc.csp != "aws"
+    - ansible_local.citc.csp != "azure"
+
+- name: Mount shared file system now that fileserver is ready
+  mount:
+    path: /mnt/{{ filesystem_mount_point }}
+    src: "{{ filesystem_target_address }}:{{ filesystem_mount_point }}"
+    fstype: nfs
+    opts: rw,hard,rsize=1048576,wsize=1048576,vers=3,tcp,_netdev,noauto
+    state: mounted
+  when:
+    - ansible_local.citc.csp == "azure"
 
 - name: Mount shared file system
   mount:

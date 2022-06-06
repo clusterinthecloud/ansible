@@ -1,0 +1,25 @@
+---
+- name: install Azure tools
+  pip:
+    name:
+      - azure-mgmt-resource
+      - azure-mgmt-compute
+      - azure-mgmt-network
+      - azure-identity
+      - azure-cli
+    virtualenv: /opt/cloud_sdk
+
+- name: create azure config directory
+  file:
+    path: "{{ slurm_elastic.azure.config_directory }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: install startnode support module
+  copy:
+    src: citc_azure.py
+    dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
+    mode: 0755
+

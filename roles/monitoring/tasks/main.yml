@@ -20,11 +20,16 @@
     baseurl: https://repos.influxdata.com/centos/$releasever/{{ "arm64" if ansible_architecture == "aarch64" else ansible_architecture }}/stable/
     gpgkey: https://repos.influxdata.com/influxdb.key
 
+#- name: install telegraf package
+#  package:
+#    name: telegraf
+#    state: present
+#  notify: restart telegraf
+
 - name: install telegraf package
-  package:
+  yum:
     name: telegraf
-    state: present
-  notify: restart telegraf
+    disable_gpg_check: yes
 
 - name: enable the telegraf service
   service:

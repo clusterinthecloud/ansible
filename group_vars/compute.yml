@@ -14,6 +14,9 @@ mpi_packages:
   google:
     - mpich
     - openmpi
+  azure:
+    - mpich
+    - openmpi
   aws: []
 
 monitoring_role: client
