@@ -28,6 +28,8 @@ ceph_packages:
   - ceph-volume
   - lvm2
 
+ceph_version: quincy
+
 monitoring_role: client
 
 ldap_hostname: "{{ ansible_local.citc.ldap_hostname }}"
