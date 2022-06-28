@@ -5,7 +5,7 @@ mgmt_hostname: "{{ ansible_local.citc.mgmt_hostname }}"
 users: []
 
 # From https://www.schedmd.com/downloads.php
-slurm_version: 20.02
+slurm_version: 20.11
 
 slurm_cluster_name: cluster
 slurm_control_machine: "{{ mgmt_hostname }}"
