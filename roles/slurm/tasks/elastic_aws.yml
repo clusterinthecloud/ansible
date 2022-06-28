@@ -20,14 +20,14 @@
 
 - name: copy aws-credentials.csv
   copy:
-    src: /home/centos/aws-credentials.csv
+    src: /home/rocky/aws-credentials.csv
     dest: /home/slurm/aws-credentials.csv
     owner: slurm
     group: slurm
     mode: 0700
-  when: '"/home/centos/aws-credentials.csv" is exists'
+  when: '"/home/rocky/aws-credentials.csv" is exists'
 
 - name: delete public aws-credentials.csv
   file:
-    path: /home/centos/aws-credentials.csv
+    path: /home/rocky/aws-credentials.csv
     state: absent
