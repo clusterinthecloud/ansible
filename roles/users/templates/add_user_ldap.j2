@@ -60,3 +60,5 @@ EOF
 curl --silent ${SSHKEYS} | /usr/local/libexec/set_ssh_key ${USER}
 
 echo "${PASSWORD}" | /usr/local/libexec/set_password_file ${USER}
+
+/usr/local/libexec/add_user_to_distrac_group ${USER}
