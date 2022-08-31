@@ -15,7 +15,7 @@ sudo dnf config-manager --set-enabled powertools
 {% elif ansible_local.citc.csp == "aws" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
-sudo dnf install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r)
+sudo dnf install -y kernel-devel-$(uname -r) kernel-headers-$(uname -r)  # For Nvidia drivers, TODO move into docs for that feature
 {% elif ansible_local.citc.csp == "oracle" %}
 sudo dnf install -y oracle-epel-release-el8
 sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
