@@ -26,12 +26,6 @@
     state: present
   notify: restart telegraf
 
-- name: enable the telegraf service
-  service:
-    name: telegraf
-    state: started
-    enabled: yes
-
 - name: enable network monitoring in telegraf
   ini_file:
     path: /etc/telegraf/telegraf.conf
@@ -51,5 +45,11 @@
     backup: yes
     mode: u=rw,g=r,o=r
   notify: restart telegraf
+
+- name: enable the telegraf service
+  service:
+    name: telegraf
+    state: started
+    enabled: yes
 
 - include_tasks: "{{ monitoring_role }}.yml"
