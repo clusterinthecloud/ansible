@@ -21,7 +21,7 @@ SURNAME=${3}
 HOMEROOT=/mnt/shared/home
 
 PASSWORD=$(openssl rand -base64 30)
-SHA1="$(python3 - <<EOF
+SHA1="$({{ ldap_venv.virtualenv }}/bin/python - <<EOF
 import ldap3
 print(ldap3.utils.hashed.hashed(ldap3.HASHED_SALTED_SHA512, "${PASSWORD}"))
 EOF

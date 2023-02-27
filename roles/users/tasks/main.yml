@@ -10,10 +10,12 @@
   group:
     name: usermgmt
 
-- name: install ldap3 in central Python 3
-  package:
-    name: python3-ldap3
-    state: present
+- name: install ldap3
+  pip:
+    name: ldap3
+    virtualenv: /opt/ldap_venv
+    virtualenv_command: "{{ python_venv }}"
+  register: ldap_venv
 
 - name: create home dir creation script
   copy:
