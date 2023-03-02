@@ -19,8 +19,8 @@ provisioner:
         slurm_role: compute
         slurm_packages:
           - slurmd
-          - libpmi
-        slurm_version: 20.02
+          - pmi
+        slurm_version: 20.11
         slurm_cluster_name: cluster
         slurm_control_machine: mgmt
         filesystem_mount_point: /shared

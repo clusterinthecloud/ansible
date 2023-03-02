@@ -5,7 +5,7 @@ slurm_accounting_db_password: "{{ lookup('password', '/tmp/slurmpasswordfile cha
 slurm_packages:
   - slurmctld
   - slurmdbd
-  - libpmi
+  - pmi
 
 slurm_role: mgmt
 
@@ -15,7 +15,6 @@ slurm_elastic:
 
 install_packages:
   - xorg-x11-xauth
-  - openmpi-devel
   - python3-devel
   - "@Development Tools"
   - vim
@@ -27,7 +26,9 @@ mpi_packages:
   google:
     - openmpi-devel
     - mpich-devel
-  aws: []
+  aws:
+    - openmpi-devel
+    - mpich-devel
 
 monitoring_role: master
 grafana_admin_password: "{{ lookup('password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
