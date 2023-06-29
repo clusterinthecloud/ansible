@@ -42,7 +42,6 @@
     - slurm
     - packer
     - ssh
-    - security_updates
     - ntp
     - sssd
     - users
