@@ -11,7 +11,7 @@
     name: 389-ds-base
 
 - name: check if 389 setup already run
-  command: systemctl list-unit-files dirsrv@.service  # noqa 301 303
+  command: systemctl list-unit-files dirsrv@.service  # noqa no-changed-when command-instead-of-module
   register: dirsrv_unit_list
 
 - name: copy 389 config template
