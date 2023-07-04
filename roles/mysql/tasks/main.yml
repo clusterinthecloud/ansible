@@ -1,4 +1,5 @@
 ---
+
 - name: install PyMySQL
   package:
     name: python3-PyMySQL

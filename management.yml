@@ -4,9 +4,9 @@
   hosts: management
   tasks:
     - name: Download required roles
-      command: ansible-galaxy install -r requirements.yml
-      register: galaxy_result
-      changed_when: '"was installed successfully" in galaxy_result.stdout'
+      community.general.ansible_galaxy_install:
+        type: both
+        requirements_file: requirements.yml
       become: false
       delegate_to: localhost
 

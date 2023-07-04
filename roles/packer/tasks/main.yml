@@ -93,7 +93,7 @@
     mode: u=rwx,g=rx,o=rx
 
 # Ansible will not wait for this task until it gets to the `finalise` role
-- name: run packer to build first image
+- name: run packer to build first image (runs in background)
   command: /usr/local/bin/run-packer  # noqa no-changed-when
   register: packer_result
   async: 1000
