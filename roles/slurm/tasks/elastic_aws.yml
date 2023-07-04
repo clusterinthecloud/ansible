@@ -3,14 +3,14 @@
   pip:
     name:
       - boto3
-      #- boto3-stubs[ec2,route53]
+      # - boto3-stubs[ec2,route53]
     virtualenv: /opt/cloud_sdk
 
 # This currently fails on Python 3.6
-#- name: generate boto3 mypy stubs
-#  command: /opt/cloud_sdk/bin/python -m mypy_boto3
-#  register: result
-#  changed_when: '"Discovered" in result.stdout'
+# - name: generate boto3 mypy stubs
+#   command: /opt/cloud_sdk/bin/python -m mypy_boto3
+#   register: result
+#   changed_when: '"Discovered" in result.stdout'
 
 - name: Install startnode support module
   copy:

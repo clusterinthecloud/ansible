@@ -34,4 +34,3 @@
     src: citc_oci.py
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
     mode: u=rw,g=r,o=r
-

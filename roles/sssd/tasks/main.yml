@@ -14,10 +14,10 @@
     mode: preserve
 
 - name: Update CA trust anchors
-  command: update-ca-trust # noqa no-changed-when
+  command: update-ca-trust  # noqa no-changed-when
 
 - name: Enable SSSD auth in PAM
-  command: authselect select sssd --force # noqa no-changed-when
+  command: authselect select sssd --force  # noqa no-changed-when
 
 - name: Copy sssd config template
   template:

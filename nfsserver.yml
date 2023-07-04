@@ -5,7 +5,6 @@
   roles:
     - nfs_server
     - ssh
-    #- security_updates
     - ntp
     - sssd
     - monitoring

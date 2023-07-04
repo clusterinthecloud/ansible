@@ -6,10 +6,14 @@
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
   with_items:
-    - { regexp: '#\$ModLoad imudp',         replace: '$ModLoad imudp'         }
-    - { regexp: '#\$UDPServerRun 514',      replace: '$UDPServerRun 514'      }
-    - { regexp: '#\$ModLoad imtcp',         replace: '$ModLoad imtcp'         }
-    - { regexp: '#\$InputTCPServerRun 514', replace: '$InputTCPServerRun 514' }
+    - regexp: '#\$ModLoad imudp'
+      replace: '$ModLoad imudp'
+    - regexp: '#\$UDPServerRun 514'
+      replace: '$UDPServerRun 514'
+    - regexp: '#\$ModLoad imtcp'
+      replace: '$ModLoad imtcp'
+    - regexp: '#\$InputTCPServerRun 514'
+      replace: '$InputTCPServerRun 514'
   notify: Restart rsyslog
 
 - name: Install influxdb package

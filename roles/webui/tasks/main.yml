@@ -59,10 +59,10 @@
             # Should be able to replace custom_options with servers below
             # See https://github.com/nginxinc/ansible-role-nginx/issues/232
             # This still breaks. Wait until 0.4 of https://github.com/nginxinc/ansible-role-nginx-config
-            #servers:
-            #  gunicorn:
-            #    address: unix:/run/gunicorn.sock
-            #    health_check: fail_timeout=0
+            # servers:
+            #   gunicorn:
+            #     address: unix:/run/gunicorn.sock
+            #     health_check: fail_timeout=0
 
 - name: Install build dependencies
   package:
