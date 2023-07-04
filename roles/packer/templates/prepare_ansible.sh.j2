@@ -1,14 +1,8 @@
 #! /bin/bash
 set -euo pipefail
 
-echo 'packer' | sudo -S sh -c '
-cat > /tmp/hosts <<EOF
-[compute]
-$(hostname)
-[all:vars]
-cluster_id={{ startnode_config.cluster_id }}
-packer_run=yes
-EOF'
+# This script runs on the packer node to set things up, ready to have Ansible connect to it.
+
 {% if ansible_local.citc.csp == "google" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
@@ -21,13 +15,10 @@ sudo dnf install -y oracle-epel-release-el8
 sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 sudo dnf config-manager --set-enabled ol8_codeready_builder
 {% endif %}
-sudo dnf install -y ansible git
-sudo cat /tmp/hosts
 sudo mkdir -p /etc/ansible/facts.d/
 echo 'packer' | sudo -S sh -c '
 cat > /etc/ansible/facts.d/citc.fact <<EOF
 {"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}", "mgmt_hostname":"{{ mgmt_hostname }}", "ldap_hostname":"{{ ldap_hostname }}", "ldap_dm_password":"{{ ldap_dm_password }}" }
 EOF'
 sudo chmod u=rw,g=,o= /etc/ansible/facts.d/citc.fact
-sudo cat /etc/ansible/facts.d/citc.fact
 sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys

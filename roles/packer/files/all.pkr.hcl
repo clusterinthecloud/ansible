@@ -153,6 +153,7 @@ build {
     }
 
     provisioner "ansible" {
+        command = "/etc/citc/packer/run-ansible.sh"
         playbook_file = "/root/citc-ansible/compute.yml"
         groups = ["compute"]
         user = var.ssh_username

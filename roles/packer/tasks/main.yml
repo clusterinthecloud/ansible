@@ -56,6 +56,13 @@
     owner: root
     mode: u=rwx,g=,o=
 
+- name: copy in packer ansible wrapper script
+  template:
+    src: run-ansible.sh.j2
+    dest: /etc/citc/packer/run-ansible.sh
+    owner: root
+    mode: "u=rwx,g=,o="
+
 - name: copy in packer extra run script template (no force overwrite)
   copy:
     src: compute_image_extra.sh
