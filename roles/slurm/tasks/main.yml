@@ -23,7 +23,7 @@
   copy:
     src: /tmp/munge.key
     dest: /etc/munge/munge.key
-    remote_src: yes
+    remote_src: true
     mode: 0400
   when:
     - slurm_role == "compute"
@@ -45,7 +45,7 @@
 - name: Start service munge
   service:
     name: munge
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Install firewalld
@@ -61,7 +61,7 @@
 - name: Start service firewalld
   service:
     name: firewalld
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Add Slurm repository
@@ -69,14 +69,14 @@
     name: slurm
     description: Slurm
     baseurl: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/
-    gpgcheck: yes
+    gpgcheck: true
     gpgkey: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/repodata/repomd.xml.key
 
 - name: Create slurm group
   group:
     name: slurm
     state: present
-    system: yes
+    system: true
     gid: 245
 
 - name: Create slurm user
@@ -84,7 +84,7 @@
     name: slurm
     comment: Slurm controller user
     group: slurm
-    system: yes
+    system: true
     uid: 245
 
 - name: Install Slurm
@@ -216,20 +216,20 @@
 - name: Start service slurmctld
   service:
     name: slurmctld
-    enabled: yes
+    enabled: true
   when: slurm_role == "mgmt"
 
 - name: Start service slurmdbd
   service:
     name: slurmdbd
     state: started
-    enabled: yes
+    enabled: true
   when: slurm_role == "mgmt"
 
 - name: Enable service slurmd
   service:
     name: slurmd
-    enabled: yes
+    enabled: true
   when: slurm_role == "compute"
 
 # As of Slurm 18.08 the slurmdbd service doesn't become available immediately

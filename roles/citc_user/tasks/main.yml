@@ -28,7 +28,7 @@
 - name: Copy SSH public keys to citc user
   copy:
     src: "{{ admin_key_path }}"
-    remote_src: yes
+    remote_src: true
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc

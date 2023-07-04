@@ -10,7 +10,7 @@
   copy:
     src: "{{ ca_cert if ca_cert is defined else '/tmp/CA.crt' }}"
     dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
-    remote_src: yes
+    remote_src: true
     mode: preserve
 
 - name: Update CA trust anchors
@@ -30,4 +30,4 @@
   service:
     name: sssd
     state: restarted
-    enabled: yes
+    enabled: true

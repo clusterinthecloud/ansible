@@ -22,7 +22,7 @@
   service:
     name: influxdb
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Add Grafana repository
   yum_repository:
@@ -41,7 +41,7 @@
   service:
     name: grafana-server
     state: started
-    enabled: yes
+    enabled: true
 
 # TODO move firewalld installation into a separate role
 - name: Install firewalld
@@ -57,7 +57,7 @@
 - name: Start service firewalld
   service:
     name: firewalld
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Open Grafana port in firewall
@@ -72,8 +72,8 @@
     url: http://localhost:3000/api/admin/settings
     user: admin
     password: "{{ grafana_admin_password }}"
-    force_basic_auth: yes
-  ignore_errors: yes
+    force_basic_auth: true
+  ignore_errors: true
   register: grafana_password
 
 - name: Set admin password
@@ -81,7 +81,7 @@
     url: http://localhost:3000/api/user/password
     user: admin
     password: admin
-    force_basic_auth: yes
+    force_basic_auth: true
     method: PUT
     body_format: json
     body: '{ "oldPassword": "admin", "newPassword": "{{ grafana_admin_password }}", "confirmNew": "{{ grafana_admin_password }}"}'

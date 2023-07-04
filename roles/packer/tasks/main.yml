@@ -37,7 +37,7 @@
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
-    remote_src: yes
+    remote_src: true
     mode: 0744
 
 - name: Load the startnode config
@@ -67,7 +67,7 @@
   copy:
     src: compute_image_extra.sh
     dest: /home/citc/compute_image_extra.sh
-    force: no
+    force: false
     owner: citc
     group: citc
     mode: u=rw,g=rw,o=

@@ -47,7 +47,7 @@
                     header_host:
                       name: Host
                       value: $http_host
-                  proxy_redirect: off
+                  proxy_redirect: "off"
                   proxy_pass: http://app_server
         upstreams:
           app_server:
@@ -97,7 +97,7 @@
 - name: Checkout webui
   git:
     repo: https://github.com/clusterinthecloud/webui.git
-    force: yes
+    force: true
     dest: "{{ webui_dir }}"
     version: master
   notify: Reload gunicorn
@@ -172,7 +172,7 @@
     chdir: "{{ webui_dir }}"
   environment:
     DJANGO_SUPERUSER_PASSWORD: "{{ webui_superuser_password }}"
-  no_log: True
+  no_log: true
   register: createsuperuser_result
   changed_when: '"Creating user" in createsuperuser_result.stdout'
 
@@ -207,8 +207,8 @@
   systemd:
     name: gunicorn
     state: started
-    enabled: yes
-    daemon_reexec: yes
+    enabled: true
+    daemon_reexec: true
 
 - name: Install firewalld
   package:

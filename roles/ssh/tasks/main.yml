@@ -7,7 +7,7 @@
 - name: Enable sshd
   service:
     name: sshd
-    enabled: yes
+    enabled: true
 
 - name: Set SSHD AddressFamily to inet
   lineinfile:

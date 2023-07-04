@@ -9,7 +9,7 @@
   service:
     name: rsyslog
     state: started
-    enabled: yes
+    enabled: true
 
 # Currently only influxdb is in the aarch64 repo so we must use the arm64 repo. Once they
 # are in https://repos.influxdata.com/centos/8/aarch64/stable/ we can change.
@@ -42,7 +42,7 @@
     section: "[outputs.influxdb]"
     option: urls
     value: '["http://{{ mgmt_hostname }}:8086"]'
-    backup: yes
+    backup: true
     mode: u=rw,g=r,o=r
   notify: Restart telegraf
 
@@ -50,6 +50,6 @@
   service:
     name: telegraf
     state: started
-    enabled: yes
+    enabled: true
 
 - include_tasks: "{{ monitoring_role }}.yml"

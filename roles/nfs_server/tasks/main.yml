@@ -39,5 +39,5 @@
 - name: Start nfs-server
   service:
     name: nfs-server
-    enabled: yes
+    enabled: true
     state: started
