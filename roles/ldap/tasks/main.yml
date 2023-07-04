@@ -37,6 +37,10 @@
     host: "{{ mgmt_hostname }}"
     port: 389
 
+- name: Install Python LDAP
+  package:
+    name: python3-ldap
+
 - name: ensure people OU exists
   ldap_entry:
     dn: ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk

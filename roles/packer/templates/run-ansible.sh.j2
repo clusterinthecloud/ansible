@@ -1,0 +1,6 @@
+#!/bin/bash
+# This script runs on the mgmt node and connects to the remote packer node
+# The virtual environment being sourced is referring to the one on the mgmt node
+# If ANSIBLE_PYTHON_INTERPRETER is set, it is referring to the one on the packer node
+source /opt/venvs/ansible/bin/activate
+ansible-playbook "$@"

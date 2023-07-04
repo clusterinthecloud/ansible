@@ -56,6 +56,13 @@
     owner: root
     mode: u=rwx,g=,o=
 
+- name: copy in packer ansible wrapper script
+  template:
+    src: run-ansible.sh.j2
+    dest: /etc/citc/packer/run-ansible.sh
+    owner: root
+    mode: "u=rwx,g=,o="
+
 - name: copy in packer extra run script template (no force overwrite)
   copy:
     src: compute_image_extra.sh
@@ -86,7 +93,7 @@
     mode: u=rwx,g=rx,o=rx
 
 # Ansible will not wait for this task until it gets to the `finalise` role
-- name: run packer to build first image
+- name: run packer to build first image (runs in background)
   command: /usr/local/bin/run-packer  # noqa no-changed-when
   register: packer_result
   async: 1000
