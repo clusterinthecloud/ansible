@@ -1,6 +1,6 @@
 ---
 
-- name: install roles
+- name: Install roles
   hosts: management
   tasks:
     - name: Download required roles
@@ -10,15 +10,15 @@
       become: false
       delegate_to: localhost
 
-- name: finisher script
+- name: Finisher script
   hosts: management
   tasks:
-    - name: copy over finisher script
+    - name: Copy over finisher script
       template:
         src: roles/finalise/templates/finish.py.j2
         dest: /usr/local/bin/finish
         mode: 0755
-    - name: set motd
+    - name: Set motd
       copy:
         content: |
           ######################
@@ -30,7 +30,7 @@
         dest: /etc/motd
         mode: u=rw,g=r,o=r
 
-- name: common
+- name: Common
   hosts: all
   tags: common
   roles:
@@ -47,7 +47,7 @@
     - sssd
     - users
   tasks:
-    - name: copy SSH public keys to slurm account
+    - name: Copy SSH public keys to slurm account
       copy:
         src: "{{ admin_key_path }}"
         dest: /home/slurm/opc_authorized_keys
@@ -55,7 +55,7 @@
         group: slurm
         mode: 0600
 
-- name: finalise
+- name: Finalise
   hosts: all
   tags: finalise
   roles:

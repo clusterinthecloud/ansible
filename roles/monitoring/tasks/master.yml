@@ -1,6 +1,6 @@
 ---
 
-- name: configure mgmt to recieve syslog on UDP and TCP
+- name: Configure mgmt to recieve syslog on UDP and TCP
   replace:
     path: /etc/rsyslog.conf
     regexp: "{{ item.regexp }}"
@@ -10,15 +10,15 @@
     - { regexp: '#\$UDPServerRun 514',      replace: '$UDPServerRun 514'      }
     - { regexp: '#\$ModLoad imtcp',         replace: '$ModLoad imtcp'         }
     - { regexp: '#\$InputTCPServerRun 514', replace: '$InputTCPServerRun 514' }
-  notify: restart rsyslog
+  notify: Restart rsyslog
 
-- name: install influxdb package
+- name: Install influxdb package
   yum:
     name:
       - influxdb
-  notify: restart influxdb
+  notify: Restart influxdb
 
-- name: enable the influxdb service
+- name: Enable the influxdb service
   service:
     name: influxdb
     state: started
@@ -31,42 +31,41 @@
     baseurl: https://packages.grafana.com/oss/rpm
     gpgkey: https://packages.grafana.com/gpg.key
 
-- name: install grafana package
+- name: Install grafana package
   yum:
     name:
       - grafana
-  notify: restart grafana
+  notify: Restart grafana
 
-- name: enable the grafana service
+- name: Enable the grafana service
   service:
     name: grafana-server
     state: started
     enabled: yes
 
 # TODO move firewalld installation into a separate role
-- name: install firewalld
+- name: Install firewalld
   package:
     name: firewalld
     state: present
 
-- name: install python-firewall
+- name: Install python-firewall
   package:
     name: python3-firewall
     state: present
 
-- name: start service firewalld
+- name: Start service firewalld
   service:
     name: firewalld
     enabled: yes
     state: started
 
-- name: open Grafana port in firewall
+- name: Open Grafana port in firewall
   firewalld:
     port: 3000/tcp
     permanent: true
     state: enabled
-  notify:
-    - restart firewalld
+  notify: Restart firewalld
 
 - name: Check admin password
   uri:
@@ -89,7 +88,7 @@
   ignore_errors: '{{ ansible_check_mode }}'
   when: grafana_password.status == 401
 
-- name: add grafana password to secrets
+- name: Add grafana password to secrets
   lineinfile:
     path: /usr/sbin/get_secrets
     line: echo grafana "{{ grafana_admin_password }}"
@@ -106,7 +105,7 @@
   tags:
     - molecule-idempotence-notest  # https://github.com/ansible-collections/community.grafana/issues/127
 
-- name: install monitor_slurm script
+- name: Install monitor_slurm script
   copy:
     dest: /usr/local/bin/monitor_slurm
     content: |
@@ -131,7 +130,7 @@
       fi
     mode: a=rx,u+w
 
-- name: enable slurm monitoring in influx
+- name: Enable slurm monitoring in influx
   ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[inputs.exec]"
@@ -146,9 +145,9 @@
       timeout: '"5s"'
       name_suffix: '"_slurm"'
       data_format: '"influx"'
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: create directory for grafana dashboards
+- name: Create directory for grafana dashboards
   file:
     path: /etc/citc/grafana
     state: directory
@@ -190,4 +189,4 @@
         options:
           path: /etc/citc/grafana
     mode: u=rw,g=r,o=r
-  notify: restart grafana
+  notify: Restart grafana

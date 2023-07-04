@@ -1,5 +1,5 @@
 ---
-- name: install common tools
+- name: Install common tools
   pip:
     name:
       - PyYAML
@@ -8,13 +8,13 @@
     virtualenv_command: "{{ python_venv }}"
   register: cloud_sdk_venv
 
-- name: install watchdog service
+- name: Install watchdog service
   template:
     src: citc-watchdog.service.j2
     dest: /usr/lib/systemd/system/citc-watchdog.service
     mode: 0755
 
-- name: create citc config dir
+- name: Create citc config dir
   file:
     path: /etc/citc
     state: directory
@@ -22,7 +22,7 @@
     group: slurm
     mode: 0755
 
-- name: copy mgmt_shape.yaml
+- name: Copy mgmt_shape.yaml
   copy:
     src: /home/opc/mgmt_shape.yaml
     dest: /etc/citc/mgmt_shape.yaml
@@ -32,7 +32,7 @@
     mode: 0744
   when: '"/home/opc/mgmt_shape.yaml" is exists'
 
-- name: copy shapes.yaml
+- name: Copy shapes.yaml
   copy:
     src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
@@ -42,7 +42,7 @@
     mode: 0744
   when: '"/tmp/shapes.yaml" is exists'
 
-- name: copy startnode.yaml
+- name: Copy startnode.yaml
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
@@ -51,35 +51,35 @@
     group: slurm
     mode: 0744
 
-- name: configure startnode script
+- name: Configure startnode script
   copy:
     src: startnode.py
     dest: /usr/local/bin/startnode
     mode: 0755
 
-- name: configure stopnode script
+- name: Configure stopnode script
   copy:
     src: stopnode.py
     dest: /usr/local/bin/stopnode
     mode: 0755
 
-- name: configure update_config script
+- name: Configure update_config script
   copy:
     src: update_config.py
     dest: /usr/local/bin/update_config
     mode: 0755
 
-- name: install kill_all_nodes script
+- name: Install kill_all_nodes script
   copy:
     src: kill_all_nodes.sh
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-- name: install ssh-keygen
+- name: Install ssh-keygen
   package:
     name: openssh
 
-- name: generate SSH host keys for compute nodespace
+- name: Generate SSH host keys for compute nodespace
   openssh_keypair:
     type: "{{ item.type }}"
     size: "{{ item.size }}"
@@ -91,22 +91,22 @@
     - {"type": "rsa", "size": 4096}
     - {"type": "ecdsa", "size": 521}
 
-- name: load the startnode config
+- name: Load the startnode config
   slurp:
     src: /etc/citc/startnode.yaml
   register: startnode_config_data
 
-- name: set the startnode_config fact
+- name: Set the startnode_config fact
   set_fact:
     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
-- name: install cleanup_images script
+- name: Install cleanup_images script
   template:
     src: cleanup_images.sh.j2
     dest: /usr/local/bin/cleanup_images
     mode: u=rwx,g=rwx,o=rx
 
-- name: create cloud-init bootstrap script
+- name: Create cloud-init bootstrap script
   copy:
     content: |
       #! /bin/bash
@@ -132,13 +132,13 @@
     owner: slurm
     mode: "u=rw,g=r,o="
 
-- name: copy list_nodes script
+- name: Copy list_nodes script
   copy:
     src: list_nodes.sh
     dest: /usr/local/bin/list_nodes
     mode: 0755
 
-- name: start and enable service citc-watchdog
+- name: Start and enable service citc-watchdog
   service:
     name: citc-watchdog
     state: started

@@ -1,14 +1,14 @@
 ---
 
-- name: install nss-tools
+- name: Install nss-tools
   package:
     name: nss-tools
 
-- name: extract CA file from 389-ds
+- name: Extract CA file from 389-ds
   shell:
     cmd: certutil -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -L -n 'Self-Signed-CA' -a > /root/CA.crt
     creates: CA.crt
 
-- name: set fact for location of CA cert
+- name: Set fact for location of CA cert
   set_fact:
     ca_cert: /root/CA.crt

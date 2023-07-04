@@ -1,9 +1,9 @@
 ---
-- name: install nfs-utils
+- name: Install nfs-utils
   yum:
     name: nfs-utils
 
-- name: ensure fileserver name exists
+- name: Ensure fileserver name exists
   lineinfile:
     dest: /etc/hosts
     line: "{{ ansible_local.citc.fileserver_ip }} fileserver"

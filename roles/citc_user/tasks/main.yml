@@ -25,7 +25,7 @@
     group: citc
     mode: 0700
 
-- name: copy SSH public keys to citc user
+- name: Copy SSH public keys to citc user
   copy:
     src: "{{ admin_key_path }}"
     remote_src: yes

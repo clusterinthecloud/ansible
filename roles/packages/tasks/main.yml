@@ -1,5 +1,5 @@
 ---
 
-- name: yum install packages
+- name: Yum install packages
   yum:
     name: "{{ install_packages }}"

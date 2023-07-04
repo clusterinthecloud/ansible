@@ -1,5 +1,5 @@
 ---
-- name: install tools
+- name: Install tools
   pip:
     name:
       - boto3
@@ -12,13 +12,13 @@
 #  register: result
 #  changed_when: '"Discovered" in result.stdout'
 
-- name: install startnode support module
+- name: Install startnode support module
   copy:
     src: citc_aws.py  # should have this to be generic
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
     mode: u=rw,g=r,o=r
 
-- name: copy aws-credentials.csv
+- name: Copy aws-credentials.csv
   copy:
     src: /home/rocky/aws-credentials.csv
     dest: /home/slurm/aws-credentials.csv
@@ -27,7 +27,7 @@
     mode: 0700
   when: '"/home/rocky/aws-credentials.csv" is exists'
 
-- name: delete public aws-credentials.csv
+- name: Delete public aws-credentials.csv
   file:
     path: /home/rocky/aws-credentials.csv
     state: absent

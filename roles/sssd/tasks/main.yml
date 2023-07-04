@@ -1,32 +1,32 @@
 ---
 
-- name: install sssd
+- name: Install sssd
   package:
     name:
       - sssd
       - nss-tools
 
-- name: copy CA cert to trust anchors
+- name: Copy CA cert to trust anchors
   copy:
     src: "{{ ca_cert if ca_cert is defined else '/tmp/CA.crt' }}"
     dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
     remote_src: yes
     mode: preserve
 
-- name: update CA trust anchors
+- name: Update CA trust anchors
   command: update-ca-trust # noqa no-changed-when
 
-- name: enable SSSD auth in PAM
+- name: Enable SSSD auth in PAM
   command: authselect select sssd --force # noqa no-changed-when
 
-- name: copy sssd config template
+- name: Copy sssd config template
   template:
     src: sssd.conf.j2
     dest: /etc/sssd/sssd.conf
     mode: 0600
-  notify: restart sssd
+  notify: Restart sssd
 
-- name: start service sssd
+- name: Start service sssd
   service:
     name: sssd
     state: restarted

@@ -1,10 +1,10 @@
 ---
 
-- name: install nginx
+- name: Install nginx
   include_role:
     name: nginxinc.nginx
 
-- name: configure nginx
+- name: Configure nginx
   include_role:
     name: nginxinc.nginx_config
   vars:
@@ -64,14 +64,14 @@
             #    address: unix:/run/gunicorn.sock
             #    health_check: fail_timeout=0
 
-- name: install build dependencies
+- name: Install build dependencies
   package:
     name:
       - gcc
       - python38-devel
     state: present
 
-- name: install gunicorn
+- name: Install gunicorn
   pip:
     name:
       - gunicorn
@@ -90,21 +90,21 @@
     groups:
       - usermgmt
 
-- name: ensure git is installed
+- name: Ensure git is installed
   package:
     name: git
 
-- name: checkout webui
+- name: Checkout webui
   git:
     repo: https://github.com/clusterinthecloud/webui.git
     force: yes
     dest: "{{ webui_dir }}"
     version: master
-  notify: reload gunicorn
+  notify: Reload gunicorn
   tags:
     - molecule-idempotence-notest  # The checkout get changed by the next tasks
 
-- name: set django to production mode
+- name: Set django to production mode
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^IN_PRODUCTION = '
@@ -112,7 +112,7 @@
   tags:
     - molecule-idempotence-notest  # The file has been reset by the checkout
 
-- name: set secret key
+- name: Set secret key
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^SECRET_KEY'
@@ -120,12 +120,12 @@
   tags:
     - molecule-idempotence-notest  # The file has been reset by the checkout
 
-- name: install webui dependencies
+- name: Install webui dependencies
   pip:
     requirements: "{{ webui_dir }}/requirements.txt"
     virtualenv: "{{ webui_venv.virtualenv }}"
 
-- name: collect static files
+- name: Collect static files
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input"
     chdir: "{{ webui_dir }}"
@@ -133,13 +133,13 @@
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
 
 # TODO move this (and other copies of it) to a central role
-- name: create citc config dir
+- name: Create citc config dir
   file:
     path: /etc/citc
     state: directory
     mode: 0755
 
-- name: create webui mysql config
+- name: Create webui mysql config
   template:
     src: my.cnf.j2
     dest: /etc/citc/webui.my.cnf
@@ -147,26 +147,26 @@
     group: webui
     mode: "660"
 
-- name: create webui database
+- name: Create webui database
   mysql_db:
     name: webui
     state: present
 
-- name: create webui MySQL user
+- name: Create webui MySQL user
   mysql_user:
     name: webui
     password: "{{ webui_database_password }}"
     priv: 'webui.*:ALL'
     state: present
 
-- name: run migrations
+- name: Run migrations
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
     chdir: "{{ webui_dir }}"
   register: migrate_result
   changed_when: '"No migrations to apply" not in migrate_result.stdout'
 
-- name: create django admin
+- name: Create django admin
   command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username citc --email citc@localhost"
     chdir: "{{ webui_dir }}"
@@ -176,12 +176,12 @@
   register: createsuperuser_result
   changed_when: '"Creating user" in createsuperuser_result.stdout'
 
-- name: add webui password to secrets
+- name: Add webui password to secrets
   lineinfile:
     path: /usr/sbin/get_secrets
     line: echo webui "{{ webui_superuser_password }}"
 
-- name: create webui config file
+- name: Create webui config file
   template:
     src: webui.yaml.j2
     dest: /etc/citc/webui.yaml
@@ -191,39 +191,38 @@
 
 # TODO make checkout readable only by correct user
 
-- name: install gunicorn service file
+- name: Install gunicorn service file
   copy:
     src: gunicorn.service
     dest: /etc/systemd/system/gunicorn.service
     mode: u=rw,g=r,o=
 
-- name: install gunicorn socket file
+- name: Install gunicorn socket file
   copy:
     src: gunicorn.socket
     dest: /etc/systemd/system/gunicorn.socket
     mode: u=rw,g=r,o=
 
-- name: start and enable gunicorn
+- name: Start and enable gunicorn
   systemd:
     name: gunicorn
     state: started
     enabled: yes
     daemon_reexec: yes
 
-- name: install firewalld
+- name: Install firewalld
   package:
     name: firewalld
     state: present
 
-- name: install python-firewall
+- name: Install python-firewall
   package:
     name: python3-firewall
     state: present
 
-- name: open HTTP port in firewall
+- name: Open HTTP port in firewall
   firewalld:
     service: http
     permanent: true
     state: enabled
-  notify:
-    - restart firewalld
+  notify: Restart firewalld

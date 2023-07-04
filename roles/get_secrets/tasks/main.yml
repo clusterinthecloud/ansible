@@ -1,6 +1,6 @@
 ---
 
-- name: create get_secrets script
+- name: Create get_secrets script
   copy:
     dest: /usr/sbin/get_secrets
     content: |

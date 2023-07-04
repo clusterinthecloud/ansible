@@ -1,11 +1,11 @@
 ---
 
-- name: install rsyslog
+- name: Install rsyslog
   yum:
     name:
       - rsyslog
 
-- name: enable the rsyslog service
+- name: Enable the rsyslog service
   service:
     name: rsyslog
     state: started
@@ -20,13 +20,13 @@
     baseurl: https://repos.influxdata.com/centos/$releasever/{{ "arm64" if ansible_architecture == "aarch64" else ansible_architecture }}/stable/
     gpgcheck: false
 
-- name: install telegraf package
+- name: Install telegraf package
   package:
     name: telegraf
     state: present
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: enable network monitoring in telegraf
+- name: Enable network monitoring in telegraf
   ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[inputs.net]"
@@ -34,9 +34,9 @@
     value: '["*"]'
     state: present
     mode: u=rw,g=r,o=r
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: configure telegraf to use InfluxDB URL
+- name: Configure telegraf to use InfluxDB URL
   ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[outputs.influxdb]"
@@ -44,9 +44,9 @@
     value: '["http://{{ mgmt_hostname }}:8086"]'
     backup: yes
     mode: u=rw,g=r,o=r
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: enable the telegraf service
+- name: Enable the telegraf service
   service:
     name: telegraf
     state: started

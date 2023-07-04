@@ -1,10 +1,10 @@
 ---
-- name: yum install chrony
+- name: Yum install chrony
   package:
     name: chrony
-  notify: restart chronyd (RedHat)
+  notify: Restart chronyd (RedHat)
 
-- name: service start chronyd
+- name: Service start chronyd
   service:
     name: chronyd
     state: started

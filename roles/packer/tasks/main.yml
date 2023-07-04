@@ -10,60 +10,60 @@
     creates: /usr/local/bin/packer
     mode: u=rwx,g=rx,o=rx
 
-- name: set permissions on packer
+- name: Set permissions on packer
   file:
     path: /usr/local/bin/packer
     mode: u=rwx,g=rx,o=rx
 
-- name: create packer directory
+- name: Create packer directory
   file:
     path: /etc/citc/packer/
     state: directory
     mode: 0755
 
-- name: copy in packer build files
+- name: Copy in packer build files
   copy:
     src: all.pkr.hcl
     dest: /etc/citc/packer/all.pkr.hcl
     mode: u=rw,g=r,o=r
 
-- name: create citc config dir
+- name: Create citc config dir
   file:
     path: /etc/citc
     state: directory
     mode: 0755
 
-- name: copy startnode.yaml
+- name: Copy startnode.yaml
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
     remote_src: yes
     mode: 0744
 
-- name: load the startnode config
+- name: Load the startnode config
   slurp:
     src: /etc/citc/startnode.yaml
   register: startnode_config_data
 
-- name: set the startnode_config fact
+- name: Set the startnode_config fact
   set_fact:
     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
-- name: copy in packer ansible preparation script
+- name: Copy in packer ansible preparation script
   template:
     src: prepare_ansible.sh.j2
     dest: /etc/citc/packer/prepare_ansible.sh
     owner: root
     mode: u=rwx,g=,o=
 
-- name: copy in packer ansible wrapper script
+- name: Copy in packer ansible wrapper script
   template:
     src: run-ansible.sh.j2
     dest: /etc/citc/packer/run-ansible.sh
     owner: root
     mode: "u=rwx,g=,o="
 
-- name: copy in packer extra run script template (no force overwrite)
+- name: Copy in packer extra run script template (no force overwrite)
   copy:
     src: compute_image_extra.sh
     dest: /home/citc/compute_image_extra.sh
@@ -72,7 +72,7 @@
     group: citc
     mode: u=rw,g=rw,o=
 
-- name: copy in EESSI install script
+- name: Copy in EESSI install script
   copy:
     src: install_cvmfs_eessi.sh
     dest: /home/citc/install_cvmfs_eessi.sh
@@ -80,20 +80,20 @@
     group: citc
     mode: u=rw,g=rw,o=
 
-- name: copy in config
+- name: Copy in config
   template:
     src: variables.pkrvars.hcl.j2
     dest: /etc/citc/packer/variables.pkrvars.hcl
     mode: u=rw,g=r,o=r
 
-- name: copy in packer run script
+- name: Copy in packer run script
   template:
     src: run-packer.sh.j2
     dest: /usr/local/bin/run-packer
     mode: u=rwx,g=rx,o=rx
 
 # Ansible will not wait for this task until it gets to the `finalise` role
-- name: run packer to build first image (runs in background)
+- name: Run packer to build first image (runs in background)
   command: /usr/local/bin/run-packer  # noqa no-changed-when
   register: packer_result
   async: 1000

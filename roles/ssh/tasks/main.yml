@@ -1,17 +1,17 @@
 ---
 
-- name: install ssh server
+- name: Install ssh server
   package:
     name: openssh-server
 
-- name: enable sshd
+- name: Enable sshd
   service:
     name: sshd
     enabled: yes
 
-- name: set SSHD AddressFamily to inet
+- name: Set SSHD AddressFamily to inet
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^AddressFamily'
     line: "AddressFamily inet"
-  notify: restart sshd
+  notify: Restart sshd

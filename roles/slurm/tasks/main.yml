@@ -1,11 +1,11 @@
 ---
-- name: install munge
+- name: Install munge
   yum:
     name: munge
     state: installed
 
 # If we're the mgmt node, create a munge key
-- name: generate munge key
+- name: Generate munge key
   shell:
     cmd: dd if=/dev/urandom bs=1 count=1024 > munge.key
     creates: munge.key
@@ -13,13 +13,13 @@
     chdir: /etc/munge/
   when: slurm_role == "mgmt"
 
-- name: check presence of munge config file
+- name: Check presence of munge config file
   stat:
     path: /etc/munge/munge.key
   register: munge_config_file
 
 # If we're a compute node, grab the file placed by Packer
-- name: copy munge.key
+- name: Copy munge.key
   copy:
     src: /tmp/munge.key
     dest: /etc/munge/munge.key
@@ -30,35 +30,35 @@
     - not munge_config_file.stat.exists
 
 # Make sure that the Packer-placed file is deleted
-- name: delete /tmp/munge.key
+- name: Delete /tmp/munge.key
   file:
     path: /tmp/munge.key
     state: absent
 
-- name: set permissions on munge key
+- name: Set permissions on munge key
   file:
     path: /etc/munge/munge.key
     owner: munge
     group: munge
     mode: 0400
 
-- name: start service munge
+- name: Start service munge
   service:
     name: munge
     enabled: yes
     state: started
 
-- name: install firewalld
+- name: Install firewalld
   package:
     name: firewalld
     state: present
 
-- name: install python-firewall
+- name: Install python-firewall
   package:
     name: python3-firewall
     state: present
 
-- name: start service firewalld
+- name: Start service firewalld
   service:
     name: firewalld
     enabled: yes
@@ -72,14 +72,14 @@
     gpgcheck: yes
     gpgkey: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/repodata/repomd.xml.key
 
-- name: create slurm group
+- name: Create slurm group
   group:
     name: slurm
     state: present
     system: yes
     gid: 245
 
-- name: create slurm user
+- name: Create slurm user
   user:
     name: slurm
     comment: Slurm controller user
@@ -87,19 +87,19 @@
     system: yes
     uid: 245
 
-- name: install Slurm
+- name: Install Slurm
   yum:
     name: slurm-{{ item }}-{{ slurm_version }}*
     state: present
   loop: "{{ slurm_packages }}"
 
-- name: create slurm accounting database
+- name: Create slurm accounting database
   mysql_db:
     name: slurmacct
     state: present
   when: slurm_role == "mgmt"
 
-- name: create slurm MySQL user
+- name: Create slurm MySQL user
   mysql_user:
     name: slurm
     password: "{{ slurm_accounting_db_password }}"
@@ -107,13 +107,13 @@
     state: present
   when: slurm_role == "mgmt"
 
-- name: create slurm config directory
+- name: Create slurm config directory
   file:
     path: /etc/slurm
     state: directory
     mode: 0755
 
-- name: slurm config file
+- name: Slurm config file
   template:
     src: slurm.conf.j2
     dest: /etc/slurm/slurm.conf
@@ -121,14 +121,14 @@
     group: slurm
     mode: 0644
 
-- name: make slurm config directory
+- name: Make slurm config directory
   file:
     path: /mnt/{{ filesystem_mount_point }}/etc/slurm
     state: directory
     mode: u=rwx,g=rx,o=rx
   when: slurm_role == "mgmt"
 
-- name: slurm config file (shared)
+- name: Slurm config file (shared)
   template:
     src: slurm_shared.conf.j2
     dest: /mnt/shared/etc/slurm/slurm.conf
@@ -137,7 +137,7 @@
     mode: 0644
   when: slurm_role == "mgmt"
 
-- name: slurmdbd config file
+- name: Slurmdbd config file
   template:
     src: slurmdbd.conf.j2
     dest: /etc/slurm/slurmdbd.conf
@@ -145,10 +145,9 @@
     group: slurm
     mode: 0400
   when: slurm_role == "mgmt"
-  notify:
-    - restart slurmdbd
+  notify: Restart slurmdbd
 
-- name: cgroup config file
+- name: Cgroup config file
   template:
     src: cgroup.conf.j2
     dest: /etc/slurm/cgroup.conf
@@ -156,7 +155,7 @@
     group: slurm
     mode: 0400
 
-- name: set slurm log directory permissions
+- name: Set slurm log directory permissions
   file:
     path: /var/log/slurm/
     state: directory
@@ -164,7 +163,7 @@
     group: slurm
     mode: 0755
 
-- name: set slurm spool directory permissions
+- name: Set slurm spool directory permissions
   file:
     path: /var/spool/slurm/
     state: directory
@@ -173,7 +172,7 @@
     mode: 0755
   when: slurm_role == "mgmt"
 
-- name: set slurmd config directory permissions
+- name: Set slurmd config directory permissions
   file:
     path: /var/spool/slurmd/
     state: directory
@@ -182,26 +181,25 @@
     mode: 0755
   when: slurm_role == "compute"
 
-- name: install SELinux-policy
+- name: Install SELinux-policy
   package:
     name: selinux-policy
 
-- name: disable SELinux
+- name: Disable SELinux
   selinux:
     state: permissive
     policy: targeted
 
 # Requires selinux:
 #   allow firewalld_t cloud_init_t:dbus send_msg;
-- name: open all ports
+- name: Open all ports
   firewalld:
     zone: trusted
     source: 10.0.0.0/8
     immediate: true
     permanent: true
     state: enabled
-  notify:
-    - restart firewalld
+  notify: Restart firewalld
 
 - include_tasks: elastic.yml
   when: slurm_role == "mgmt"
@@ -215,20 +213,20 @@
 - include_tasks: elastic_aws.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "aws"
 
-- name: start service slurmctld
+- name: Start service slurmctld
   service:
     name: slurmctld
     enabled: yes
   when: slurm_role == "mgmt"
 
-- name: start service slurmdbd
+- name: Start service slurmdbd
   service:
     name: slurmdbd
     state: started
     enabled: yes
   when: slurm_role == "mgmt"
 
-- name: enable service slurmd
+- name: Enable service slurmd
   service:
     name: slurmd
     enabled: yes
@@ -241,7 +239,7 @@
     port: 6819
   when: slurm_role == "mgmt"
 
-- name: create accounting cluster
+- name: Create accounting cluster
   command: sacctmgr --immediate add cluster {{ slurm_cluster_name }}
   register: create_cluster_result
   changed_when: "create_cluster_result.rc == 0"

@@ -5,7 +5,7 @@
 # installs
 #
 
-- name: yum install useful tools
+- name: Yum install useful tools
   package:
     name:
       - curl

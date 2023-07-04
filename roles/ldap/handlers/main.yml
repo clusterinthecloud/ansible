@@ -1,6 +1,6 @@
 ---
 
-- name: restart dirsrv
+- name: Restart dirsrv
   service:
     name: "dirsrv@{{ mgmt_hostname }}"
     state: restarted

@@ -1,11 +1,11 @@
 ---
-- name: install OCI tools
+- name: Install OCI tools
   pip:
     name:
       - oci
     virtualenv: /opt/cloud_sdk
 
-- name: create oci config directory
+- name: Create oci config directory
   file:
     path: "{{ slurm_elastic.oracle.config_directory }}"
     state: directory
@@ -13,7 +13,7 @@
     group: slurm
     mode: 0755
 
-- name: copy OCI private key
+- name: Copy OCI private key
   copy:
     src: /home/opc/oci_api_key.pem
     dest: "{{ slurm_elastic.oracle.config_directory }}/oci_api_key.pem"
@@ -21,7 +21,7 @@
     group: slurm
     mode: 0400
 
-- name: configure OCI config file
+- name: Configure OCI config file
   copy:
     src: /home/opc/config
     dest: "{{ slurm_elastic.oracle.config_directory }}/config"
@@ -29,7 +29,7 @@
     group: slurm
     mode: 0400
 
-- name: install startnode support module
+- name: Install startnode support module
   copy:
     src: citc_oci.py
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py

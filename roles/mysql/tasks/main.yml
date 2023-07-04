@@ -1,21 +1,21 @@
 ---
 
-- name: install PyMySQL
+- name: Install PyMySQL
   package:
     name: python3-PyMySQL
 
-- name: install mariadb module
+- name: Install mariadb module
   package:
     name: "@mariadb"
 
-- name: install mariadb
+- name: Install mariadb
   yum:
     name:
       - mariadb-server
       - mariadb-devel
     state: installed
 
-- name: start service mariadb
+- name: Start service mariadb
   service:
     name: mariadb
     state: started

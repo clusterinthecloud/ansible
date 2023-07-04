@@ -1,6 +1,6 @@
 ---
 
-- name: make base home directory
+- name: Make base home directory
   file:
     path: /mnt{{ filesystem_mount_point }}/home
     state: directory
@@ -10,14 +10,14 @@
   group:
     name: usermgmt
 
-- name: install ldap3
+- name: Install ldap3
   pip:
     name: ldap3
     virtualenv: /opt/ldap_venv
     virtualenv_command: "{{ python_venv }}"
   register: ldap_venv
 
-- name: create home dir creation script
+- name: Create home dir creation script
   copy:
     src: create_home_dir.sh
     dest: /usr/local/libexec/create_home_dir
@@ -35,7 +35,7 @@
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
-- name: create ssh key setting script
+- name: Create ssh key setting script
   copy:
     src: set_ssh_key.sh
     dest: /usr/local/libexec/set_ssh_key
@@ -53,7 +53,7 @@
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
-- name: create user password file creation script
+- name: Create user password file creation script
   copy:
     src: set_password_file.sh
     dest: /usr/local/libexec/set_password_file
@@ -71,13 +71,13 @@
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
-- name: copy in LDAP add user script
+- name: Copy in LDAP add user script
   template:
     src: add_user_ldap.j2
     dest: /usr/local/sbin/add_user_ldap
     mode: 0700
 
-- name: create cluster-internal SSH key for OCI user
+- name: Create cluster-internal SSH key for OCI user
   user:
     name: opc
     generate_ssh_key: yes

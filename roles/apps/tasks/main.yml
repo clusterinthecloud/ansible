@@ -1,6 +1,6 @@
 ---
 
-- name: download app repo
+- name: Download app repo
   git:
     repo: https://github.com/clusterinthecloud/apps.git
     dest: /opt/apps

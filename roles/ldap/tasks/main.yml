@@ -1,31 +1,31 @@
 # Install 389-ds
 
-- name: enable 389-ds module
+- name: Enable 389-ds module
   command:
     cmd: dnf module enable -y 389-ds:1.4
   register: dnf_result
   changed_when: '"Nothing to do" not in dnf_result.stdout'
 
-- name: install 389-ds
+- name: Install 389-ds
   package:
     name: 389-ds-base
 
-- name: check if 389 setup already run
+- name: Check if 389 setup already run
   command: systemctl list-unit-files dirsrv@.service  # noqa no-changed-when command-instead-of-module
   register: dirsrv_unit_list
 
-- name: copy 389 config template
+- name: Copy 389 config template
   template:
     src: ds389.inf.j2
     dest: /root/389ds.inf
     mode: u=rw,g=r,o=
   when: "'disabled' in dirsrv_unit_list.stdout"
 
-- name: run dscreate
+- name: Run dscreate
   command: dscreate from-file /root/389ds.inf
   when: "'disabled' in dirsrv_unit_list.stdout"
 
-- name: start dirsrv
+- name: Start dirsrv
   service:
     name: "dirsrv@{{ mgmt_hostname }}"
     state: started
@@ -41,7 +41,7 @@
   package:
     name: python3-ldap
 
-- name: ensure people OU exists
+- name: Ensure people OU exists
   ldap_entry:
     dn: ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
     objectClass:
@@ -50,7 +50,7 @@
     bind_dn: cn=Directory Manager
     bind_pw: "{{ ldap_dm_password }}"
     server_uri: "ldap://{{ mgmt_hostname }}"
-  notify: restart dirsrv
+  notify: Restart dirsrv
 
-- name: flush handlers
+- name: Flush handlers
   meta: flush_handlers
