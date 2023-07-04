@@ -19,7 +19,7 @@
   file:
     path: /etc/citc/packer/
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Copy in packer build files
   copy:
@@ -31,14 +31,14 @@
   file:
     path: /etc/citc
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Copy startnode.yaml
   copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
     remote_src: true
-    mode: 0744
+    mode: "0744"
 
 - name: Load the startnode config
   slurp:

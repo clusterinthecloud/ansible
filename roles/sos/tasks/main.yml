@@ -19,7 +19,7 @@
     dest: "{{ platform_python_site_packages }}/sos/report/plugins/citc.py"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Update SOS config compression to gzip
   copy:

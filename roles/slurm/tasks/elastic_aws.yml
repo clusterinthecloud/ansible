@@ -24,7 +24,7 @@
     dest: /home/slurm/aws-credentials.csv
     owner: slurm
     group: slurm
-    mode: 0700
+    mode: "0700"
   when: '"/home/rocky/aws-credentials.csv" is exists'
 
 - name: Delete public aws-credentials.csv

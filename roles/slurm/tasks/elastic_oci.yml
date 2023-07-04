@@ -11,7 +11,7 @@
     state: directory
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
 
 - name: Copy OCI private key
   copy:
@@ -19,7 +19,7 @@
     dest: "{{ slurm_elastic.oracle.config_directory }}/oci_api_key.pem"
     owner: slurm
     group: slurm
-    mode: 0400
+    mode: "0400"
 
 - name: Configure OCI config file
   copy:
@@ -27,7 +27,7 @@
     dest: "{{ slurm_elastic.oracle.config_directory }}/config"
     owner: slurm
     group: slurm
-    mode: 0400
+    mode: "0400"
 
 - name: Install startnode support module
   copy:

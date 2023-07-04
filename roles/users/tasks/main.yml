@@ -75,7 +75,7 @@
   template:
     src: add_user_ldap.j2
     dest: /usr/local/sbin/add_user_ldap
-    mode: 0700
+    mode: "0700"
 
 - name: Create cluster-internal SSH key for OCI user
   user:

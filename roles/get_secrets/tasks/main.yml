@@ -5,4 +5,4 @@
     dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash
-    mode: 0700
+    mode: "0700"

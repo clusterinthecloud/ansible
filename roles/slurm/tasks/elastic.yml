@@ -12,7 +12,7 @@
   template:
     src: citc-watchdog.service.j2
     dest: /usr/lib/systemd/system/citc-watchdog.service
-    mode: 0755
+    mode: "0755"
 
 - name: Create citc config dir
   file:
@@ -20,7 +20,7 @@
     state: directory
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
 
 - name: Copy mgmt_shape.yaml
   copy:
@@ -29,7 +29,7 @@
     remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
   when: '"/home/opc/mgmt_shape.yaml" is exists'
 
 - name: Copy shapes.yaml
@@ -39,7 +39,7 @@
     remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
   when: '"/tmp/shapes.yaml" is exists'
 
 - name: Copy startnode.yaml
@@ -49,25 +49,25 @@
     remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
 
 - name: Configure startnode script
   copy:
     src: startnode.py
     dest: /usr/local/bin/startnode
-    mode: 0755
+    mode: "0755"
 
 - name: Configure stopnode script
   copy:
     src: stopnode.py
     dest: /usr/local/bin/stopnode
-    mode: 0755
+    mode: "0755"
 
 - name: Configure update_config script
   copy:
     src: update_config.py
     dest: /usr/local/bin/update_config
-    mode: 0755
+    mode: "0755"
 
 - name: Install kill_all_nodes script
   copy:
@@ -136,7 +136,7 @@
   copy:
     src: list_nodes.sh
     dest: /usr/local/bin/list_nodes
-    mode: 0755
+    mode: "0755"
 
 - name: Start and enable service citc-watchdog
   service:

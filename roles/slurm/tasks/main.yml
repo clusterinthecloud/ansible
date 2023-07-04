@@ -24,7 +24,7 @@
     src: /tmp/munge.key
     dest: /etc/munge/munge.key
     remote_src: true
-    mode: 0400
+    mode: "0400"
   when:
     - slurm_role == "compute"
     - not munge_config_file.stat.exists
@@ -40,7 +40,7 @@
     path: /etc/munge/munge.key
     owner: munge
     group: munge
-    mode: 0400
+    mode: "0400"
 
 - name: Start service munge
   service:
@@ -111,7 +111,7 @@
   file:
     path: /etc/slurm
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Slurm config file
   template:
@@ -119,7 +119,7 @@
     dest: /etc/slurm/slurm.conf
     owner: slurm
     group: slurm
-    mode: 0644
+    mode: "0644"
 
 - name: Make slurm config directory
   file:
@@ -134,7 +134,7 @@
     dest: /mnt/shared/etc/slurm/slurm.conf
     owner: slurm
     group: slurm
-    mode: 0644
+    mode: "0644"
   when: slurm_role == "mgmt"
 
 - name: Slurmdbd config file
@@ -143,7 +143,7 @@
     dest: /etc/slurm/slurmdbd.conf
     owner: slurm
     group: slurm
-    mode: 0400
+    mode: "0400"
   when: slurm_role == "mgmt"
   notify: Restart slurmdbd
 
@@ -153,7 +153,7 @@
     dest: /etc/slurm/cgroup.conf
     owner: slurm
     group: slurm
-    mode: 0400
+    mode: "0400"
 
 - name: Set slurm log directory permissions
   file:
@@ -161,7 +161,7 @@
     state: directory
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
 
 - name: Set slurm spool directory permissions
   file:
@@ -169,7 +169,7 @@
     state: directory
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
   when: slurm_role == "mgmt"
 
 - name: Set slurmd config directory permissions
@@ -178,7 +178,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   when: slurm_role == "compute"
 
 - name: Install SELinux-policy

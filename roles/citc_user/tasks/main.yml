@@ -23,7 +23,7 @@
     state: directory
     owner: citc
     group: citc
-    mode: 0700
+    mode: "0700"
 
 - name: Copy SSH public keys to citc user
   copy:
@@ -32,7 +32,7 @@
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
     owner: citc
     group: citc
-    mode: 0600
+    mode: "0600"
 
 # For Google 1-click install, this is the user-provided SSH key file
 - name: Copy in 1-click admin key

@@ -137,7 +137,7 @@
   file:
     path: /etc/citc
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Create webui mysql config
   template:
