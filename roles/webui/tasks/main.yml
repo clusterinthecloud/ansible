@@ -64,19 +64,19 @@
             #     address: unix:/run/gunicorn.sock
             #     health_check: fail_timeout=0
 
-- name: Install build dependencies
+- name: Install dependencies
   ansible.builtin.package:
     name:
-      - gcc
+      - python38
       - python38-devel
-    state: present
+      - gcc
 
 - name: Install gunicorn
   ansible.builtin.pip:
     name:
       - gunicorn
     virtualenv: /opt/webui_venv
-    virtualenv_command: "{{ python_venv }}"
+    virtualenv_command: /usr/bin/python3.8 -m venv
   register: webui_venv
 
 - name: Create webui group
