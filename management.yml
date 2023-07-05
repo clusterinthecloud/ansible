@@ -14,12 +14,12 @@
   hosts: management
   tasks:
     - name: Copy over finisher script
-      template:
+      ansible.builtin.template:
         src: roles/finalise/templates/finish.py.j2
         dest: /usr/local/bin/finish
         mode: "0755"
     - name: Set motd
-      copy:
+      ansible.builtin.copy:
         content: |
           ######################
 
@@ -48,7 +48,7 @@
     - users
   tasks:
     - name: Copy SSH public keys to slurm account
-      copy:
+      ansible.builtin.copy:
         src: "{{ admin_key_path }}"
         dest: /home/slurm/opc_authorized_keys
         owner: slurm

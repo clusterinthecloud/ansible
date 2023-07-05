@@ -1,33 +1,33 @@
 ---
 
 - name: Install sssd
-  package:
+  ansible.builtin.package:
     name:
       - sssd
       - nss-tools
 
 - name: Copy CA cert to trust anchors
-  copy:
+  ansible.builtin.copy:
     src: "{{ ca_cert if ca_cert is defined else '/tmp/CA.crt' }}"
     dest: /etc/pki/ca-trust/source/anchors/389-ds-cert.crt
     remote_src: true
     mode: preserve
 
 - name: Update CA trust anchors
-  command: update-ca-trust  # noqa no-changed-when
+  ansible.builtin.command: update-ca-trust  # noqa no-changed-when
 
 - name: Enable SSSD auth in PAM
-  command: authselect select sssd --force  # noqa no-changed-when
+  ansible.builtin.command: authselect select sssd --force  # noqa no-changed-when
 
 - name: Copy sssd config template
-  template:
+  ansible.builtin.template:
     src: sssd.conf.j2
     dest: /etc/sssd/sssd.conf
     mode: "0600"
   notify: Restart sssd
 
 - name: Start service sssd
-  service:
+  ansible.builtin.service:
     name: sssd
     state: restarted
     enabled: true

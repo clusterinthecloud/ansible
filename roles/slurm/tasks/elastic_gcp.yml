@@ -1,6 +1,6 @@
 ---
 - name: Install tools
-  pip:
+  ansible.builtin.pip:
     name:
       - google-api-python-client
       - google-auth-httplib2
@@ -8,13 +8,13 @@
     virtualenv: /opt/cloud_sdk
 
 - name: Install startnode support module
-  copy:
+  ansible.builtin.copy:
     src: citc_gcp.py  # should have this to be generic
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
     mode: u=rw,g=r,o=r
 
 - name: Copy mgmt-sa-credentials.json
-  copy:
+  ansible.builtin.copy:
     src: /tmp/mgmt-sa-credentials.json
     dest: /home/slurm/mgmt-sa-credentials.json
     owner: slurm
@@ -23,6 +23,6 @@
   when: '"/tmp/mgmt-sa-credentials.json" is exists'
 
 - name: Delete public mgmt-sa-credentials.json
-  file:
+  ansible.builtin.file:
     path: /tmp/mgmt-sa-credentials.json
     state: absent

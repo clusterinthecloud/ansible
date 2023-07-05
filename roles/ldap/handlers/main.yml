@@ -1,6 +1,6 @@
 ---
 
 - name: Restart dirsrv
-  service:
+  ansible.builtin.service:
     name: "dirsrv@{{ mgmt_hostname }}"
     state: restarted

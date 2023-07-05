@@ -1,7 +1,7 @@
 ---
 
 - name: Check if powertools repo is already enabled
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     dnf -q repolist --enabled powertools | grep -i powertools  # noqa no-changed-when
   changed_when: false
@@ -10,19 +10,19 @@
   when: ansible_local.citc.csp != "oracle"
 
 - name: Enable powertools module
-  command: dnf config-manager --set-enabled powertools
+  ansible.builtin.command: dnf config-manager --set-enabled powertools
   changed_when: true
   when:
     - ansible_local.citc.csp != "oracle"
     - powertools.rc != 0
 
 - name: Install Lmod
-  package:
+  ansible.builtin.package:
     name: Lmod
     state: present
 
 - name: Install lmod config
-  copy:
+  ansible.builtin.copy:
     dest: /etc/profile.d/10-modules.sh
     content: MODULEPATH={{ software_install_dir }}/manual_modules/
     mode: u=rw,g=r,o=r

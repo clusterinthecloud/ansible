@@ -1,7 +1,7 @@
 ---
 
 - name: Create get_secrets script
-  copy:
+  ansible.builtin.copy:
     dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash

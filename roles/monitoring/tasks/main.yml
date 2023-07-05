@@ -1,12 +1,12 @@
 ---
 
 - name: Install rsyslog
-  yum:
+  ansible.builtin.yum:
     name:
       - rsyslog
 
 - name: Enable the rsyslog service
-  service:
+  ansible.builtin.service:
     name: rsyslog
     state: started
     enabled: true
@@ -14,20 +14,20 @@
 # Currently only influxdb is in the aarch64 repo so we must use the arm64 repo. Once they
 # are in https://repos.influxdata.com/centos/8/aarch64/stable/ we can change.
 - name: Add InfluxDB repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: influxdb
     description: InfluxDB
     baseurl: https://repos.influxdata.com/centos/$releasever/{{ "arm64" if ansible_architecture == "aarch64" else ansible_architecture }}/stable/
     gpgcheck: false
 
 - name: Install telegraf package
-  package:
+  ansible.builtin.package:
     name: telegraf
     state: present
   notify: Restart telegraf
 
 - name: Enable network monitoring in telegraf
-  ini_file:
+  community.general.ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[inputs.net]"
     option: interfaces
@@ -37,7 +37,7 @@
   notify: Restart telegraf
 
 - name: Configure telegraf to use InfluxDB URL
-  ini_file:
+  community.general.ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[outputs.influxdb]"
     option: urls
@@ -47,10 +47,10 @@
   notify: Restart telegraf
 
 - name: Enable the telegraf service
-  service:
+  ansible.builtin.service:
     name: telegraf
     state: started
     enabled: true
 
 - name: Setup monitoring role
-  include_tasks: "{{ monitoring_role }}.yml"
+  ansible.builtin.include_tasks: "{{ monitoring_role }}.yml"

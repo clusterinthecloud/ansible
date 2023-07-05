@@ -1,16 +1,16 @@
 ---
 
 - name: Install ssh server
-  package:
+  ansible.builtin.package:
     name: openssh-server
 
 - name: Enable sshd
-  service:
+  ansible.builtin.service:
     name: sshd
     enabled: true
 
 - name: Set SSHD AddressFamily to inet
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^AddressFamily'
     line: "AddressFamily inet"

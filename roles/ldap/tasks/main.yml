@@ -1,50 +1,50 @@
 ---
 
 - name: Enable 389-ds module
-  command:
+  ansible.builtin.command:
     cmd: dnf module enable -y 389-ds:1.4
   register: dnf_result
   changed_when: '"Nothing to do" not in dnf_result.stdout'
 
 - name: Install 389-ds
-  package:
+  ansible.builtin.package:
     name: 389-ds-base
 
 - name: Check if 389 setup already run
-  command: systemctl list-unit-files dirsrv@.service  # noqa no-changed-when command-instead-of-module
+  ansible.builtin.command: systemctl list-unit-files dirsrv@.service  # noqa no-changed-when command-instead-of-module
   register: dirsrv_unit_list
 
 - name: Copy 389 config template
-  template:
+  ansible.builtin.template:
     src: ds389.inf.j2
     dest: /root/389ds.inf
     mode: u=rw,g=r,o=
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: Run dscreate
-  command: dscreate from-file /root/389ds.inf
+  ansible.builtin.command: dscreate from-file /root/389ds.inf
   changed_when: true
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: Start dirsrv
-  service:
+  ansible.builtin.service:
     name: "dirsrv@{{ mgmt_hostname }}"
     state: started
 
 - name: Setup TLS for LDAP
-  include_tasks: tls.yml
+  ansible.builtin.include_tasks: tls.yml
 
 - name: Wait for LDAP server to be ready
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{{ mgmt_hostname }}"
     port: 389
 
 - name: Install Python LDAP
-  package:
+  ansible.builtin.package:
     name: python3-ldap
 
 - name: Ensure people OU exists
-  ldap_entry:
+  community.general.ldap_entry:
     dn: ou=People,dc=citc,dc=acrc,dc=bristol,dc=ac,dc=uk
     objectClass:
       - top
@@ -55,4 +55,4 @@
   notify: Restart dirsrv
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers

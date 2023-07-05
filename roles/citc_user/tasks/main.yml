@@ -1,12 +1,12 @@
 ---
 
 - name: Create citc group
-  group:
+  ansible.builtin.group:
     name: citc
     gid: 1105
 
 - name: Create the citc user
-  user:
+  ansible.builtin.user:
     name: citc
     comment: CitC Admin
     uid: 1105
@@ -18,7 +18,7 @@
   register: citc_user
 
 - name: Create citc user .ssh dir
-  file:
+  ansible.builtin.file:
     path: "{{ citc_user.home }}/.ssh"
     state: directory
     owner: citc
@@ -26,7 +26,7 @@
     mode: "0700"
 
 - name: Copy SSH public keys to citc user
-  copy:
+  ansible.builtin.copy:
     src: "{{ admin_key_path }}"
     remote_src: true
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
@@ -36,13 +36,13 @@
 
 # For Google 1-click install, this is the user-provided SSH key file
 - name: Copy in 1-click admin key
-  blockinfile:
+  ansible.builtin.blockinfile:
     block: "{{ lookup('file', '/home/provisioner/citc-admin.pub') }}"
     dest: "{{ citc_user.home }}/.ssh/authorized_keys"
   when: '"/home/provisioner/citc-admin.pub" is exists'
 
 - name: Add citc to sudoers
-  copy:
+  ansible.builtin.copy:
     content: |
       citc ALL=(ALL) NOPASSWD:ALL
     dest: /etc/sudoers.d/91-citc

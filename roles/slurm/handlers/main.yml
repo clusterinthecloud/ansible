@@ -1,10 +1,10 @@
 ---
 - name: Restart firewalld
-  service:
+  ansible.builtin.service:
     name: firewalld
     state: restarted
 
 - name: Restart slurmdbd
-  service:
+  ansible.builtin.service:
     name: slurmdbd
     state: restarted

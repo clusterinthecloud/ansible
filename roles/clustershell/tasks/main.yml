@@ -1,24 +1,24 @@
 ---
 - name: Install clustershell
-  package:
+  ansible.builtin.package:
     name: clustershell
 - name: Copy clustershell config file
-  copy:
+  ansible.builtin.copy:
     src: clush.conf
     dest: /etc/clustershell/clush.conf
     mode: u=rw,g=r,o=r
 - name: Copy clustershell group config file
-  copy:
+  ansible.builtin.copy:
     src: groups.conf
     dest: /etc/clustershell/groups.conf
     mode: u=rw,g=r,o=r
 - name: Copy clustershell slurm config file
-  copy:
+  ansible.builtin.copy:
     src: slurm.conf
     dest: /etc/clustershell/groups.conf.d/slurm.conf
     mode: u=rw,g=r,o=r
 - name: Copy clustershell cluster config file
-  copy:
+  ansible.builtin.copy:
     src: cluster.yaml
     dest: /etc/clustershell/groups.d/cluster.yaml
     mode: u=rw,g=r,o=r

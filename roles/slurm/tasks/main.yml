@@ -1,12 +1,12 @@
 ---
 - name: Install munge
-  yum:
+  ansible.builtin.yum:
     name: munge
     state: installed
 
 # If we're the mgmt node, create a munge key
 - name: Generate munge key
-  shell:
+  ansible.builtin.shell:
     cmd: dd if=/dev/urandom bs=1 count=1024 > munge.key
     creates: munge.key
   args:
@@ -14,13 +14,13 @@
   when: slurm_role == "mgmt"
 
 - name: Check presence of munge config file
-  stat:
+  ansible.builtin.stat:
     path: /etc/munge/munge.key
   register: munge_config_file
 
 # If we're a compute node, grab the file placed by Packer
 - name: Copy munge.key
-  copy:
+  ansible.builtin.copy:
     src: /tmp/munge.key
     dest: /etc/munge/munge.key
     remote_src: true
@@ -31,41 +31,41 @@
 
 # Make sure that the Packer-placed file is deleted
 - name: Delete /tmp/munge.key
-  file:
+  ansible.builtin.file:
     path: /tmp/munge.key
     state: absent
 
 - name: Set permissions on munge key
-  file:
+  ansible.builtin.file:
     path: /etc/munge/munge.key
     owner: munge
     group: munge
     mode: "0400"
 
 - name: Start service munge
-  service:
+  ansible.builtin.service:
     name: munge
     enabled: true
     state: started
 
 - name: Install firewalld
-  package:
+  ansible.builtin.package:
     name: firewalld
     state: present
 
 - name: Install python-firewall
-  package:
+  ansible.builtin.package:
     name: python3-firewall
     state: present
 
 - name: Start service firewalld
-  service:
+  ansible.builtin.service:
     name: firewalld
     enabled: true
     state: started
 
 - name: Add Slurm repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: slurm
     description: Slurm
     baseurl: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/
@@ -73,14 +73,14 @@
     gpgkey: https://download.opensuse.org/repositories/home:/Milliams:/citc/EPEL_8_CentOS/repodata/repomd.xml.key
 
 - name: Create slurm group
-  group:
+  ansible.builtin.group:
     name: slurm
     state: present
     system: true
     gid: 245
 
 - name: Create slurm user
-  user:
+  ansible.builtin.user:
     name: slurm
     comment: Slurm controller user
     group: slurm
@@ -88,19 +88,19 @@
     uid: 245
 
 - name: Install Slurm
-  yum:
+  ansible.builtin.yum:
     name: slurm-{{ item }}-{{ slurm_version }}*
     state: present
   loop: "{{ slurm_packages }}"
 
 - name: Create slurm accounting database
-  mysql_db:
+  community.mysql.mysql_db:
     name: slurmacct
     state: present
   when: slurm_role == "mgmt"
 
 - name: Create slurm MySQL user
-  mysql_user:
+  community.mysql.mysql_user:
     name: slurm
     password: "{{ slurm_accounting_db_password }}"
     priv: 'slurmacct.*:ALL'
@@ -108,13 +108,13 @@
   when: slurm_role == "mgmt"
 
 - name: Create slurm config directory
-  file:
+  ansible.builtin.file:
     path: /etc/slurm
     state: directory
     mode: "0755"
 
 - name: Slurm config file
-  template:
+  ansible.builtin.template:
     src: slurm.conf.j2
     dest: /etc/slurm/slurm.conf
     owner: slurm
@@ -122,14 +122,14 @@
     mode: "0644"
 
 - name: Make slurm config directory
-  file:
+  ansible.builtin.file:
     path: /mnt/{{ filesystem_mount_point }}/etc/slurm
     state: directory
     mode: u=rwx,g=rx,o=rx
   when: slurm_role == "mgmt"
 
 - name: Slurm config file (shared)
-  template:
+  ansible.builtin.template:
     src: slurm_shared.conf.j2
     dest: /mnt/shared/etc/slurm/slurm.conf
     owner: slurm
@@ -138,7 +138,7 @@
   when: slurm_role == "mgmt"
 
 - name: Slurmdbd config file
-  template:
+  ansible.builtin.template:
     src: slurmdbd.conf.j2
     dest: /etc/slurm/slurmdbd.conf
     owner: slurm
@@ -148,7 +148,7 @@
   notify: Restart slurmdbd
 
 - name: Cgroup config file
-  template:
+  ansible.builtin.template:
     src: cgroup.conf.j2
     dest: /etc/slurm/cgroup.conf
     owner: slurm
@@ -156,7 +156,7 @@
     mode: "0400"
 
 - name: Set slurm log directory permissions
-  file:
+  ansible.builtin.file:
     path: /var/log/slurm/
     state: directory
     owner: slurm
@@ -164,7 +164,7 @@
     mode: "0755"
 
 - name: Set slurm spool directory permissions
-  file:
+  ansible.builtin.file:
     path: /var/spool/slurm/
     state: directory
     owner: slurm
@@ -173,7 +173,7 @@
   when: slurm_role == "mgmt"
 
 - name: Set slurmd config directory permissions
-  file:
+  ansible.builtin.file:
     path: /var/spool/slurmd/
     state: directory
     owner: root
@@ -182,18 +182,18 @@
   when: slurm_role == "compute"
 
 - name: Install SELinux-policy
-  package:
+  ansible.builtin.package:
     name: selinux-policy
 
 - name: Disable SELinux
-  selinux:
+  ansible.posix.selinux:
     state: permissive
     policy: targeted
 
 # Requires selinux:
 #   allow firewalld_t cloud_init_t:dbus send_msg;
 - name: Open all ports
-  firewalld:
+  ansible.posix.firewalld:
     zone: trusted
     source: 10.0.0.0/8
     immediate: true
@@ -202,36 +202,36 @@
   notify: Restart firewalld
 
 - name: Perform generic elastic Slurm config
-  include_tasks: elastic.yml
+  ansible.builtin.include_tasks: elastic.yml
   when: slurm_role == "mgmt"
 
 - name: Perform OCI elastic Slurm config
-  include_tasks: elastic_oci.yml
+  ansible.builtin.include_tasks: elastic_oci.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "oracle"
 
 - name: Perform GCP elastic Slurm config
-  include_tasks: elastic_gcp.yml
+  ansible.builtin.include_tasks: elastic_gcp.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "google"
 
 - name: Perform AWS elastic Slurm config
-  include_tasks: elastic_aws.yml
+  ansible.builtin.include_tasks: elastic_aws.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "aws"
 
 - name: Start service slurmctld
-  service:
+  ansible.builtin.service:
     name: slurmctld
     enabled: true
   when: slurm_role == "mgmt"
 
 - name: Start service slurmdbd
-  service:
+  ansible.builtin.service:
     name: slurmdbd
     state: started
     enabled: true
   when: slurm_role == "mgmt"
 
 - name: Enable service slurmd
-  service:
+  ansible.builtin.service:
     name: slurmd
     enabled: true
   when: slurm_role == "compute"
@@ -239,12 +239,12 @@
 # As of Slurm 18.08 the slurmdbd service doesn't become available immediately
 # This ensures that the service is available before continuing
 - name: Wait for slurmdbd to start
-  wait_for:
+  ansible.builtin.wait_for:
     port: 6819
   when: slurm_role == "mgmt"
 
 - name: Create accounting cluster
-  command: sacctmgr --immediate add cluster {{ slurm_cluster_name }}
+  ansible.builtin.command: sacctmgr --immediate add cluster {{ slurm_cluster_name }}
   register: create_cluster_result
   changed_when: "create_cluster_result.rc == 0"
   failed_when: "create_cluster_result.rc != 0 and create_cluster_result.stdout != ' This cluster {{ slurm_cluster_name }} already exists.  Not adding.'"

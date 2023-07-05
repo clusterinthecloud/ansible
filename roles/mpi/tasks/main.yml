@@ -1,5 +1,5 @@
 ---
 
 - name: Install packages
-  package:
+  ansible.builtin.package:
     name: "{{ mpi_packages[ansible_local.citc.csp] }}"

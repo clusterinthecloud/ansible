@@ -1,25 +1,25 @@
 ---
 - name: Install tools
-  pip:
+  ansible.builtin.pip:
     name:
       - boto3
       # - boto3-stubs[ec2,route53]
     virtualenv: /opt/cloud_sdk
 
 # This currently fails on Python 3.6
-# - name: generate boto3 mypy stubs
+# - ansible.builtin.name: generate boto3 mypy stubs
 #   command: /opt/cloud_sdk/bin/python -m mypy_boto3
 #   register: result
 #   changed_when: '"Discovered" in result.stdout'
 
 - name: Install startnode support module
-  copy:
+  ansible.builtin.copy:
     src: citc_aws.py  # should have this to be generic
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
     mode: u=rw,g=r,o=r
 
 - name: Copy aws-credentials.csv
-  copy:
+  ansible.builtin.copy:
     src: /home/rocky/aws-credentials.csv
     dest: /home/slurm/aws-credentials.csv
     owner: slurm
@@ -28,6 +28,6 @@
   when: '"/home/rocky/aws-credentials.csv" is exists'
 
 - name: Delete public aws-credentials.csv
-  file:
+  ansible.builtin.file:
     path: /home/rocky/aws-credentials.csv
     state: absent

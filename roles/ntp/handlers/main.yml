@@ -1,10 +1,10 @@
 ---
 - name: Restart ntp (Ubuntu)
-  service:
+  ansible.builtin.service:
     name: ntp
     state: restarted
 
 - name: Restart chronyd (RedHat)
-  service:
+  ansible.builtin.service:
     name: chronyd
     state: restarted

@@ -1,14 +1,14 @@
 ---
 
 - name: Install nss-tools
-  package:
+  ansible.builtin.package:
     name: nss-tools
 
 - name: Extract CA file from 389-ds
-  shell:
+  ansible.builtin.shell:
     cmd: certutil -d /etc/dirsrv/slapd-{{ mgmt_hostname }}/ -L -n 'Self-Signed-CA' -a > /root/CA.crt
     creates: CA.crt
 
 - name: Set fact for location of CA cert
-  set_fact:
+  ansible.builtin.set_fact:
     ca_cert: /root/CA.crt

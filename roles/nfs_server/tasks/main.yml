@@ -1,43 +1,43 @@
 ---
 
 - name: Create /shared directory
-  file:
+  ansible.builtin.file:
     path: /shared
     state: directory
     mode: '01777'
 
 - name: Create a new primary partition
-  parted:
+  community.general.parted:
     device: /dev/sdb
     number: 1
     state: present
 
 - name: Create ext4 filesystem on /dev/sdb1
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdb1
 
 - name: Mount the filesystem to /shared
-  mount:
+  ansible.posix.mount:
     fstype: ext4
     src: /dev/sdb1
     path: /shared
     state: mounted
 
 - name: Install NFS server components
-  yum:
+  ansible.builtin.yum:
     name: nfs-utils
     state: present
 
 - name: Create /etc/exports file to export NFS share
-  copy:
+  ansible.builtin.copy:
     dest: "/etc/exports"
     content: |
       /shared  *(rw,sync,no_root_squash)
     mode: u=rw,g=r,o=r
 
 - name: Start nfs-server
-  service:
+  ansible.builtin.service:
     name: nfs-server
     enabled: true
     state: started
