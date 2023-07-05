@@ -1,5 +1,5 @@
 ---
 
-- name: yum install packages
-  yum:
+- name: Yum install packages
+  ansible.builtin.yum:
     name: "{{ install_packages }}"

@@ -1,10 +1,10 @@
 ---
-- name: install nfs-utils
-  yum:
+- name: Install nfs-utils
+  ansible.builtin.yum:
     name: nfs-utils
 
-- name: ensure fileserver name exists
-  lineinfile:
+- name: Ensure fileserver name exists
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: "{{ ansible_local.citc.fileserver_ip }} fileserver"
     state: present
@@ -13,13 +13,13 @@
     - ansible_local.citc.csp == "google"
 
 - name: Wait for fileserver to be ready checking nfs tcp port open (critical path - avoids race condition)
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{{ ansible_local.citc.fileserver_ip }}"
     port: 2049
     state: started
 
 - name: Mount shared file system now that fileserver is ready
-  mount:
+  ansible.posix.mount:
     path: /mnt/{{ filesystem_mount_point }}
     src: "{{ filesystem_target_address }}:{{ filesystem_mount_point }}"
     fstype: nfs
@@ -29,7 +29,7 @@
     ansible_local.citc.csp != "aws"
 
 - name: Mount shared file system
-  mount:
+  ansible.posix.mount:
     path: /mnt/shared
     src: "{{ filesystem_target_address }}:/"
     fstype: nfs

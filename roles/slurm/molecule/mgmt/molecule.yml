@@ -28,7 +28,7 @@ provisioner:
         slurm_partitions:
           - name: compute
             nodelist: ALL
-            default: YES
+            default: "YES"
         slurm_accounting_db_password: "this_is_the_slurm_accounting_db_password"
 verifier:
   name: ansible

@@ -13,7 +13,7 @@ slurm_control_machine: "{{ mgmt_hostname }}"
 slurm_partitions:
   - name: compute
     nodelist: ALL
-    default: YES
+    default: "YES"
 
 filesystem_target_address: fileserver
 filesystem_mount_point: /shared

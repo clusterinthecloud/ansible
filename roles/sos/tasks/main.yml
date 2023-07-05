@@ -1,28 +1,28 @@
 ---
-- name: install sos
-  package:
+- name: Install sos
+  ansible.builtin.package:
     name: sos
     state: present
 
-- name: get platform-python site path
-  command: /usr/libexec/platform-python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())'
+- name: Get platform-python site path
+  ansible.builtin.command: /usr/libexec/platform-python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())'
   register: get_python_lib_result
-  changed_when: False
+  changed_when: false
 
-- name: set platform_python_site_packages
-  set_fact:
+- name: Set platform_python_site_packages
+  ansible.builtin.set_fact:
     platform_python_site_packages: "{{ get_python_lib_result.stdout }}"
 
-- name: copy in CitC sosreport plugin
-  copy:
+- name: Copy in CitC sosreport plugin
+  ansible.builtin.copy:
     src: citc.py
     dest: "{{ platform_python_site_packages }}/sos/report/plugins/citc.py"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- name: update SOS config compression to gzip
-  copy:
+- name: Update SOS config compression to gzip
+  ansible.builtin.copy:
     src: sos.conf
     dest: /etc/sos.conf
     owner: root

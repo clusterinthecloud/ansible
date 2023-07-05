@@ -1,7 +1,9 @@
 ---
 name: CI
 
-on: [push, pull_request]
+on:  # yamllint disable-line rule:truthy
+  - push
+  - pull_request
 
 jobs:
   test_python:
@@ -29,6 +31,14 @@ jobs:
       - name: Type check
         run: |
           mypy roles/slurm/files/citc_aws.py roles/slurm/files/citc_gcp.py roles/slurm/files/citc_oci.py
+
+  yaml_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: YAML lint
+        run: |
+          yamllint *.yml group_vars roles
 
   ansible_lint:
     runs-on: ubuntu-latest

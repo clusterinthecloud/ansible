@@ -1,20 +1,21 @@
 ---
 
-- hosts: compute
-  become: yes
+- name: Disable SELinux
+  hosts: compute
+  become: true
   tasks:
-    - name: disable SELinux
-      selinux:
+    - name: Disable SELinux
+      ansible.posix.selinux:
         state: permissive
         policy: targeted
 
-- hosts: compute
-  become: yes
+- name: Configure system
+  hosts: compute
+  become: true
   roles:
     - citc_user
     - filesystem
     - ssh
-    #- security_updates
     - ntp
     - sssd
     - lmod

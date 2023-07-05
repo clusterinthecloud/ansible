@@ -1,113 +1,116 @@
 ---
 
-- name: configure mgmt to recieve syslog on UDP and TCP
-  replace:
+- name: Configure mgmt to recieve syslog on UDP and TCP
+  ansible.builtin.replace:
     path: /etc/rsyslog.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
   with_items:
-    - { regexp: '#\$ModLoad imudp',         replace: '$ModLoad imudp'         }
-    - { regexp: '#\$UDPServerRun 514',      replace: '$UDPServerRun 514'      }
-    - { regexp: '#\$ModLoad imtcp',         replace: '$ModLoad imtcp'         }
-    - { regexp: '#\$InputTCPServerRun 514', replace: '$InputTCPServerRun 514' }
-  notify: restart rsyslog
+    - regexp: '#\$ModLoad imudp'
+      replace: '$ModLoad imudp'
+    - regexp: '#\$UDPServerRun 514'
+      replace: '$UDPServerRun 514'
+    - regexp: '#\$ModLoad imtcp'
+      replace: '$ModLoad imtcp'
+    - regexp: '#\$InputTCPServerRun 514'
+      replace: '$InputTCPServerRun 514'
+  notify: Restart rsyslog
 
-- name: install influxdb package
-  yum:
+- name: Install influxdb package
+  ansible.builtin.yum:
     name:
       - influxdb
-  notify: restart influxdb
+  notify: Restart influxdb
 
-- name: enable the influxdb service
-  service:
+- name: Enable the influxdb service
+  ansible.builtin.service:
     name: influxdb
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Add Grafana repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: grafana
     description: Grafana
     baseurl: https://packages.grafana.com/oss/rpm
     gpgkey: https://packages.grafana.com/gpg.key
 
-- name: install grafana package
-  yum:
+- name: Install grafana package
+  ansible.builtin.yum:
     name:
       - grafana
-  notify: restart grafana
+  notify: Restart grafana
 
-- name: enable the grafana service
-  service:
+- name: Enable the grafana service
+  ansible.builtin.service:
     name: grafana-server
     state: started
-    enabled: yes
+    enabled: true
 
 # TODO move firewalld installation into a separate role
-- name: install firewalld
-  package:
+- name: Install firewalld
+  ansible.builtin.package:
     name: firewalld
     state: present
 
-- name: install python-firewall
-  package:
+- name: Install python-firewall
+  ansible.builtin.package:
     name: python3-firewall
     state: present
 
-- name: start service firewalld
-  service:
+- name: Start service firewalld
+  ansible.builtin.service:
     name: firewalld
-    enabled: yes
+    enabled: true
     state: started
 
-- name: open Grafana port in firewall
-  firewalld:
+- name: Open Grafana port in firewall
+  ansible.posix.firewalld:
     port: 3000/tcp
     permanent: true
     state: enabled
-  notify:
-    - restart firewalld
+  notify: Restart firewalld
 
 - name: Check admin password
-  uri:
+  ansible.builtin.uri:
     url: http://localhost:3000/api/admin/settings
     user: admin
     password: "{{ grafana_admin_password }}"
-    force_basic_auth: yes
-  ignore_errors: yes
+    force_basic_auth: true
+  ignore_errors: true
   register: grafana_password
 
 - name: Set admin password
-  uri:
+  ansible.builtin.uri:
     url: http://localhost:3000/api/user/password
     user: admin
     password: admin
-    force_basic_auth: yes
+    force_basic_auth: true
     method: PUT
     body_format: json
     body: '{ "oldPassword": "admin", "newPassword": "{{ grafana_admin_password }}", "confirmNew": "{{ grafana_admin_password }}"}'
   ignore_errors: '{{ ansible_check_mode }}'
   when: grafana_password.status == 401
 
-- name: add grafana password to secrets
-  lineinfile:
+- name: Add grafana password to secrets
+  ansible.builtin.lineinfile:
     path: /usr/sbin/get_secrets
     line: echo grafana "{{ grafana_admin_password }}"
 
 - name: Create influxdb telegraf datasource
-  grafana_datasource:
+  community.grafana.grafana_datasource:
     grafana_url: http://localhost:3000
     grafana_user: admin
     grafana_password: "{{ grafana_admin_password }}"
     name: influxdb_telegraf
     ds_type: influxdb
-    url: http://localhost:8086
+    ds_url: http://localhost:8086
     database: telegraf
   tags:
     - molecule-idempotence-notest  # https://github.com/ansible-collections/community.grafana/issues/127
 
-- name: install monitor_slurm script
-  copy:
+- name: Install monitor_slurm script
+  ansible.builtin.copy:
     dest: /usr/local/bin/monitor_slurm
     content: |
       #! /bin/bash
@@ -131,37 +134,37 @@
       fi
     mode: a=rx,u+w
 
-- name: enable slurm monitoring in influx
-  ini_file:
+- name: Enable slurm monitoring in influx
+  community.general.ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[inputs.exec]"
     option: "{{ item.key }}"
     value: "{{ item.value }}"
     state: present
     mode: u=rw,g=r,o=r
-  loop: "{{ keys|dict2items }}"
+  loop: "{{ keys | dict2items }}"
   vars:
     keys:
       commands: '["/usr/local/bin/monitor_slurm"]'
       timeout: '"5s"'
       name_suffix: '"_slurm"'
       data_format: '"influx"'
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: create directory for grafana dashboards
-  file:
+- name: Create directory for grafana dashboards
+  ansible.builtin.file:
     path: /etc/citc/grafana
     state: directory
     mode: u=rwx,g=rx,o=rx
 
 - name: Copy in Slurm Grafana dashboard
-  template:
+  ansible.builtin.template:
     src: slurm_dashboard.json.j2
     dest: /etc/citc/grafana/slurm_dashboard.json
     mode: u=rw,g=r,o=r
 
 - name: Download Telegraf dashboard
-  get_url:
+  ansible.builtin.get_url:
     url: https://grafana.com/api/dashboards/928/revisions/3/download
     dest: /etc/citc/grafana/928.json
     mode: u=rw,g=r,o=r
@@ -169,13 +172,13 @@
     - molecule-idempotence-notest  # We download and then change this file in-place
 
 - name: Set Influx datasource on dashboard
-  replace:
+  ansible.builtin.replace:
     path: /etc/citc/grafana/928.json
     regexp: '\${DS_INFLUXDB_TELEGRAF}'
     replace: 'influxdb_telegraf'
 
 - name: Import dashboard
-  copy:
+  ansible.builtin.copy:
     dest: /etc/grafana/provisioning/dashboards/citc.yaml
     content: |
       apiVersion: 1
@@ -190,4 +193,4 @@
         options:
           path: /etc/citc/grafana
     mode: u=rw,g=r,o=r
-  notify: restart grafana
+  notify: Restart grafana

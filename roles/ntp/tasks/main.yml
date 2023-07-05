@@ -1,11 +1,11 @@
 ---
-- name: yum install chrony
-  package:
+- name: Yum install chrony
+  ansible.builtin.package:
     name: chrony
-  notify: restart chronyd (RedHat)
+  notify: Restart chronyd (RedHat)
 
-- name: service start chronyd
-  service:
+- name: Service start chronyd
+  ansible.builtin.service:
     name: chronyd
     state: started
-    enabled: yes
+    enabled: true

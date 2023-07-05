@@ -1,7 +1,7 @@
 ---
 
 - name: Wait for packer to finish
-  async_status:
+  ansible.builtin.async_status:
     jid: "{{ packer_result.ansible_job_id }}"
   register: packer_job_result
   until: packer_job_result.finished
@@ -9,14 +9,14 @@
   delay: 10
   tags: packer
 
-- name: create directory for the finalised files
-  file:
+- name: Create directory for the finalised files
+  ansible.builtin.file:
     path: /mnt/shared/finalised
     state: directory
-    mode: 0755
+    mode: "0755"
 
-- name: create the finalised file
-  file:
+- name: Create the finalised file
+  ansible.builtin.file:
     path: /mnt/shared/finalised/{{ ansible_hostname }}
     state: touch
-    mode: 0777
+    mode: "0777"
