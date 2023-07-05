@@ -69,12 +69,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3
-      - name: install python3-docker
-        run: sudo apt-get install python3-docker
       - name: Install Molecule
         run: |
-          python -m pip install 'ansible ~= 8.0' 'ansible-lint' 'molecule-plugins[podman,docker]'
+          python -m pip install 'ansible ~= 8.0' 'ansible-lint' 'molecule-plugins[podman]'
       - name: Test role
         run: |
           cd roles/${{ matrix.role }}
-          molecule test --all --driver-name docker
+          molecule test --all --driver-name podman
