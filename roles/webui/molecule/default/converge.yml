@@ -1,9 +1,10 @@
 ---
 - name: Converge
   hosts: all
-  roles:
-    - python
   tasks:
-    - name: "Include webui"
+    - name: Include webui
       include_role:
-        name: "webui"
+        name: webui
+      vars:
+        webui_password_store_directory: /tmp
+        ldap_dm_password: this_is_the_ldap_dm_password

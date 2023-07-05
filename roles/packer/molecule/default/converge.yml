@@ -2,6 +2,9 @@
 - name: Converge
   hosts: all
   tasks:
-    - name: "Include packer"
+    - name: Include packer
       include_role:
-        name: "packer"
+        name: packer
+      vars:
+        ldap_dm_password: this_is_the_ldap_dm_password
+        ca_cert: /root/CA.crt

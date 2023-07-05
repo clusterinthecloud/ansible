@@ -5,15 +5,17 @@ driver:
   name: podman
 platforms:
   - name: instance
+    groups:
+      - compute
     image: docker.io/pycontribs/centos:8
     pre_build_image: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
   inventory:
-    host_vars:
-      instance:
-        slurm_role: compute
-        monitoring_role: client
-        admin_key_path: /root/citc_authorized_keys
+    links:
+      group_vars: ../../../../group_vars/
 verifier:
   name: ansible
