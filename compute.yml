@@ -1,6 +1,7 @@
 ---
 
-- hosts: compute
+- name: Disable SELinux
+  hosts: compute
   become: true
   tasks:
     - name: Disable SELinux
@@ -8,7 +9,8 @@
         state: permissive
         policy: targeted
 
-- hosts: compute
+- name: Configure system
+  hosts: compute
   become: true
   roles:
     - citc_user

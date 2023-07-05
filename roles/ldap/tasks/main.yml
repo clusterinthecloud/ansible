@@ -30,7 +30,8 @@
     name: "dirsrv@{{ mgmt_hostname }}"
     state: started
 
-- include_tasks: tls.yml
+- name: Setup TLS for LDAP
+  include_tasks: tls.yml
 
 - name: Wait for LDAP server to be ready
   wait_for:

@@ -52,4 +52,5 @@
     state: started
     enabled: true
 
-- include_tasks: "{{ monitoring_role }}.yml"
+- name: Setup monitoring role
+  include_tasks: "{{ monitoring_role }}.yml"
