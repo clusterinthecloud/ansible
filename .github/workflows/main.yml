@@ -76,3 +76,6 @@ jobs:
         run: |
           cd roles/${{ matrix.role }}
           molecule test --all --driver-name podman
+        env:
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
