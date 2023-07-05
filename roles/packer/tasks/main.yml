@@ -1,6 +1,8 @@
 ---
 - name: Ensure unzip is installed.
-  package: name=unzip state=present
+  package:
+    name: unzip
+    state: present
 
 - name: Download and unarchive Packer.
   unarchive:
