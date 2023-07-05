@@ -1,6 +1,6 @@
 ---
 
 webui_password_store_directory: /root
-webui_database_password: "{{ lookup('password', webui_password_store_directory+'/webuimysqlpasswordfile chars=ascii_letters,digits,hexdigits') }}"
+webui_database_password: "{{ lookup('password', webui_password_store_directory + '/webuimysqlpasswordfile chars=ascii_letters,digits,hexdigits') }}"
 webui_dir: /opt/webui
-webui_superuser_password: "{{ lookup('password', webui_password_store_directory+'/webuisuperuserpasswordfile chars=ascii_letters,digits,hexdigits') }}"
+webui_superuser_password: "{{ lookup('password', webui_password_store_directory + '/webuisuperuserpasswordfile chars=ascii_letters,digits,hexdigits') }}"

@@ -142,7 +142,7 @@
     value: "{{ item.value }}"
     state: present
     mode: u=rw,g=r,o=r
-  loop: "{{ keys|dict2items }}"
+  loop: "{{ keys | dict2items }}"
   vars:
     keys:
       commands: '["/usr/local/bin/monitor_slurm"]'

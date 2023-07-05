@@ -116,7 +116,7 @@
   lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^SECRET_KEY'
-    line: SECRET_KEY = r"{{ lookup('password', webui_password_store_directory+'/webuisecretkeyfile chars=ascii_letters,digits length=50') }}"
+    line: SECRET_KEY = r"{{ lookup('password', webui_password_store_directory + '/webuisecretkeyfile chars=ascii_letters,digits length=50') }}"
   tags:
     - molecule-idempotence-notest  # The file has been reset by the checkout
 
