@@ -23,6 +23,7 @@
 
 - name: Run dscreate
   command: dscreate from-file /root/389ds.inf
+  changed_when: true
   when: "'disabled' in dirsrv_unit_list.stdout"
 
 - name: Start dirsrv

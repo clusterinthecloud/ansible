@@ -11,6 +11,7 @@
 
 - name: Enable powertools module
   command: dnf config-manager --set-enabled powertools
+  changed_when: true
   when:
     - ansible_local.citc.csp != "oracle"
     - powertools.rc != 0
