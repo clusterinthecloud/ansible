@@ -147,7 +147,7 @@
     dest: /etc/slurm/slurmdbd.conf
     owner: slurm
     group: slurm
-    mode: "0400"
+    mode: "0600"
   when: slurm_role == "mgmt"
   notify: Restart slurmdbd
 
