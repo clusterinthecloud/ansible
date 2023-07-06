@@ -3,6 +3,11 @@
 - name: Prepare
   hosts: all
   tasks:
+    - name: make citc config dir
+      file:
+        path: /etc/citc
+        state: directory
+        mode: a=rw,o+x
     # The packer role depends on files being put in the citc user's home dir,
     - name: put key file in correct location
       copy:
@@ -21,14 +26,6 @@
           ansible_repo: https://github.com/clusterinthecloud/ansible.git
           ansible_branch: 6
         dest: /tmp/startnode.yaml
-        mode: u=rw,g=r,o=r
-
-    - name: ca cert  # Put there by the `ldap` role
-      copy:
-        content: |
-          some dummy test pretending to be
-          a certificate
-        dest: "{{ ca_cert }}"
         mode: u=rw,g=r,o=r
 
     - name: make ansible config dir

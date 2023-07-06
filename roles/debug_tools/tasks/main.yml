@@ -5,8 +5,8 @@
 # installs
 #
 
-- name: yum install useful tools
-  package:
+- name: Yum install useful tools
+  ansible.builtin.package:
     name:
       - curl
       - htop

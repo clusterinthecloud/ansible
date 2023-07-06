@@ -1,27 +1,26 @@
 ---
 
-
-- name: restart rsyslog
-  service:
+- name: Restart rsyslog
+  ansible.builtin.service:
     name: rsyslog
     state: restarted
 
-- name: restart telegraf
-  service:
+- name: Restart telegraf
+  ansible.builtin.service:
     name: telegraf
     state: restarted
 
-- name: restart influxdb
-  service:
+- name: Restart influxdb
+  ansible.builtin.service:
     name: influxdb
     state: restarted
 
-- name: restart grafana
-  service:
+- name: Restart grafana
+  ansible.builtin.service:
     name: grafana-server
     state: restarted
 
-- name: restart firewalld
-  service:
+- name: Restart firewalld
+  ansible.builtin.service:
     name: firewalld
     state: restarted

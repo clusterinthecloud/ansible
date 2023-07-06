@@ -1,11 +1,11 @@
 ---
 
-- name: install nginx
-  include_role:
+- name: Install nginx
+  ansible.builtin.include_role:
     name: nginxinc.nginx
 
-- name: configure nginx
-  include_role:
+- name: Configure nginx
+  ansible.builtin.include_role:
     name: nginxinc.nginx_config
   vars:
     nginx_config_cleanup: true
@@ -47,7 +47,7 @@
                     header_host:
                       name: Host
                       value: $http_host
-                  proxy_redirect: off
+                  proxy_redirect: "off"
                   proxy_pass: http://app_server
         upstreams:
           app_server:
@@ -59,130 +59,130 @@
             # Should be able to replace custom_options with servers below
             # See https://github.com/nginxinc/ansible-role-nginx/issues/232
             # This still breaks. Wait until 0.4 of https://github.com/nginxinc/ansible-role-nginx-config
-            #servers:
-            #  gunicorn:
-            #    address: unix:/run/gunicorn.sock
-            #    health_check: fail_timeout=0
+            # servers:
+            #   gunicorn:
+            #     address: unix:/run/gunicorn.sock
+            #     health_check: fail_timeout=0
 
-- name: install build dependencies
-  package:
+- name: Install dependencies
+  ansible.builtin.package:
     name:
-      - gcc
+      - python38
       - python38-devel
-    state: present
+      - gcc
 
-- name: install gunicorn
-  pip:
+- name: Install gunicorn
+  ansible.builtin.pip:
     name:
       - gunicorn
     virtualenv: /opt/webui_venv
-    virtualenv_command: "{{ python_venv }}"
+    virtualenv_command: /usr/bin/python3.8 -m venv
   register: webui_venv
 
 - name: Create webui group
-  group:
+  ansible.builtin.group:
     name: webui
 
 - name: Create the webui user
-  user:
+  ansible.builtin.user:
     name: webui
     group: webui
     groups:
       - usermgmt
 
-- name: ensure git is installed
-  package:
+- name: Ensure git is installed
+  ansible.builtin.package:
     name: git
 
-- name: checkout webui
-  git:
+- name: Checkout webui
+  ansible.builtin.git:
     repo: https://github.com/clusterinthecloud/webui.git
-    force: yes
+    force: true
     dest: "{{ webui_dir }}"
     version: master
-  notify: reload gunicorn
+  notify: Reload gunicorn
   tags:
     - molecule-idempotence-notest  # The checkout get changed by the next tasks
 
-- name: set django to production mode
-  lineinfile:
+- name: Set django to production mode
+  ansible.builtin.lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^IN_PRODUCTION = '
     line: IN_PRODUCTION = True
   tags:
     - molecule-idempotence-notest  # The file has been reset by the checkout
 
-- name: set secret key
-  lineinfile:
+- name: Set secret key
+  ansible.builtin.lineinfile:
     path: "{{ webui_dir }}/webui/settings.py"
     regexp: '^SECRET_KEY'
-    line: SECRET_KEY = r"{{ lookup('password', webui_password_store_directory+'/webuisecretkeyfile chars=ascii_letters,digits length=50') }}"
+    line: SECRET_KEY = r"{{ lookup('password', webui_password_store_directory + '/webuisecretkeyfile chars=ascii_letters,digits length=50') }}"
   tags:
     - molecule-idempotence-notest  # The file has been reset by the checkout
 
-- name: install webui dependencies
-  pip:
+- name: Install webui dependencies
+  ansible.builtin.pip:
     requirements: "{{ webui_dir }}/requirements.txt"
     virtualenv: "{{ webui_venv.virtualenv }}"
 
-- name: collect static files
-  command:
+- name: Collect static files
+  ansible.builtin.command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input"
     chdir: "{{ webui_dir }}"
   register: collectstatic_result
   changed_when: '"0 static files copied to" not in collectstatic_result.stdout'
 
 # TODO move this (and other copies of it) to a central role
-- name: create citc config dir
-  file:
+- name: Create citc config dir
+  ansible.builtin.file:
     path: /etc/citc
     state: directory
-    mode: 0755
+    mode: "0755"
 
-- name: create webui mysql config
-  template:
+- name: Create webui mysql config
+  ansible.builtin.template:
     src: my.cnf.j2
     dest: /etc/citc/webui.my.cnf
     owner: webui
     group: webui
     mode: "660"
 
-- name: create webui database
-  mysql_db:
+- name: Create webui database
+  community.mysql.mysql_db:
     name: webui
     state: present
 
-- name: create webui MySQL user
-  mysql_user:
+- name: Create webui MySQL user
+  community.mysql.mysql_user:
     name: webui
     password: "{{ webui_database_password }}"
     priv: 'webui.*:ALL'
     state: present
 
-- name: run migrations
-  command:
+- name: Run migrations
+  ansible.builtin.command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input"
     chdir: "{{ webui_dir }}"
   register: migrate_result
   changed_when: '"No migrations to apply" not in migrate_result.stdout'
 
-- name: create django admin
-  command:
+- name: Create django admin
+  ansible.builtin.command:
     cmd: "{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username citc --email citc@localhost"
     chdir: "{{ webui_dir }}"
   environment:
     DJANGO_SUPERUSER_PASSWORD: "{{ webui_superuser_password }}"
-  no_log: True
+  no_log: true
   register: createsuperuser_result
   changed_when: '"Creating user" in createsuperuser_result.stdout'
 
-- name: add webui password to secrets
-  lineinfile:
+- name: Add webui password to secrets
+  ansible.builtin.lineinfile:
     path: /usr/sbin/get_secrets
     line: echo webui "{{ webui_superuser_password }}"
 
-- name: create webui config file
-  template:
+- name: Create webui config file
+  ansible.builtin.template:
     src: webui.yaml.j2
     dest: /etc/citc/webui.yaml
     owner: webui
@@ -191,39 +191,38 @@
 
 # TODO make checkout readable only by correct user
 
-- name: install gunicorn service file
-  copy:
+- name: Install gunicorn service file
+  ansible.builtin.copy:
     src: gunicorn.service
     dest: /etc/systemd/system/gunicorn.service
     mode: u=rw,g=r,o=
 
-- name: install gunicorn socket file
-  copy:
+- name: Install gunicorn socket file
+  ansible.builtin.copy:
     src: gunicorn.socket
     dest: /etc/systemd/system/gunicorn.socket
     mode: u=rw,g=r,o=
 
-- name: start and enable gunicorn
-  systemd:
+- name: Start and enable gunicorn
+  ansible.builtin.systemd:
     name: gunicorn
     state: started
-    enabled: yes
-    daemon_reexec: yes
+    enabled: true
+    daemon_reexec: true
 
-- name: install firewalld
-  package:
+- name: Install firewalld
+  ansible.builtin.package:
     name: firewalld
     state: present
 
-- name: install python-firewall
-  package:
+- name: Install python-firewall
+  ansible.builtin.package:
     name: python3-firewall
     state: present
 
-- name: open HTTP port in firewall
-  firewalld:
+- name: Open HTTP port in firewall
+  ansible.posix.firewalld:
     service: http
     permanent: true
     state: enabled
-  notify:
-    - restart firewalld
+  notify: Restart firewalld

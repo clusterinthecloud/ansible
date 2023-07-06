@@ -1,8 +1,8 @@
 ---
 
-- name: create get_secrets script
-  copy:
+- name: Create get_secrets script
+  ansible.builtin.copy:
     dest: /usr/sbin/get_secrets
     content: |
       #! /bin/bash
-    mode: 0700
+    mode: "0700"

@@ -1,6 +1,8 @@
 ---
 - name: Prepare - create local facts
   hosts: all
+  roles:
+    - python
   tasks:
     - name: make ansible config dir
       file:
@@ -33,6 +35,8 @@
 
     - include_role:
         name: users
+      vars:
+        ldap_dm_password: this_is_the_ldap_dm_password
 
 - name: Prepare
   hosts: all

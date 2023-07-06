@@ -1,11 +1,11 @@
 ---
 
-- name: restart firewalld
-  service:
+- name: Restart firewalld
+  ansible.builtin.service:
     name: firewalld
     state: restarted
 
-- name: reload gunicorn
-  service:
+- name: Reload gunicorn
+  ansible.builtin.service:
     name: gunicorn
     state: reloaded

@@ -1,53 +1,54 @@
 ---
 
-- name: install rsyslog
-  yum:
+- name: Install rsyslog
+  ansible.builtin.yum:
     name:
       - rsyslog
 
-- name: enable the rsyslog service
-  service:
+- name: Enable the rsyslog service
+  ansible.builtin.service:
     name: rsyslog
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Add InfluxDB repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: influxdb
     description: InfluxDB
     baseurl: https://repos.influxdata.com/centos/$releasever/$ansible_architecture/stable/
-    gpgkey: https://repos.influxdata.com/influxdb.key
+    gpgcheck: false
 
-- name: install telegraf package
-  package:
+- name: Install telegraf package
+  ansible.builtin.package:
     name: telegraf
     state: present
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: enable the telegraf service
-  service:
-    name: telegraf
-    state: started
-    enabled: yes
-
-- name: enable network monitoring in telegraf
-  ini_file:
+- name: Enable network monitoring in telegraf
+  community.general.ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[inputs.net]"
     option: interfaces
     value: '["*"]'
     state: present
     mode: u=rw,g=r,o=r
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- name: configure telegraf to use InfluxDB URL
-  ini_file:
+- name: Configure telegraf to use InfluxDB URL
+  community.general.ini_file:
     path: /etc/telegraf/telegraf.conf
     section: "[outputs.influxdb]"
     option: urls
     value: '["http://{{ mgmt_hostname }}:8086"]'
-    backup: yes
+    backup: true
     mode: u=rw,g=r,o=r
-  notify: restart telegraf
+  notify: Restart telegraf
 
-- include_tasks: "{{ monitoring_role }}.yml"
+- name: Enable the telegraf service
+  ansible.builtin.service:
+    name: telegraf
+    state: started
+    enabled: true
+
+- name: Setup monitoring role
+  ansible.builtin.include_tasks: "{{ monitoring_role }}.yml"

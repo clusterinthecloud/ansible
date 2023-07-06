@@ -4,7 +4,9 @@ dependency:
 driver:
   name: podman
 platforms:
-  - name: instance
+  - name: mgmt
+    groups:
+      - management
     image: geerlingguy/docker-centos8-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -13,12 +15,11 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
   inventory:
-    host_vars:
-      instance:
-        filesystem_mount_point: /shared
-        ldap_dm_password: this_is_the_ldap_dm_password
-        ldap_hostname: mgmt
-        webui_password_store_directory: .
+    links:
+      group_vars: ../../../../group_vars/
 verifier:
   name: ansible

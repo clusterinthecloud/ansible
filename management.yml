@@ -1,25 +1,25 @@
 ---
 
-- name: install roles
+- name: Install roles
   hosts: management
   tasks:
     - name: Download required roles
-      command: ansible-galaxy install -r requirements.yml
-      register: galaxy_result
-      changed_when: '"was installed successfully" in galaxy_result.stdout'
+      community.general.ansible_galaxy_install:
+        type: both
+        requirements_file: requirements.yml
       become: false
       delegate_to: localhost
 
-- name: finisher script
+- name: Finisher script
   hosts: management
   tasks:
-    - name: copy over finisher script
-      template:
+    - name: Copy over finisher script
+      ansible.builtin.template:
         src: roles/finalise/templates/finish.py.j2
         dest: /usr/local/bin/finish
-        mode: 0755
-    - name: set motd
-      copy:
+        mode: "0755"
+    - name: Set motd
+      ansible.builtin.copy:
         content: |
           ######################
 
@@ -30,7 +30,7 @@
         dest: /etc/motd
         mode: u=rw,g=r,o=r
 
-- name: common
+- name: Common
   hosts: all
   tags: common
   roles:
@@ -47,15 +47,15 @@
     - sssd
     - users
   tasks:
-    - name: copy SSH public keys to slurm account
-      copy:
+    - name: Copy SSH public keys to slurm account
+      ansible.builtin.copy:
         src: "{{ admin_key_path }}"
         dest: /home/slurm/opc_authorized_keys
         owner: slurm
         group: slurm
-        mode: 0600
+        mode: "0600"
 
-- name: finalise
+- name: Finalise
   hosts: all
   tags: finalise
   roles:

@@ -1,6 +1,6 @@
 ---
-- name: install common tools
-  pip:
+- name: Install common tools
+  ansible.builtin.pip:
     name:
       - PyYAML
       - https://github.com/clusterinthecloud/python-citc/releases/download/0.3.10/citc-0.3.10-py3-none-any.whl
@@ -8,79 +8,79 @@
     virtualenv_command: "{{ python_venv }}"
   register: cloud_sdk_venv
 
-- name: install watchdog service
-  template:
+- name: Install watchdog service
+  ansible.builtin.template:
     src: citc-watchdog.service.j2
     dest: /usr/lib/systemd/system/citc-watchdog.service
-    mode: 0755
+    mode: "0755"
 
-- name: create citc config dir
-  file:
+- name: Create citc config dir
+  ansible.builtin.file:
     path: /etc/citc
     state: directory
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
 
-- name: copy mgmt_shape.yaml
-  copy:
+- name: Copy mgmt_shape.yaml
+  ansible.builtin.copy:
     src: /home/opc/mgmt_shape.yaml
     dest: /etc/citc/mgmt_shape.yaml
-    remote_src: yes
+    remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
   when: '"/home/opc/mgmt_shape.yaml" is exists'
 
-- name: copy shapes.yaml
-  copy:
+- name: Copy shapes.yaml
+  ansible.builtin.copy:
     src: /tmp/shapes.yaml
     dest: /etc/citc/shapes.yaml
-    remote_src: yes
+    remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
   when: '"/tmp/shapes.yaml" is exists'
 
-- name: copy startnode.yaml
-  copy:
+- name: Copy startnode.yaml
+  ansible.builtin.copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
-    remote_src: yes
+    remote_src: true
     owner: slurm
     group: slurm
-    mode: 0744
+    mode: "0744"
 
-- name: configure startnode script
-  copy:
+- name: Configure startnode script
+  ansible.builtin.copy:
     src: startnode.py
     dest: /usr/local/bin/startnode
-    mode: 0755
+    mode: "0755"
 
-- name: configure stopnode script
-  copy:
+- name: Configure stopnode script
+  ansible.builtin.copy:
     src: stopnode.py
     dest: /usr/local/bin/stopnode
-    mode: 0755
+    mode: "0755"
 
-- name: configure update_config script
-  copy:
+- name: Configure update_config script
+  ansible.builtin.copy:
     src: update_config.py
     dest: /usr/local/bin/update_config
-    mode: 0755
+    mode: "0755"
 
-- name: install kill_all_nodes script
-  copy:
+- name: Install kill_all_nodes script
+  ansible.builtin.copy:
     src: kill_all_nodes.sh
     dest: /usr/local/bin/kill_all_nodes
     mode: u=rwx,g=rwx,o=rx
 
-- name: install ssh-keygen
-  package:
+- name: Install ssh-keygen
+  ansible.builtin.package:
     name: openssh
 
-- name: generate SSH host keys for compute nodespace
-  openssh_keypair:
+- name: Generate SSH host keys for compute nodespace
+  community.crypto.openssh_keypair:
     type: "{{ item.type }}"
     size: "{{ item.size }}"
     path: "/home/slurm/ssh_host_{{ item.type }}_key"
@@ -91,23 +91,23 @@
     - {"type": "rsa", "size": 4096}
     - {"type": "ecdsa", "size": 521}
 
-- name: load the startnode config
-  slurp:
+- name: Load the startnode config
+  ansible.builtin.slurp:
     src: /etc/citc/startnode.yaml
   register: startnode_config_data
 
-- name: set the startnode_config fact
-  set_fact:
+- name: Set the startnode_config fact
+  ansible.builtin.set_fact:
     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
-- name: install cleanup_images script
-  template:
+- name: Install cleanup_images script
+  ansible.builtin.template:
     src: cleanup_images.sh.j2
     dest: /usr/local/bin/cleanup_images
     mode: u=rwx,g=rwx,o=rx
 
-- name: create cloud-init bootstrap script
-  copy:
+- name: Create cloud-init bootstrap script
+  ansible.builtin.copy:
     content: |
       #! /bin/bash
 
@@ -132,16 +132,16 @@
     owner: slurm
     mode: "u=rw,g=r,o="
 
-- name: copy list_nodes script
-  copy:
+- name: Copy list_nodes script
+  ansible.builtin.copy:
     src: list_nodes.sh
     dest: /usr/local/bin/list_nodes
-    mode: 0755
+    mode: "0755"
 
-- name: start and enable service citc-watchdog
-  service:
+- name: Start and enable service citc-watchdog
+  ansible.builtin.service:
     name: citc-watchdog
     state: started
-    enabled: yes
+    enabled: true
   tags:
     - molecule-idempotence-notest

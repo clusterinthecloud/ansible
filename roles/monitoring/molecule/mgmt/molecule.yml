@@ -5,6 +5,8 @@ driver:
   name: podman
 platforms:
   - name: mgmt
+    groups:
+      - management
     image: geerlingguy/docker-centos8-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -13,11 +15,11 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
   inventory:
-    host_vars:
-      mgmt:
-        monitoring_role: master
-        mgmt_hostname: mgmt
-        grafana_admin_password: this_is_the_grafana_admin_password
+    links:
+      group_vars: ../../../../group_vars/
 verifier:
   name: ansible

@@ -1,7 +1,7 @@
 ---
 
-- name: download app repo
-  git:
+- name: Download app repo
+  ansible.builtin.git:
     repo: https://github.com/clusterinthecloud/apps.git
     dest: /opt/apps
     version: master

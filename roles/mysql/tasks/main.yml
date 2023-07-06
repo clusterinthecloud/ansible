@@ -1,21 +1,22 @@
 ---
-- name: install PyMySQL
-  package:
+
+- name: Install PyMySQL
+  ansible.builtin.package:
     name: python3-PyMySQL
 
-- name: install mariadb module
-  package:
+- name: Install mariadb module
+  ansible.builtin.package:
     name: "@mariadb"
 
-- name: install mariadb
-  yum:
+- name: Install mariadb
+  ansible.builtin.yum:
     name:
       - mariadb-server
       - mariadb-devel
     state: installed
 
-- name: start service mariadb
-  service:
+- name: Start service mariadb
+  ansible.builtin.service:
     name: mariadb
     state: started
-    enabled: yes
+    enabled: true

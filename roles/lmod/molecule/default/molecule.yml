@@ -5,6 +5,8 @@ driver:
   name: podman
 platforms:
   - name: instance
+    groups:
+      - compute
     image: geerlingguy/docker-centos8-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -13,9 +15,11 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
   inventory:
-    host_vars:
-      instance:
-        software_install_dir: /tmp/foo
+    links:
+      group_vars: ../../../../group_vars/
 verifier:
   name: ansible

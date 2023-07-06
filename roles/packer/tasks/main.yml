@@ -1,93 +1,102 @@
 ---
 - name: Ensure unzip is installed.
-  package: name=unzip state=present
+  ansible.builtin.package:
+    name: unzip
+    state: present
 
 - name: Download and unarchive Packer.
-  unarchive:
+  ansible.builtin.unarchive:
     src: https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
     dest: /usr/local/bin
     remote_src: true
     creates: /usr/local/bin/packer
     mode: u=rwx,g=rx,o=rx
 
-- name: set permissions on packer
-  file:
+- name: Set permissions on packer
+  ansible.builtin.file:
     path: /usr/local/bin/packer
     mode: u=rwx,g=rx,o=rx
 
-- name: create packer directory
-  file:
+- name: Create packer directory
+  ansible.builtin.file:
     path: /etc/citc/packer/
     state: directory
-    mode: 0755
+    mode: "0755"
 
-- name: copy in packer build files
-  copy:
+- name: Copy in packer build files
+  ansible.builtin.copy:
     src: all.pkr.hcl
     dest: /etc/citc/packer/all.pkr.hcl
     mode: u=rw,g=r,o=r
 
-- name: create citc config dir
-  file:
+- name: Create citc config dir
+  ansible.builtin.file:
     path: /etc/citc
     state: directory
-    mode: 0755
+    mode: "0755"
 
-- name: copy startnode.yaml
-  copy:
+- name: Copy startnode.yaml
+  ansible.builtin.copy:
     src: /tmp/startnode.yaml
     dest: /etc/citc/startnode.yaml
-    remote_src: yes
-    mode: 0744
+    remote_src: true
+    mode: "0744"
 
-- name: load the startnode config
-  slurp:
+- name: Load the startnode config
+  ansible.builtin.slurp:
     src: /etc/citc/startnode.yaml
   register: startnode_config_data
 
-- name: set the startnode_config fact
-  set_fact:
+- name: Set the startnode_config fact
+  ansible.builtin.set_fact:
     startnode_config: "{{ startnode_config_data['content'] | b64decode | from_yaml }}"
 
-- name: copy in packer ansible preparation script
-  template:
+- name: Copy in packer ansible preparation script
+  ansible.builtin.template:
     src: prepare_ansible.sh.j2
     dest: /etc/citc/packer/prepare_ansible.sh
     owner: root
     mode: u=rwx,g=,o=
 
-- name: copy in packer extra run script template (no force overwrite)
-  copy:
+- name: Copy in packer ansible wrapper script
+  ansible.builtin.template:
+    src: run-ansible.sh.j2
+    dest: /etc/citc/packer/run-ansible.sh
+    owner: root
+    mode: "u=rwx,g=,o="
+
+- name: Copy in packer extra run script template (no force overwrite)
+  ansible.builtin.copy:
     src: compute_image_extra.sh
     dest: /home/citc/compute_image_extra.sh
-    force: no
+    force: false
     owner: citc
     group: citc
     mode: u=rw,g=rw,o=
 
-- name: copy in EESSI install script
-  copy:
+- name: Copy in EESSI install script
+  ansible.builtin.copy:
     src: install_cvmfs_eessi.sh
     dest: /home/citc/install_cvmfs_eessi.sh
     owner: citc
     group: citc
     mode: u=rw,g=rw,o=
 
-- name: copy in config
-  template:
+- name: Copy in config
+  ansible.builtin.template:
     src: variables.pkrvars.hcl.j2
     dest: /etc/citc/packer/variables.pkrvars.hcl
     mode: u=rw,g=r,o=r
 
-- name: copy in packer run script
-  template:
+- name: Copy in packer run script
+  ansible.builtin.template:
     src: run-packer.sh.j2
     dest: /usr/local/bin/run-packer
     mode: u=rwx,g=rx,o=rx
 
 # Ansible will not wait for this task until it gets to the `finalise` role
-- name: run packer to build first image
-  command: /usr/local/bin/run-packer  # noqa no-changed-when
+- name: Run packer to build first image (runs in background)
+  ansible.builtin.command: /usr/local/bin/run-packer  # noqa no-changed-when
   register: packer_result
   async: 1000
   poll: 0
