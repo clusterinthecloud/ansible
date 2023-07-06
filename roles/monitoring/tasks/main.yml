@@ -11,13 +11,11 @@
     state: started
     enabled: true
 
-# Currently only influxdb is in the aarch64 repo so we must use the arm64 repo. Once they
-# are in https://repos.influxdata.com/centos/8/aarch64/stable/ we can change.
 - name: Add InfluxDB repository
   ansible.builtin.yum_repository:
     name: influxdb
     description: InfluxDB
-    baseurl: https://repos.influxdata.com/centos/$releasever/{{ "arm64" if ansible_architecture == "aarch64" else ansible_architecture }}/stable/
+    baseurl: https://repos.influxdata.com/centos/$releasever/$arch/stable/
     gpgcheck: false
 
 - name: Install telegraf package
