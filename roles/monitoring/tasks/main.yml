@@ -15,7 +15,7 @@
   ansible.builtin.yum_repository:
     name: influxdb
     description: InfluxDB
-    baseurl: https://repos.influxdata.com/centos/$releasever/$ansible_architecture/stable/
+    baseurl: https://repos.influxdata.com/centos/$releasever/$arch/stable/
     gpgcheck: false
 
 - name: Install telegraf package
