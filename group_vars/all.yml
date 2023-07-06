@@ -3,7 +3,7 @@
 mgmt_hostname: "{{ ansible_local.citc.mgmt_hostname }}"
 
 # From https://www.schedmd.com/downloads.php
-slurm_version: 20.02
+slurm_version: 23.02
 
 slurm_control_machine: "{{ mgmt_hostname }}"
 
