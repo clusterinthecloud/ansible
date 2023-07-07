@@ -4,11 +4,16 @@
 
 export AWS_SHARED_CREDENTIALS_FILE="/home/slurm/aws-credentials.csv"
 
+PACKER_LOG=/root/packer.log
+
+echo "$(date) - Running packer" >> $PACKER_LOG
+
 if [[ -z "${1+x}" ]]; then
     /usr/local/bin/packer build \
         -var-file /etc/citc/packer/variables.pkrvars.hcl \
         -only="*.{{ ansible_local.citc.csp }}" \
-        /etc/citc/packer/
+        /etc/citc/packer/ \
+    > >(tee --append --ignore-interrupts $PACKER_LOG) 2> >(tee --append --ignore-interrupts $PACKER_LOG >&2)
 {% if ansible_local.citc.csp == "aws" %}
 elif [[ "$1" == "aarch64" ]]; then
     /usr/local/bin/packer build \
@@ -22,3 +27,8 @@ else
     echo "No match found for ${1}"
     exit 1
 fi
+
+echo "$(date) - Packer run finished" >> $PACKER_LOG
+echo "" >> $PACKER_LOG
+echo "=============================" >> $PACKER_LOG
+echo "" >> $PACKER_LOG
