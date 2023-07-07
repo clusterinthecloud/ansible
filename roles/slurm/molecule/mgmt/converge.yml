@@ -1,8 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  roles:
-    - python
   tasks:
     - name: "Include slurm"
       include_role:

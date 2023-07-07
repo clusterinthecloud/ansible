@@ -1,8 +1,6 @@
 ---
 - name: Prepare - create local facts
   hosts: all
-  roles:
-    - python
   tasks:
     - name: make ansible config dir
       file:
