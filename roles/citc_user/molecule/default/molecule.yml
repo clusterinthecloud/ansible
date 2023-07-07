@@ -14,6 +14,8 @@ provisioner:
   config_options:
     defaults:
       interpreter_python: /usr/bin/python3
+      callbacks_enabled: profile_tasks, timer
+      stdout_callback: yaml
   inventory:
     links:
       group_vars: ../../../../group_vars/
