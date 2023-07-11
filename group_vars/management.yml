@@ -32,6 +32,4 @@ mpi_packages:
 monitoring_role: master
 ldap_dm_password: "{{ lookup('ansible.builtin.password', '/etc/citc/ldapdmpasswordfile chars=ascii_letters,digits') }}"
 
-bootstrap_ansible_pull_playbook: compute.yml
-
 ldap_hostname: "{{ ansible_nodename }}"
