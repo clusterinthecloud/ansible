@@ -118,8 +118,9 @@
 
       {% if ansible_local.citc.csp == "aws" %}
       yum install -y epel-release
-      dnf install -y jq
-      python3 -m pip install awscli
+      dnf install -y jq python36
+      # TODO try to do this without using Python
+      python3.6 -m pip install awscli
       region=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq --raw-output '.region')
       instanceid=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
       name=$(/usr/local/bin/aws ec2 describe-tags --region=${region} --filters "Name=resource-id,Values=${instanceid}"\
