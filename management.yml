@@ -64,7 +64,6 @@
     - get_secrets
     - webui
     - monitoring
-    - clustershell
     - packages
     - devtoolset
     - mpi
