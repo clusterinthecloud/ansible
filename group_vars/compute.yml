@@ -5,8 +5,6 @@ slurm_packages:
 
 slurm_role: compute
 
-install_packages: []
-
 mpi_packages:
   oracle:
     - mpich

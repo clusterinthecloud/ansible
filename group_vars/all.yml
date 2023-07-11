@@ -2,12 +2,9 @@
 
 mgmt_hostname: "{{ ansible_local.citc.mgmt_hostname }}"
 
-users: []
-
 # From https://www.schedmd.com/downloads.php
 slurm_version: 20.02
 
-slurm_cluster_name: cluster
 slurm_control_machine: "{{ mgmt_hostname }}"
 
 slurm_partitions:
@@ -17,7 +14,5 @@ slurm_partitions:
 
 filesystem_target_address: fileserver
 filesystem_mount_point: /shared
-
-software_install_dir: /mnt/{{ filesystem_mount_point }}
 
 admin_key_path: /root/citc_authorized_keys

@@ -1,0 +1,2 @@
+---
+software_install_dir: /mnt/{{ filesystem_mount_point }}
