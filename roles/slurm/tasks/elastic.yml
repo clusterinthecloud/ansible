@@ -1,10 +1,14 @@
 ---
+- name: Install python38
+  ansible.builtin.package:
+    name: python38
+
 - name: Install common tools
   ansible.builtin.pip:
     name:
       - citc[{{ ansible_local.citc.csp }}] @ https://github.com/clusterinthecloud/python-citc/releases/download/0.3.11/citc-0.3.11-py3-none-any.whl
     virtualenv: /opt/cloud_sdk
-    virtualenv_command: "{{ python_venv }}"
+    virtualenv_command: /usr/bin/python3.8 -m venv
   register: cloud_sdk_venv
 
 - name: Install watchdog service

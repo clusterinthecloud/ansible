@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: mgmt
+    groups:
+      - management
+    image: geerlingguy/docker-centos8-ansible:latest
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
+      callbacks_enabled: profile_tasks, timer
+      stdout_callback: yaml
+  inventory:
+    links:
+      group_vars: ../../../../group_vars/
+verifier:
+  name: ansible

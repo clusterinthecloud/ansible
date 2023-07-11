@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include users
+      ansible.builtin.include_role:
+        name: users
+      vars:
+        ldap_dm_password: this_is_the_ldap_dm_password

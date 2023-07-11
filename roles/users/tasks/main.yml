@@ -10,13 +10,6 @@
   ansible.builtin.group:
     name: usermgmt
 
-- name: Install ldap3
-  ansible.builtin.pip:
-    name: ldap3
-    virtualenv: /opt/ldap_venv
-    virtualenv_command: "{{ python_venv }}"
-  register: ldap_venv
-
 - name: Create home dir creation script
   ansible.builtin.copy:
     src: create_home_dir.sh
@@ -71,11 +64,17 @@
     mode: u=rw,g=r,o=
     validate: /usr/sbin/visudo -cf %s
 
+- name: Install python38
+  ansible.builtin.package:
+    name: python38
+
 - name: Copy in LDAP add user script
   ansible.builtin.template:
     src: add_user_ldap.j2
     dest: /usr/local/sbin/add_user_ldap
     mode: "0700"
+  vars:
+    python_bin: /usr/bin/python3.8
 
 - name: Create cluster-internal SSH key for OCI user
   ansible.builtin.user:

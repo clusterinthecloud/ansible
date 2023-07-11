@@ -21,9 +21,14 @@ SURNAME=${3}
 HOMEROOT=/mnt/shared/home
 
 PASSWORD=$(openssl rand -base64 30)
-SHA1="$({{ ldap_venv.virtualenv }}/bin/python - <<EOF
-import ldap3
-print(ldap3.utils.hashed.hashed(ldap3.HASHED_SALTED_SHA512, "${PASSWORD}"))
+SHA1="$({{ python_bin }} - <<EOF
+# This should do the same thing as
+# ldap3.utils.hashed.hashed(ldap3.HASHED_SALTED_SHA512, "${PASSWORD}")
+import base64, hashlib, os
+salt = os.urandom(8)
+salted_pw = "${PASSWORD}".encode("utf-8") + salt
+hashed_salted_pw = hashlib.new("sha512", salted_pw).digest()
+print("{ssha512}" + base64.b64encode(hashed_salted_pw + salt).decode("ascii"))
 EOF
 )"
 
