@@ -1,2 +1,2 @@
 ---
-grafana_admin_password: "{{ lookup('ansible.builtin.password', '/tmp/grafanapasswordfile chars=ascii_letters,digits,hexdigits') }}"
+grafana_admin_password: "{{ lookup('ansible.builtin.password', '/tmp/grafanapasswordfile', chars=['ascii_letters', 'digits', 'hexdigits']) }}"

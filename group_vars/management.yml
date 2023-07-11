@@ -1,6 +1,6 @@
 ---
 
-slurm_accounting_db_password: "{{ lookup('ansible.builtin.password', '/tmp/slurmpasswordfile chars=ascii_letters,digits,hexdigits') }}"
+slurm_accounting_db_password: "{{ lookup('ansible.builtin.password', '/tmp/slurmpasswordfile', chars=['ascii_letters', 'digits', 'hexdigits']) }}"
 
 slurm_packages:
   - slurmctld
@@ -30,6 +30,6 @@ mpi_packages:
   aws: []
 
 monitoring_role: master
-ldap_dm_password: "{{ lookup('ansible.builtin.password', '/etc/citc/ldapdmpasswordfile chars=ascii_letters,digits') }}"
+ldap_dm_password: "{{ lookup('ansible.builtin.password', '/etc/citc/ldapdmpasswordfile', chars=['ascii_letters', 'digits']) }}"
 
 ldap_hostname: "{{ ansible_nodename }}"
