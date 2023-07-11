@@ -1,4 +1,2 @@
 ---
-install_packages: []
-
 monitoring_role: client
