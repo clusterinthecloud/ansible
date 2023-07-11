@@ -37,7 +37,9 @@
         mode: a=rw,o+x
     - name: create local citc.fact file  # Put there by Terraform usually
       copy:
+        # Choose one CSP for now, based on Python package installation speed
+        # TODO parameterise on CSP
         content: |
-          {"csp":"example", "fileserver_ip":"10.0.0.1", "mgmt_hostname":"mgmt"}
+          {"csp":"google", "fileserver_ip":"10.0.0.1", "mgmt_hostname":"mgmt"}
         dest: /etc/ansible/facts.d/citc.fact
         mode: u=rw,g=r,o=r

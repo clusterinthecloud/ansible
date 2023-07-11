@@ -2,8 +2,7 @@
 - name: Install common tools
   ansible.builtin.pip:
     name:
-      - PyYAML
-      - https://github.com/clusterinthecloud/python-citc/releases/download/0.3.10/citc-0.3.10-py3-none-any.whl
+      - citc[{{ ansible_local.citc.csp }}] @ https://github.com/clusterinthecloud/python-citc/releases/download/0.3.11/citc-0.3.11-py3-none-any.whl
     virtualenv: /opt/cloud_sdk
     virtualenv_command: "{{ python_venv }}"
   register: cloud_sdk_venv
