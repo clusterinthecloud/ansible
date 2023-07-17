@@ -1,0 +1,32 @@
+---
+
+- name: Download glauth binary
+  ansible.builtin.command:
+    cmd: curl --output /usr/bin/glauth -L https://github.com/glauth/glauth/releases/download/v2.2.0/glauth-linux-amd64
+
+- name: Make glauth binary executable
+  ansible.builtin.command:
+    cmd: chmod +x /usr/bin/glauth
+
+- name: Copy refresh-glauth-config.sh
+  copy:
+    src: refresh-glauth-config.sh
+    dest: /usr/sbin/refresh-glauth-config.sh
+
+- name: Template glauth-preconfig.cfg
+  template:
+    src: glauth-preconfig.cfg
+    dest: /etc/glauth/glauth-preconfig.cfg
+
+- name: Start glauth config refresh script
+  ansible.builtin.command:
+    cmd: /usr/sbin/refresh-glauth-config.sh &> /var/log/refresh-glauth-config.log &
+  environment:
+    WALDUR_URL: "{{ waldur_url | default('https://waldur.example.com/api/') }}"
+    WALDUR_TOKEN: "{{ waldur_token }}"
+    WALDUR_RESOURCE_UUID: "{{ waldur_resource_uuid }}"
+    WALDUR_API_VERIFY_TLS: "{{ waldur_api_verify_tls | default('false') }}"
+
+- name: Start glauth
+  ansible.builtin.command:
+    cmd: /usr/bin/glauth -c /app/config/config.cfg &> /var/log/glauth.log &
