@@ -1,0 +1,8 @@
+---
+- name: Reload nfs-server
+  service:
+    name: nfs-server
+    state: reloaded
+
+- name: Re-export shares
+  command: exportfs -rav

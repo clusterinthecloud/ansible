@@ -1,4 +1,28 @@
 ---
+- name: start nfs server
+  service:
+    name: nfs-server
+    state: started
+    enabled: true
+
+- name: Create shared FS
+  ansible.builtin.file:
+    path: /shared
+    state: directory
+
+# TODO mount a Cinder volume
+- name: config nfs server
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    line: "/shared *(rw,sync,insecure,no_root_squash)"
+    regexp: "^/shared"
+  notify:
+    - Reload nfs-server
+    - Re-export shares
+
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Install nfs-utils
   ansible.builtin.yum:
     name: nfs-utils
@@ -11,6 +35,15 @@
   when:
     - ansible_local.citc is defined
     - ansible_local.citc.csp == "google"
+
+- name: Ensure fileserver name exists
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    line: "{{ ansible_local.citc.fileserver_ip }} fileserver"
+    state: present
+  when:
+    - ansible_local.citc is defined
+    - ansible_local.citc.csp == "openstack"
 
 - name: Wait for fileserver to be ready checking nfs tcp port open (critical path - avoids race condition)
   ansible.builtin.wait_for:
