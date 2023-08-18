@@ -13,6 +13,7 @@ mpi_packages:
     - mpich
     - openmpi
   aws: []
+  openstack: []
 
 monitoring_role: client
 
