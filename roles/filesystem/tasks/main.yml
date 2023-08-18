@@ -1,6 +1,6 @@
 ---
-- name: start nfs server
-  service:
+- name: Start nfs server
+  ansible.builtin.service:
     name: nfs-server
     state: started
     enabled: true
@@ -9,9 +9,10 @@
   ansible.builtin.file:
     path: /shared
     state: directory
+    mode: o=rwx,g=rx,o=rx
 
 # TODO mount a Cinder volume
-- name: config nfs server
+- name: Config nfs server
   ansible.builtin.lineinfile:
     path: /etc/exports
     line: "/shared *(rw,sync,insecure,no_root_squash)"
@@ -21,7 +22,7 @@
     - Re-export shares
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Install nfs-utils
   ansible.builtin.yum:

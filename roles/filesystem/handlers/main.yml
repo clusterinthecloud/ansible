@@ -1,8 +1,8 @@
 ---
 - name: Reload nfs-server
-  service:
+  ansible.builtin.service:
     name: nfs-server
     state: reloaded
 
 - name: Re-export shares
-  command: exportfs -rav
+  ansible.builtin.command: exportfs -rav  # noqa no-changed-when
