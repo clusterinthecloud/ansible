@@ -221,6 +221,10 @@
   ansible.builtin.include_tasks: elastic_aws.yml
   when: slurm_role == "mgmt" and ansible_local.citc.csp == "aws"
 
+- name: Perform OpenStack elastic Slurm config
+  ansible.builtin.include_tasks: elastic_openstack.yml
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
+
 - name: Start service slurmctld
   ansible.builtin.service:
     name: slurmctld

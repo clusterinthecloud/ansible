@@ -1,0 +1,14 @@
+---
+- name: Install OpenStack SDK
+  ansible.builtin.pip:
+    name:
+      - python-openstackclient
+    virtualenv: /opt/cloud_sdk
+
+- name: Install startnode support module
+  ansible.builtin.copy:
+    src: citc_openstack.py
+    dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
+    mode: u=rw,g=r,o=r
+
+# TODO copy in credentials to the right place in /home/slurm/
