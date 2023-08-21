@@ -25,7 +25,7 @@ jobs:
           pip install oci pytest-mock pytest-asyncio pyyaml mypy \
                       requests_mock google-api-python-client google-auth boto3 \
                       "boto3-stubs[ec2,route53]" \
-                      https://github.com/clusterinthecloud/python-citc/releases/download/0.3.10/citc-0.3.10-py3-none-any.whl
+                      https://github.com/clusterinthecloud/python-citc/releases/download/0.3.11/citc-0.3.11-py3-none-any.whl
       - name: Test with pytest
         run: pytest
       - name: Type check
