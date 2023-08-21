@@ -22,3 +22,5 @@ oracle_subnet_ocid = "{%- if startnode_config.subnet_id is defined -%}{{ startno
 oracle_shape = "VM.Standard2.1"
 oracle_access_cfg_file = "/home/slurm/.oci/config"
 oracle_key_file = "/home/slurm/.oci/oci_api_key.pem"
+
+openstack_network = "{%- if startnode_config.network_id is defined -%}{{ startnode_config.network_id }}{%- endif -%}"

@@ -18,6 +18,8 @@ variable "oracle_shape" {}
 variable "oracle_access_cfg_file" {}
 variable "oracle_key_file" {}
 
+variable "openstack_network" {}
+
 variable "destination_image_name" {}
 variable "cluster" {}
 variable "ca_cert" {}
@@ -106,11 +108,23 @@ source "oracle-oci" "oracle" {
     ssh_username = var.ssh_username
 }
 
+source "openstack" "openstack" {
+    cloud = "openstack"  # TODO update for correct credentials
+    flavor = "m1.small"
+    image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    source_image_name = "Rocky-8.8"
+    ssh_username = var.ssh_username
+    networks = [var.openstack_network]
+    image_tags = ["compute"]
+    metadata = {"cluster": var.cluster}
+}
+
 build {
     sources = [
         "source.googlecompute.google",
         "source.amazon-ebs.aws",
         "source.oracle-oci.oracle",
+        "source.openstack.openstack",
     ]
 
     provisioner "file" {

@@ -6,6 +6,9 @@ set -euo pipefail
 {% if ansible_local.citc.csp == "google" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
+{% if ansible_local.citc.csp == "openstack" %}
+sudo yum install -y epel-release
+sudo dnf config-manager --set-enabled powertools
 {% elif ansible_local.citc.csp == "aws" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
