@@ -59,8 +59,9 @@ def get_shape_name(hostname):
 
 
 def get_image(conn, cluster_id: str):
-    all_images = conn.image.images(name="Rocky-8.8", tag="compute")
-    our_images = (i for i in all_images if i.get("cluster") == cluster_id)
+    # TODO sort images by newest
+    all_images = conn.image.images(tag="compute")
+    our_images = (i for i in all_images if i["properties"].get("cluster") == cluster_id)
     return next(our_images)
 
 
@@ -112,6 +113,11 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     except openstack.exceptions.SDKException as e:
         log.error(f"{host}:  problem launching instance: {e}")
         return
+
+    if not slurm_ip:
+        private_ip = instance.addresses[nodespace["network_name"]][0]["addr"]
+        log.info(f"{host}:   Private IP {private_ip}")
+        subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
 
     log.info(f"{host}:  Started")
     return instance
