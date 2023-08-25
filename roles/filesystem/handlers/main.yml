@@ -6,3 +6,8 @@
 
 - name: Re-export shares
   ansible.builtin.command: exportfs -rav  # noqa no-changed-when
+
+- name: Restart firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: restarted

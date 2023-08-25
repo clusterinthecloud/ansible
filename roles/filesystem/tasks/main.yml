@@ -4,12 +4,14 @@
     name: nfs-server
     state: started
     enabled: true
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
 
 - name: Create shared FS
   ansible.builtin.file:
     path: /shared
     state: directory
     mode: o=rwx,g=rx,o=rx
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
 
 # TODO mount a Cinder volume
 - name: Config nfs server
@@ -20,9 +22,18 @@
   notify:
     - Reload nfs-server
     - Re-export shares
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
+
+- name: Open NFS port in firewall
+  ansible.posix.firewalld:
+    port: 2049/tcp
+    permanent: true
+    state: enabled
+  notify: Restart firewalld
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
+  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
 
 - name: Install nfs-utils
   ansible.builtin.yum:
