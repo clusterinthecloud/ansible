@@ -5,10 +5,24 @@
       - python-openstackclient
     virtualenv: /opt/cloud_sdk
 
+- name: Configure OpenStack clouds.yaml
+  ansible.builtin.copy:
+    src: /home/opc/config
+    dest: /home/slurm/.config/openstack/clouds.yaml
+    owner: slurm
+    group: slurm
+    mode: "0400"
+
+- name: Configure OpenStack clouds.yaml
+  ansible.builtin.copy:
+    src: /home/opc/config
+    dest: /root/.config/openstack/clouds.yaml
+    owner: root
+    group: root
+    mode: "0400"
+
 - name: Install startnode support module
   ansible.builtin.copy:
     src: citc_openstack.py
     dest: /opt/cloud_sdk/lib/python3.8/site-packages/citc_cloud.py
     mode: u=rw,g=r,o=r
-
-# TODO copy in credentials to the right place in /home/slurm/
