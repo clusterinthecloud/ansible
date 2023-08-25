@@ -89,6 +89,7 @@ def create_node_config(conn, hostname: str, ip: Optional[str], nodespace: Dict[s
         "flavor_id": flavor.id,
         "networks": [{"uuid": nodespace["network_id"]}],
         "user_data": user_data,
+        "security_groups": [{"name": nodespace["security_group"]}],
         "block_device_mapping_v2": block_device_mapping_v2,
         "tags": ["compute"],
         "metadata": {"cluster": nodespace["cluster_id"]},
