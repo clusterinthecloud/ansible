@@ -125,7 +125,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
     return instance
 
 
-async def terminate_instance(log, hosts):
+def terminate_instance(log, hosts):
     nodespace = get_nodespace()
 
     conn = openstack.connect()
