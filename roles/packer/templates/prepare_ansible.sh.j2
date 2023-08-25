@@ -3,12 +3,20 @@ set -euo pipefail
 
 # This script runs on the packer node to set things up, ready to have Ansible connect to it.
 
+sudo dnf install -y glibc-langpack-en.x86_64
+sudo localectl set-locale en_GB.utf8
+sudo localectl set-keymap gb
+
 {% if ansible_local.citc.csp == "google" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
 {% elif ansible_local.citc.csp == "openstack" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
+# TODO this should point to the eventual fileserver
+sudo bash -c 'cat > /etc/hosts' << EOF
+{{ ansible_default_ipv4.address }} mgmt fileserver
+EOF
 {% elif ansible_local.citc.csp == "aws" %}
 sudo yum install -y epel-release
 sudo dnf config-manager --set-enabled powertools
