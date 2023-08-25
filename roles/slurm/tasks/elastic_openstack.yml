@@ -7,7 +7,7 @@
 
 - name: Configure OpenStack clouds.yaml
   ansible.builtin.copy:
-    src: /home/opc/config
+    src: /home/cloud-user/clouds.yaml
     dest: /home/slurm/.config/openstack/clouds.yaml
     owner: slurm
     group: slurm
@@ -15,7 +15,7 @@
 
 - name: Configure OpenStack clouds.yaml
   ansible.builtin.copy:
-    src: /home/opc/config
+    src: /home/cloud-user/clouds.yaml
     dest: /root/.config/openstack/clouds.yaml
     owner: root
     group: root
