@@ -115,6 +115,7 @@ async def start_node(log, host: str, nodespace: Dict[str, str], ssh_keys: str) -
         return
 
     if not slurm_ip:
+        instance = await asyncio.get_event_loop().run_in_executor(None, lambda: conn.compute.wait_for_server(instance))
         private_ip = instance.addresses[nodespace["network_name"]][0]["addr"]
         log.info(f"{host}:   Private IP {private_ip}")
         subprocess.run(["scontrol", "update", f"NodeName={host}", f"NodeAddr={private_ip}"])
