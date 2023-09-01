@@ -112,7 +112,7 @@ source "openstack" "openstack" {
     cloud = "openstack"  # TODO update for correct credentials
     flavor = "m1.small"
     image_name = "${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
-    instance_name = "packer-${var.destination_image_name}-${var.cluster}-v{{timestamp}}"
+    instance_name = "packer-${var.cluster}-v{{timestamp}}"
     source_image_name = "Rocky-8.8"
     ssh_username = var.ssh_username
     networks = [var.openstack_network]
