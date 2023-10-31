@@ -87,7 +87,7 @@ def create_node_config(conn, hostname: str, ip: Optional[str], nodespace: Dict[s
         "name": hostname,
         "image_id": image.id,
         "flavor_id": flavor.id,
-        "networks": [{"uuid": nodespace["network_id"]}],
+        "networks": [{"uuid": nodespace["network_id"]}, {"uuid": nodespace["ceph_network"]}],
         "user_data": user_data,
         "security_groups": [{"name": nodespace["security_group"]}],
         "block_device_mapping_v2": block_device_mapping_v2,
