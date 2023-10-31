@@ -19,6 +19,7 @@ variable "oracle_access_cfg_file" {}
 variable "oracle_key_file" {}
 
 variable "openstack_network" {}
+variable "openstack_ceph_network" {}
 
 variable "destination_image_name" {}
 variable "cluster" {}
@@ -115,7 +116,7 @@ source "openstack" "openstack" {
     instance_name = "packer-${var.cluster}-v{{timestamp}}"
     source_image_name = "Rocky-8.8"
     ssh_username = var.ssh_username
-    networks = [var.openstack_network]
+    networks = [var.openstack_network, var.openstack_ceph_network]
     image_tags = ["compute"]
     metadata = {"cluster": var.cluster}
 }
