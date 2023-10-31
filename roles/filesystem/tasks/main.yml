@@ -44,6 +44,6 @@
     path: /mnt/shared
     src: "{{ filesystem_target_address }}:/"
     fstype: ceph
-    opts: secret={{  }},name={{  }}
+    opts: "secret={{ ansible_local.citc_ceph.secret }},name={{ ansible_local.citc.cluster_id }}"
     state: mounted
   when: ansible_local.citc.csp == "openstack"
