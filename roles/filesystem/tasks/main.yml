@@ -1,40 +1,4 @@
 ---
-- name: Start nfs server
-  ansible.builtin.service:
-    name: nfs-server
-    state: started
-    enabled: true
-  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
-
-- name: Create shared FS
-  ansible.builtin.file:
-    path: /shared
-    state: directory
-    mode: o=rwx,g=rx,o=rx
-  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
-
-# TODO mount a Cinder volume
-- name: Config nfs server
-  ansible.builtin.lineinfile:
-    path: /etc/exports
-    line: "/shared *(rw,sync,insecure,no_root_squash)"
-    regexp: "^/shared"
-  notify:
-    - Reload nfs-server
-    - Re-export shares
-  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
-
-- name: Open NFS port in firewall
-  ansible.posix.firewalld:
-    port: 2049/tcp
-    permanent: true
-    state: enabled
-  notify: Restart firewalld
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-  when: slurm_role == "mgmt" and ansible_local.citc.csp == "openstack"
-
 - name: Install nfs-utils
   ansible.builtin.yum:
     name: nfs-utils
@@ -53,6 +17,7 @@
     host: "{{ ansible_local.citc.fileserver_ip }}"
     port: 2049
     state: started
+  when: ansible_local.citc.csp != "openstack"
 
 - name: Mount shared file system now that fileserver is ready
   ansible.posix.mount:
@@ -62,14 +27,23 @@
     opts: defaults,nofail,nosuid
     state: mounted
   when:
-    ansible_local.citc.csp != "aws"
+    - ansible_local.citc.csp != "aws"
+    - ansible_local.citc.csp != "openstack"
 
-- name: Mount shared file system
+- name: Mount shared file system [aws]
   ansible.posix.mount:
     path: /mnt/shared
     src: "{{ filesystem_target_address }}:/"
     fstype: nfs
     opts: defaults,nofail,nosuid
     state: mounted
-  when:
-    ansible_local.citc.csp == "aws"
+  when: ansible_local.citc.csp == "aws"
+
+- name: Mount shared file system [openstack]
+  ansible.posix.mount:
+    path: /mnt/shared
+    src: "{{ filesystem_target_address }}:/"
+    fstype: ceph
+    opts: secret={{  }},name={{  }}
+    state: mounted
+  when: ansible_local.citc.csp == "openstack"
