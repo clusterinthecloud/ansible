@@ -29,7 +29,14 @@ sudo dnf config-manager --set-enabled ol8_codeready_builder
 sudo mkdir -p /etc/ansible/facts.d/
 echo 'packer' | sudo -S sh -c '
 cat > /etc/ansible/facts.d/citc.fact <<EOF
-{"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}", "mgmt_hostname":"{{ mgmt_hostname }}", "ldap_hostname":"{{ ldap_hostname }}", "ldap_dm_password":"{{ ldap_dm_password }}" }
+{"csp":"{{ ansible_local.citc.csp }}", "fileserver_ip":"{{ ansible_local.citc.fileserver_ip }}", "mgmt_hostname":"{{ mgmt_hostname }}", "ldap_hostname":"{{ ldap_hostname }}", "ldap_dm_password":"{{ ldap_dm_password }}", "cluster_id":"{{ ansible_local.citc.cluster_id }}" }
 EOF'
 sudo chmod u=rw,g=,o= /etc/ansible/facts.d/citc.fact
+{% if ansible_local.citc.csp == "openstack" %}
+echo 'packer' | sudo -S sh -c '
+cat > /etc/ansible/facts.d/citc_ceph.fact <<EOF
+{"secret":"{{ ansible_local.citc_ceph.secret }}" }
+EOF'
+sudo chmod u=rw,g=,o= /etc/ansible/facts.d/citc.fact
+{% endif %}
 sudo mv /tmp/citc_authorized_keys /root/citc_authorized_keys
