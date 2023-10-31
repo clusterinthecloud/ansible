@@ -42,7 +42,7 @@
 - name: Mount shared file system [openstack]
   ansible.posix.mount:
     path: /mnt/shared
-    src: "{{ filesystem_target_address }}:/"
+    src: "{{ ansible_local.citc.fileserver_ip }}"
     fstype: ceph
     opts: "secret={{ ansible_local.citc_ceph.secret }},name={{ ansible_local.citc.cluster_id }}"
     state: mounted
