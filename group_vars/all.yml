@@ -16,3 +16,5 @@ filesystem_target_address: fileserver
 filesystem_mount_point: /shared
 
 admin_key_path: /root/citc_authorized_keys
+
+ansible_python_interpreter: /usr/libexec/platform-python
