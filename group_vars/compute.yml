@@ -14,6 +14,20 @@ mpi_packages:
     - openmpi
   aws: []
 
+ceph_packages:
+  - ceph
+  - ceph-base
+  - ceph-common
+  - ceph-osd
+  - ceph-mon
+  - ceph-mgr
+  - ceph-mds
+  - ceph-radosgw
+  - ceph-volume
+  - lvm2
+
+ceph_version: quincy
+
 monitoring_role: client
 
 ldap_hostname: "{{ ansible_local.citc.ldap_hostname }}"

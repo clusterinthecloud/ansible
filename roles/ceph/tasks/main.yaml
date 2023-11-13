@@ -1,0 +1,37 @@
+---
+
+- name: Add Ceph {{ ansible_architecture }} repository
+  yum_repository:
+    name: ceph
+    description: Ceph packages for {{ ansible_architecture }}
+    baseurl: https://download.ceph.com/rpm-{{ ceph_version }}/el$releasever/{{ ansible_architecture }}
+    enabled: 1
+    priority: 2
+    gpgcheck: 1
+    gpgkey: https://download.ceph.com/keys/release.asc
+
+- name: Add Ceph noarch repository
+  yum_repository:
+    name: ceph-noarch
+    description: Ceph noarch packages
+    baseurl: https://download.ceph.com/rpm-{{ ceph_version }}/el$releasever/noarch
+    enabled: 1
+    priority: 2
+    gpgcheck: 1
+    gpgkey: https://download.ceph.com/keys/release.asc
+
+- name: Add Ceph source repository
+  yum_repository:
+    name: ceph-source
+    description: Ceph noarch packages
+    baseurl: https://download.ceph.com/rpm-{{ ceph_version }}/el$releasever/SRPMS
+    enabled: 1
+    priority: 2
+    gpgcheck: 1
+    gpgkey: https://download.ceph.com/keys/release.asc
+
+- name: install ceph
+  package:
+    name: '{{ item }}'
+    state: present
+  loop:  "{{ ceph_packages }}"

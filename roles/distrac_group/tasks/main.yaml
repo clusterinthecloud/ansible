@@ -1,0 +1,14 @@
+---
+
+- name: Ensure group distrac group exists
+  group:
+    name: distrac
+    gid: 2000
+    state: present
+
+- name: create add user to distrac group script
+  copy:
+    src: add_user_to_distrac_group.sh
+    dest: /usr/local/libexec/add_user_to_distrac_group
+    mode: go=r,u=rwx
+  register: add_user_to_distrac_group
